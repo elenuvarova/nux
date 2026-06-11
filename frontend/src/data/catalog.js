@@ -75,12 +75,12 @@ export const HERO = {
   meta: 'Epic · 1962 · 3h 47m · ★ 8.3',
 };
 
+// Honest pairs only: each still actually belongs to the film it labels.
 export const CONTINUE_WATCHING = [
   { filmId: 'the-third-man', still: still('still-third-man.jpg'), minutesLeft: 31 },
-  { filmId: 'sexy-beast', still: still('still-get-carter.jpg'), minutesLeft: 47 },
   { filmId: 'black-narcissus', still: still('still-black-narcissus.jpg'), minutesLeft: 22 },
   { filmId: 'lawrence-of-arabia', still: still('still-lawrence-of-arabia.jpg'), minutesLeft: 96 },
-  { filmId: 'brief-encounter', still: still('still-matter-life-death.jpg'), minutesLeft: 58 },
+  { filmId: 'the-red-shoes', still: still('still2-red-shoes.jpg'), minutesLeft: 47 },
 ];
 
 export const RAILS = [
