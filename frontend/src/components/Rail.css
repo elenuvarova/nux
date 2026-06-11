@@ -1,0 +1,198 @@
+/* Rails — editorial shelf: Fraunces header + horizontal scroll. */
+
+.rail {
+  max-width: 1440px;
+  margin: 0 auto var(--space-16);
+  padding: 0 var(--space-16);
+}
+
+.rail-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.rail-seeall {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: 500 13px/1 var(--font-ui);
+  color: var(--text-tertiary);
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.rail-seeall:hover {
+  color: var(--text-secondary);
+}
+
+.rail-scroll {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 168px;
+  gap: var(--space-5);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* let card hover shadows breathe */
+  padding: var(--space-2);
+  margin: calc(-1 * var(--space-2));
+}
+
+.rail-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.rail-scroll > * {
+  scroll-snap-align: start;
+}
+
+.rail-scroll--wide {
+  grid-auto-columns: 296px;
+}
+
+/* ── PosterCard ──────────────────────────────────────────────── */
+.poster-card {
+  display: grid;
+  gap: var(--space-2);
+  outline-offset: 4px;
+}
+
+.poster-card-art {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-poster);
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px var(--white-a07);
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+
+.poster-card-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* hairline above the artwork */
+.poster-card-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--white-a08);
+  transition: box-shadow var(--dur-base) var(--ease-out);
+}
+
+.poster-card:hover .poster-card-art {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.poster-card:hover .poster-card-art::after {
+  box-shadow: inset 0 0 0 1px var(--white-a18);
+}
+
+.poster-card-badge {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  font: 700 9px/1 var(--font-ui);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--paper-100);
+  background: rgb(13 12 11 / 0.72);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-xs);
+  padding: 3px 5px;
+}
+
+.poster-card-title {
+  font: var(--type-card-title);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── ContinueCard (landscape still + progress) ───────────────── */
+.continue-card {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.continue-card-art {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-poster);
+  overflow: hidden;
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+
+.continue-card-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.continue-card-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--white-a08);
+  background: linear-gradient(to top, rgb(13 12 11 / 0.55), transparent 45%);
+}
+
+.continue-card:hover .continue-card-art {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.continue-card-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--paper-100);
+  z-index: 1;
+}
+
+.continue-card-play svg {
+  width: 34px;
+  height: 34px;
+  padding: 10px;
+  border-radius: var(--radius-full);
+  background: rgb(13 12 11 / 0.55);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* flush-bottom progress on artwork (Apple TV pattern) */
+.continue-card-progress {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: var(--white-a18);
+  z-index: 1;
+}
+
+.continue-card-progress::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--progress, 40%);
+  background: var(--accent-progress);
+}
+
+@media (max-width: 768px) {
+  .rail {
+    padding: 0 var(--space-4);
+    margin-bottom: var(--space-10);
+  }
+
+  .rail-scroll {
+    grid-auto-columns: 124px;
+    gap: var(--space-3);
+  }
+}

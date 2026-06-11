@@ -1,0 +1,77 @@
+{
+  "$schema": "https://design-tokens.org/schema",
+  "$metadata": {
+    "description": "Design semantic tokens — LIGHT MODE.",
+    "tokenSetOrder": ["semantic-design-light"]
+  },
+
+  "semantic": {
+    "surface": {
+      "page":        { "$value": "{primitives.dark.50}",   "$type": "color", "$description": "#F8F8FA — warm white" },
+      "raised":      { "$value": "{primitives.dark.0}",    "$type": "color", "$description": "#FFFFFF — cards" },
+      "elevated":    { "$value": "{primitives.dark.0}",    "$type": "color", "$description": "#FFFFFF — modals" },
+      "sunken":      { "$value": "{primitives.dark.100}",  "$type": "color", "$description": "#E8E8EF — inputs" },
+      "muted":       { "$value": "{primitives.dark.100}",  "$type": "color" },
+      "neutral":     { "$value": "{primitives.dark.200}",  "$type": "color" },
+      "inverse":     { "$value": "{primitives.dark.900}",  "$type": "color" },
+      "overlay":     { "$value": "rgba(8,8,15,0.40)",     "$type": "color" },
+      "brand":       { "$value": "{primitives.brand.500}", "$type": "color" },
+      "brand-subtle":{ "$value": "{primitives.brand.50}",  "$type": "color" }
+    },
+
+    "text": {
+      "primary":   { "$value": "{primitives.dark.900}",  "$type": "color", "$description": "#08080F" },
+      "secondary": { "$value": "{primitives.dark.500}",  "$type": "color", "$description": "#3A3A56" },
+      "tertiary":  { "$value": "{primitives.dark.400}",  "$type": "color", "$description": "#5C5C7A — captions" },
+      "disabled":  { "$value": "{primitives.dark.300}",  "$type": "color" },
+      "inverse":   { "$value": "{primitives.dark.0}",    "$type": "color" },
+      "brand":     { "$value": "{primitives.brand.600}", "$type": "color" },
+      "link":      { "$value": "{primitives.brand.600}", "$type": "color" },
+      "success":   { "$value": "{primitives.status.success}", "$type": "color" },
+      "error":     { "$value": "{primitives.status.error}",   "$type": "color" }
+    },
+
+    "border": {
+      "subtle":  { "$value": "{primitives.dark.100}", "$type": "color" },
+      "default": { "$value": "{primitives.dark.200}", "$type": "color" },
+      "strong":  { "$value": "{primitives.dark.300}", "$type": "color" },
+      "focus":   { "$value": "{primitives.brand.500}","$type": "color" },
+      "brand":   { "$value": "{primitives.brand.500}","$type": "color" },
+      "inverse": { "$value": "{primitives.dark.900}", "$type": "color" }
+    },
+
+    "icon": {
+      "primary":   { "$value": "{primitives.dark.900}", "$type": "color" },
+      "secondary": { "$value": "{primitives.dark.500}", "$type": "color" },
+      "tertiary":  { "$value": "{primitives.dark.400}", "$type": "color" },
+      "brand":     { "$value": "{primitives.brand.600}","$type": "color" },
+      "inverse":   { "$value": "{primitives.dark.0}",   "$type": "color" }
+    },
+
+    "action": {
+      "primary":          { "$value": "{primitives.brand.500}", "$type": "color" },
+      "primary-hover":    { "$value": "{primitives.brand.600}", "$type": "color" },
+      "primary-active":   { "$value": "{primitives.brand.700}", "$type": "color" },
+      "primary-text":     { "$value": "{primitives.dark.0}",    "$type": "color" },
+      "secondary":        { "$value": "transparent",            "$type": "color" },
+      "secondary-border": { "$value": "{primitives.dark.300}",  "$type": "color" },
+      "secondary-text":   { "$value": "{primitives.dark.900}",  "$type": "color" },
+      "secondary-hover":  { "$value": "{primitives.dark.100}",  "$type": "color" },
+      "ghost":            { "$value": "transparent",            "$type": "color" },
+      "ghost-hover":      { "$value": "{primitives.brand.50}",  "$type": "color" },
+      "danger":           { "$value": "{primitives.status.error}", "$type": "color" }
+    },
+
+    "media-type": {
+      "film":   { "$value": "{primitives.media.film}",   "$type": "color" },
+      "doc":    { "$value": "{primitives.media.doc}",    "$type": "color" },
+      "game":   { "$value": "{primitives.media.game}",   "$type": "color" },
+      "course": { "$value": "{primitives.media.course}", "$type": "color" }
+    },
+
+    "shadow": {
+      "default": { "$value": "{primitives.shadow.default}", "$type": "shadow" },
+      "raised":  { "$value": "{primitives.shadow.raised}",  "$type": "shadow" }
+    }
+  }
+}

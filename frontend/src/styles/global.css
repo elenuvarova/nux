@@ -1,0 +1,129 @@
+/* NUX global styles — reset, base, grain, focus discipline. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font: var(--type-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+
+img,
+picture,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+/* Keyboard focus only — amber ring per the design system. */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-xs);
+}
+
+::selection {
+  background: var(--amber-500);
+  color: var(--ink-900);
+}
+
+/* ── Film grain overlay (2.5%, kills banding on scrims) ──────── */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url('/assets/noise-grain.png');
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+}
+
+/* ── Shared text utilities ───────────────────────────────────── */
+.eyebrow {
+  font: var(--type-eyebrow);
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+  color: var(--amber-500);
+}
+
+.display-xl {
+  font: var(--type-display-xl);
+  letter-spacing: var(--track-display);
+}
+
+.display-l {
+  font: var(--type-display-l);
+  letter-spacing: var(--track-display);
+}
+
+.display-m {
+  font: var(--type-display-m);
+  letter-spacing: var(--track-display);
+}
+
+.headline {
+  font: var(--type-headline);
+  letter-spacing: var(--track-display);
+}
+
+.metadata {
+  font: var(--type-metadata);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Motion discipline ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

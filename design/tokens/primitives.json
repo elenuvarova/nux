@@ -1,0 +1,146 @@
+{
+  "$schema": "https://design-tokens.org/schema",
+  "$metadata": { "tokenSetOrder": ["primitives"] },
+
+  "primitives": {
+    "grey": {
+      "0":   { "$value": "#FFFFFF", "$type": "color", "$description": "canvas · cards" },
+      "100": { "$value": "#F2F2F2", "$type": "color", "$description": "surface · sunken" },
+      "300": { "$value": "#CCCCCC", "$type": "color", "$description": "placeholder · disabled" },
+      "500": { "$value": "#ABABAB", "$type": "color", "$description": "secondary · captions" },
+      "900": { "$value": "#1A1A1A", "$type": "color", "$description": "primary text" }
+    },
+
+    "brand": {
+      "50":  { "$value": "#F0EDFF", "$type": "color" },
+      "100": { "$value": "#DDD6FF", "$type": "color" },
+      "200": { "$value": "#BDB0FF", "$type": "color" },
+      "300": { "$value": "#9B8BFF", "$type": "color" },
+      "400": { "$value": "#7B65FF", "$type": "color" },
+      "500": { "$value": "#6650F5", "$type": "color", "$description": "NUX brand — electric indigo" },
+      "600": { "$value": "#5040D9", "$type": "color" },
+      "700": { "$value": "#3B2EBF", "$type": "color" },
+      "800": { "$value": "#281FA0", "$type": "color" },
+      "900": { "$value": "#170E7A", "$type": "color" }
+    },
+
+    "dark": {
+      "0":   { "$value": "#FFFFFF", "$type": "color" },
+      "50":  { "$value": "#F8F8FA", "$type": "color" },
+      "100": { "$value": "#E8E8EF", "$type": "color" },
+      "200": { "$value": "#C4C4D0", "$type": "color" },
+      "300": { "$value": "#8F8FA8", "$type": "color" },
+      "400": { "$value": "#5C5C7A", "$type": "color" },
+      "500": { "$value": "#3A3A56", "$type": "color" },
+      "600": { "$value": "#252540", "$type": "color" },
+      "700": { "$value": "#16162E", "$type": "color" },
+      "800": { "$value": "#0E0E1E", "$type": "color" },
+      "900": { "$value": "#08080F", "$type": "color", "$description": "deepest dark background" }
+    },
+
+    "media": {
+      "film":    { "$value": "#E8A44A", "$type": "color", "$description": "amber — cinematic warmth" },
+      "doc":     { "$value": "#4AABE8", "$type": "color", "$description": "sky blue — informational" },
+      "game":    { "$value": "#7DE84A", "$type": "color", "$description": "electric green — interactive" },
+      "course":  { "$value": "#E84A9B", "$type": "color", "$description": "hot pink — educational" }
+    },
+
+    "status": {
+      "success": { "$value": "#3DBA74", "$type": "color" },
+      "warning": { "$value": "#F5A623", "$type": "color" },
+      "error":   { "$value": "#E8504A", "$type": "color" },
+      "info":    { "$value": "#4A8CE8", "$type": "color" }
+    },
+
+    "shadow": {
+      "default": { "$value": "rgba(0,0,0,0.12)", "$type": "shadow", "$description": "card elevation" },
+      "raised":  { "$value": "rgba(0,0,0,0.20)", "$type": "shadow" },
+      "overlay": { "$value": "rgba(0,0,0,0.48)", "$type": "shadow" },
+      "dark-card": { "$value": "rgba(0,0,0,0.40)", "$type": "shadow" },
+      "brand-glow": { "$value": "0 0 24px rgba(102,80,245,0.35)", "$type": "shadow" }
+    },
+
+    "radius": {
+      "none":   { "$value": "0px",   "$type": "dimension" },
+      "xs":     { "$value": "4px",   "$type": "dimension" },
+      "sm":     { "$value": "8px",   "$type": "dimension" },
+      "md":     { "$value": "12px",  "$type": "dimension" },
+      "lg":     { "$value": "16px",  "$type": "dimension" },
+      "xl":     { "$value": "24px",  "$type": "dimension" },
+      "2xl":    { "$value": "32px",  "$type": "dimension" },
+      "full":   { "$value": "9999px","$type": "dimension" }
+    },
+
+    "spacing": {
+      "0":  { "$value": "0px",   "$type": "dimension" },
+      "1":  { "$value": "4px",   "$type": "dimension" },
+      "2":  { "$value": "8px",   "$type": "dimension" },
+      "3":  { "$value": "12px",  "$type": "dimension" },
+      "4":  { "$value": "16px",  "$type": "dimension" },
+      "5":  { "$value": "20px",  "$type": "dimension" },
+      "6":  { "$value": "24px",  "$type": "dimension" },
+      "8":  { "$value": "32px",  "$type": "dimension" },
+      "10": { "$value": "40px",  "$type": "dimension" },
+      "12": { "$value": "48px",  "$type": "dimension" },
+      "16": { "$value": "64px",  "$type": "dimension" },
+      "20": { "$value": "80px",  "$type": "dimension" },
+      "24": { "$value": "96px",  "$type": "dimension" }
+    },
+
+    "typography": {
+      "family": {
+        "display": { "$value": "'Plus Jakarta Sans', system-ui, sans-serif", "$type": "fontFamily" },
+        "body":    { "$value": "'Inter', system-ui, sans-serif",             "$type": "fontFamily" },
+        "mono":    { "$value": "'JetBrains Mono', monospace",                "$type": "fontFamily" }
+      },
+      "size": {
+        "xs":   { "$value": "11px", "$type": "dimension" },
+        "sm":   { "$value": "13px", "$type": "dimension" },
+        "base": { "$value": "16px", "$type": "dimension" },
+        "lg":   { "$value": "18px", "$type": "dimension" },
+        "xl":   { "$value": "22px", "$type": "dimension" },
+        "2xl":  { "$value": "28px", "$type": "dimension" },
+        "3xl":  { "$value": "36px", "$type": "dimension" },
+        "4xl":  { "$value": "48px", "$type": "dimension" },
+        "5xl":  { "$value": "64px", "$type": "dimension" }
+      },
+      "weight": {
+        "regular": { "$value": "400", "$type": "fontWeight" },
+        "medium":  { "$value": "500", "$type": "fontWeight" },
+        "semibold":{ "$value": "600", "$type": "fontWeight" },
+        "bold":    { "$value": "700", "$type": "fontWeight" },
+        "black":   { "$value": "800", "$type": "fontWeight" }
+      },
+      "leading": {
+        "tight":  { "$value": "1.15", "$type": "lineHeight" },
+        "snug":   { "$value": "1.3",  "$type": "lineHeight" },
+        "normal": { "$value": "1.5",  "$type": "lineHeight" },
+        "relaxed":{ "$value": "1.65", "$type": "lineHeight" }
+      },
+      "tracking": {
+        "tight":  { "$value": "-0.03em", "$type": "letterSpacing" },
+        "normal": { "$value": "0em",     "$type": "letterSpacing" },
+        "wide":   { "$value": "0.04em",  "$type": "letterSpacing" },
+        "wider":  { "$value": "0.08em",  "$type": "letterSpacing" },
+        "widest": { "$value": "0.16em",  "$type": "letterSpacing" }
+      }
+    },
+
+    "motion": {
+      "duration": {
+        "instant":   { "$value": "80ms",   "$type": "duration" },
+        "fast":      { "$value": "150ms",  "$type": "duration" },
+        "normal":    { "$value": "250ms",  "$type": "duration" },
+        "slow":      { "$value": "400ms",  "$type": "duration" },
+        "cinematic": { "$value": "700ms",  "$type": "duration" }
+      },
+      "easing": {
+        "enter":     { "$value": "cubic-bezier(0.0, 0.0, 0.2, 1.0)", "$type": "cubicBezier", "$description": "decelerate — things entering the screen" },
+        "exit":      { "$value": "cubic-bezier(0.4, 0.0, 1.0, 1.0)", "$type": "cubicBezier", "$description": "accelerate — things leaving" },
+        "standard":  { "$value": "cubic-bezier(0.4, 0.0, 0.2, 1.0)", "$type": "cubicBezier", "$description": "standard move" },
+        "spring":    { "$value": "cubic-bezier(0.175, 0.885, 0.32, 1.275)", "$type": "cubicBezier", "$description": "playful spring overshoot" },
+        "cinematic": { "$value": "cubic-bezier(0.25, 0.46, 0.45, 0.94)", "$type": "cubicBezier", "$description": "smooth cinematic feel" }
+      }
+    }
+  }
+}

@@ -1,0 +1,286 @@
+/* ============================================================
+   NUX Design Tokens — CSS Custom Properties
+   Generated from design/tokens/*.json
+   Usage: import this file once at the root of your app
+   ============================================================ */
+
+/* ---- PRIMITIVES ------------------------------------------ */
+:root {
+  /* Grey scale (wireframe system) */
+  --primitive-grey-0:   #FFFFFF;
+  --primitive-grey-100: #F2F2F2;
+  --primitive-grey-300: #CCCCCC;
+  --primitive-grey-500: #ABABAB;
+  --primitive-grey-900: #1A1A1A;
+
+  /* Brand — Electric Indigo */
+  --primitive-brand-50:  #F0EDFF;
+  --primitive-brand-100: #DDD6FF;
+  --primitive-brand-200: #BDB0FF;
+  --primitive-brand-300: #9B8BFF;
+  --primitive-brand-400: #7B65FF;
+  --primitive-brand-500: #6650F5;
+  --primitive-brand-600: #5040D9;
+  --primitive-brand-700: #3B2EBF;
+  --primitive-brand-800: #281FA0;
+  --primitive-brand-900: #170E7A;
+
+  /* Dark scale (design system base) */
+  --primitive-dark-0:   #FFFFFF;
+  --primitive-dark-50:  #F8F8FA;
+  --primitive-dark-100: #E8E8EF;
+  --primitive-dark-200: #C4C4D0;
+  --primitive-dark-300: #8F8FA8;
+  --primitive-dark-400: #5C5C7A;
+  --primitive-dark-500: #3A3A56;
+  --primitive-dark-600: #252540;
+  --primitive-dark-700: #16162E;
+  --primitive-dark-800: #0E0E1E;
+  --primitive-dark-900: #08080F;
+
+  /* Media type indicators */
+  --primitive-media-film:   #E8A44A;
+  --primitive-media-doc:    #4AABE8;
+  --primitive-media-game:   #7DE84A;
+  --primitive-media-course: #E84A9B;
+
+  /* Status */
+  --primitive-status-success: #3DBA74;
+  --primitive-status-warning: #F5A623;
+  --primitive-status-error:   #E8504A;
+  --primitive-status-info:    #4A8CE8;
+
+  /* Radius */
+  --radius-none: 0px;
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-2xl:  32px;
+  --radius-full: 9999px;
+
+  /* Spacing */
+  --space-0:  0px;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* Typography */
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 16px;
+  --text-lg:   18px;
+  --text-xl:   22px;
+  --text-2xl:  28px;
+  --text-3xl:  36px;
+  --text-4xl:  48px;
+  --text-5xl:  64px;
+
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-black:    800;
+
+  --leading-tight:   1.15;
+  --leading-snug:    1.3;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.65;
+
+  --tracking-tight:  -0.03em;
+  --tracking-normal: 0em;
+  --tracking-wide:   0.04em;
+  --tracking-wider:  0.08em;
+  --tracking-widest: 0.16em;
+
+  /* Motion */
+  --duration-instant:   80ms;
+  --duration-fast:      150ms;
+  --duration-normal:    250ms;
+  --duration-slow:      400ms;
+  --duration-cinematic: 700ms;
+
+  --ease-enter:     cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --ease-exit:      cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --ease-standard:  cubic-bezier(0.4, 0.0, 0.2, 1.0);
+  --ease-spring:    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-cinematic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+
+/* ============================================================
+   WIREFRAME MODE  (data-theme="wireframe")
+   Pure grey scale — for lo-fi prototyping
+   ============================================================ */
+[data-theme="wireframe"] {
+  --surface-page:    var(--primitive-grey-0);
+  --surface-raised:  var(--primitive-grey-0);
+  --surface-sunken:  var(--primitive-grey-100);
+  --surface-muted:   var(--primitive-grey-300);
+  --surface-neutral: var(--primitive-grey-500);
+  --surface-inverse: var(--primitive-grey-900);
+
+  --text-primary:   var(--primitive-grey-900);
+  --text-secondary: var(--primitive-grey-500);
+  --text-tertiary:  var(--primitive-grey-500);
+  --text-disabled:  var(--primitive-grey-300);
+  --text-inverse:   var(--primitive-grey-0);
+
+  --border-subtle:  var(--primitive-grey-100);
+  --border-default: var(--primitive-grey-300);
+  --border-strong:  var(--primitive-grey-500);
+  --border-focus:   var(--primitive-grey-900);
+  --border-inverse: var(--primitive-grey-900);
+
+  --icon-primary:   var(--primitive-grey-900);
+  --icon-secondary: var(--primitive-grey-500);
+  --icon-tertiary:  var(--primitive-grey-300);
+  --icon-inverse:   var(--primitive-grey-0);
+
+  --action-primary:       var(--primitive-grey-900);
+  --action-primary-text:  var(--primitive-grey-0);
+  --action-secondary:     transparent;
+  --action-secondary-border: var(--primitive-grey-900);
+  --action-secondary-text:   var(--primitive-grey-900);
+
+  --shadow-default: rgba(0,0,0,0.12);
+
+  --media-film:   var(--primitive-grey-500);
+  --media-doc:    var(--primitive-grey-500);
+  --media-game:   var(--primitive-grey-500);
+  --media-course: var(--primitive-grey-500);
+}
+
+
+/* ============================================================
+   DESIGN — DARK MODE  (data-theme="dark")
+   ============================================================ */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --surface-page:        var(--primitive-dark-900);
+  --surface-raised:      var(--primitive-dark-800);
+  --surface-elevated:    var(--primitive-dark-700);
+  --surface-sunken:      var(--primitive-dark-900);
+  --surface-muted:       var(--primitive-dark-600);
+  --surface-neutral:     var(--primitive-dark-500);
+  --surface-inverse:     var(--primitive-dark-0);
+  --surface-overlay:     rgba(8,8,15,0.72);
+  --surface-brand:       var(--primitive-brand-500);
+  --surface-brand-subtle: rgba(102,80,245,0.12);
+
+  --text-primary:   var(--primitive-dark-50);
+  --text-secondary: var(--primitive-dark-200);
+  --text-tertiary:  var(--primitive-dark-300);
+  --text-disabled:  var(--primitive-dark-400);
+  --text-inverse:   var(--primitive-dark-900);
+  --text-brand:     var(--primitive-brand-300);
+  --text-link:      var(--primitive-brand-300);
+
+  --border-subtle:  var(--primitive-dark-600);
+  --border-default: var(--primitive-dark-500);
+  --border-strong:  var(--primitive-dark-400);
+  --border-focus:   var(--primitive-brand-400);
+  --border-brand:   var(--primitive-brand-500);
+  --border-inverse: var(--primitive-dark-50);
+
+  --icon-primary:   var(--primitive-dark-50);
+  --icon-secondary: var(--primitive-dark-300);
+  --icon-tertiary:  var(--primitive-dark-400);
+  --icon-brand:     var(--primitive-brand-400);
+  --icon-inverse:   var(--primitive-dark-900);
+
+  --action-primary:         var(--primitive-brand-500);
+  --action-primary-hover:   var(--primitive-brand-400);
+  --action-primary-active:  var(--primitive-brand-600);
+  --action-primary-text:    var(--primitive-dark-0);
+  --action-secondary:       transparent;
+  --action-secondary-border: var(--primitive-dark-400);
+  --action-secondary-text:   var(--primitive-dark-50);
+  --action-secondary-hover:  var(--primitive-dark-700);
+  --action-ghost-hover:      rgba(102,80,245,0.12);
+  --action-danger:           var(--primitive-status-error);
+
+  --media-film:   var(--primitive-media-film);
+  --media-doc:    var(--primitive-media-doc);
+  --media-game:   var(--primitive-media-game);
+  --media-course: var(--primitive-media-course);
+
+  --shadow-default: rgba(0,0,0,0.40);
+  --shadow-raised:  rgba(0,0,0,0.48);
+  --shadow-brand:   0 0 24px rgba(102,80,245,0.35);
+}
+
+
+/* ============================================================
+   DESIGN — LIGHT MODE  (data-theme="light")
+   ============================================================ */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --surface-page:        var(--primitive-dark-50);
+  --surface-raised:      var(--primitive-dark-0);
+  --surface-elevated:    var(--primitive-dark-0);
+  --surface-sunken:      var(--primitive-dark-100);
+  --surface-muted:       var(--primitive-dark-100);
+  --surface-neutral:     var(--primitive-dark-200);
+  --surface-inverse:     var(--primitive-dark-900);
+  --surface-overlay:     rgba(8,8,15,0.40);
+  --surface-brand:       var(--primitive-brand-500);
+  --surface-brand-subtle: var(--primitive-brand-50);
+
+  --text-primary:   var(--primitive-dark-900);
+  --text-secondary: var(--primitive-dark-500);
+  --text-tertiary:  var(--primitive-dark-400);
+  --text-disabled:  var(--primitive-dark-300);
+  --text-inverse:   var(--primitive-dark-0);
+  --text-brand:     var(--primitive-brand-600);
+  --text-link:      var(--primitive-brand-600);
+
+  --border-subtle:  var(--primitive-dark-100);
+  --border-default: var(--primitive-dark-200);
+  --border-strong:  var(--primitive-dark-300);
+  --border-focus:   var(--primitive-brand-500);
+  --border-brand:   var(--primitive-brand-500);
+  --border-inverse: var(--primitive-dark-900);
+
+  --icon-primary:   var(--primitive-dark-900);
+  --icon-secondary: var(--primitive-dark-500);
+  --icon-tertiary:  var(--primitive-dark-400);
+  --icon-brand:     var(--primitive-brand-600);
+  --icon-inverse:   var(--primitive-dark-0);
+
+  --action-primary:         var(--primitive-brand-500);
+  --action-primary-hover:   var(--primitive-brand-600);
+  --action-primary-active:  var(--primitive-brand-700);
+  --action-primary-text:    var(--primitive-dark-0);
+  --action-secondary:       transparent;
+  --action-secondary-border: var(--primitive-dark-300);
+  --action-secondary-text:   var(--primitive-dark-900);
+  --action-secondary-hover:  var(--primitive-dark-100);
+  --action-ghost-hover:      var(--primitive-brand-50);
+  --action-danger:           var(--primitive-status-error);
+
+  --media-film:   var(--primitive-media-film);
+  --media-doc:    var(--primitive-media-doc);
+  --media-game:   var(--primitive-media-game);
+  --media-course: var(--primitive-media-course);
+
+  --shadow-default: rgba(0,0,0,0.12);
+  --shadow-raised:  rgba(0,0,0,0.20);
+  --shadow-brand:   0 0 24px rgba(102,80,245,0.20);
+}

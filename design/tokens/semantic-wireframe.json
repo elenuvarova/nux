@@ -1,0 +1,53 @@
+{
+  "$schema": "https://design-tokens.org/schema",
+  "$metadata": {
+    "description": "Wireframe semantic tokens — maps to grey primitives only. Used for lo-fi prototyping.",
+    "tokenSetOrder": ["semantic-wireframe"]
+  },
+
+  "semantic": {
+    "surface": {
+      "page":    { "$value": "{primitives.grey.0}",   "$type": "color", "$description": "#FFFFFF — main canvas" },
+      "raised":  { "$value": "{primitives.grey.0}",   "$type": "color", "$description": "#FFFFFF — cards, modals" },
+      "sunken":  { "$value": "{primitives.grey.100}",  "$type": "color", "$description": "#F2F2F2 — input bg, inset sections" },
+      "muted":   { "$value": "{primitives.grey.300}",  "$type": "color", "$description": "#CCCCCC — skeleton, placeholder" },
+      "neutral": { "$value": "{primitives.grey.500}",  "$type": "color", "$description": "#ABABAB — secondary surfaces" },
+      "inverse": { "$value": "{primitives.grey.900}",  "$type": "color", "$description": "#1A1A1A — dark surfaces" }
+    },
+
+    "text": {
+      "primary":   { "$value": "{primitives.grey.900}", "$type": "color", "$description": "#1A1A1A" },
+      "secondary": { "$value": "{primitives.grey.500}", "$type": "color", "$description": "#ABABAB" },
+      "tertiary":  { "$value": "{primitives.grey.500}", "$type": "color", "$description": "#ABABAB — captions" },
+      "disabled":  { "$value": "{primitives.grey.300}", "$type": "color", "$description": "#CCCCCC" },
+      "inverse":   { "$value": "{primitives.grey.0}",   "$type": "color", "$description": "#FFFFFF — on dark surfaces" },
+      "placeholder":{ "$value": "{primitives.grey.300}","$type": "color" }
+    },
+
+    "border": {
+      "subtle":  { "$value": "{primitives.grey.100}", "$type": "color", "$description": "#F2F2F2 — very light dividers" },
+      "strong":  { "$value": "{primitives.grey.300}", "$type": "color", "$description": "#CCCCCC — visible borders" },
+      "focus":   { "$value": "{primitives.grey.500}", "$type": "color", "$description": "#ABABAB — focus ring" },
+      "inverse": { "$value": "{primitives.grey.900}", "$type": "color", "$description": "#1A1A1A" }
+    },
+
+    "icon": {
+      "primary":   { "$value": "{primitives.grey.900}", "$type": "color" },
+      "secondary": { "$value": "{primitives.grey.500}", "$type": "color" },
+      "tertiary":  { "$value": "{primitives.grey.300}", "$type": "color" },
+      "inverse":   { "$value": "{primitives.grey.0}",   "$type": "color" }
+    },
+
+    "action": {
+      "primary":          { "$value": "{primitives.grey.900}", "$type": "color", "$description": "CTA buttons in wireframe" },
+      "primary-text":     { "$value": "{primitives.grey.0}",   "$type": "color" },
+      "secondary":        { "$value": "{primitives.grey.0}",   "$type": "color" },
+      "secondary-border": { "$value": "{primitives.grey.900}", "$type": "color" },
+      "secondary-text":   { "$value": "{primitives.grey.900}", "$type": "color" }
+    },
+
+    "shadow": {
+      "default": { "$value": "{primitives.shadow.default}", "$type": "shadow" }
+    }
+  }
+}
