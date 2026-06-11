@@ -116,6 +116,26 @@ ol {
   font-variant-numeric: tabular-nums;
 }
 
+/* ── View Transitions: poster → hero morph ───────────────────── */
+::view-transition-group(hero-art) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* keep artwork covering its box while the aspect ratio morphs */
+::view-transition-old(hero-art),
+::view-transition-new(hero-art) {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  overflow: clip;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+}
+
 /* ── Motion discipline ───────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -125,5 +145,12 @@ ol {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

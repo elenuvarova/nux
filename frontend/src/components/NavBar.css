@@ -97,17 +97,12 @@
 @media (max-width: 768px) {
   .nav-inner {
     padding: 0 var(--space-4);
+    height: 56px;
   }
 
+  /* tab bar takes over primary nav + search on mobile */
+  .nav-links,
   .nav-search {
-    min-width: 0;
-  }
-
-  .nav-search span {
     display: none;
-  }
-
-  .nav-links {
-    gap: var(--space-5);
   }
 }

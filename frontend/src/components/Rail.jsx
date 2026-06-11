@@ -2,10 +2,25 @@ import { Link } from 'react-router-dom';
 import { byId } from '../data/catalog.js';
 import './Rail.css';
 
+/* Mark the clicked artwork as the shared element for the
+   poster → hero View Transition morph. Clear stale marks first —
+   duplicate view-transition-names skip the whole transition. */
+function markHeroArt(e) {
+  document.querySelectorAll('[data-vt="hero-art"]').forEach((el) => {
+    el.style.viewTransitionName = '';
+    delete el.dataset.vt;
+  });
+  const img = e.currentTarget.querySelector('img');
+  if (img) {
+    img.style.viewTransitionName = 'hero-art';
+    img.dataset.vt = 'hero-art';
+  }
+}
+
 export function PosterCard({ filmId }) {
   const film = byId(filmId);
   return (
-    <Link to={`/film/${film.id}`} className="poster-card">
+    <Link to={`/film/${film.id}`} className="poster-card" viewTransition onClick={markHeroArt}>
       <div className="poster-card-art">
         <img src={film.poster} alt="" loading="lazy" />
         <span className="poster-card-badge">{film.type}</span>
@@ -22,7 +37,7 @@ export function ContinueCard({ item }) {
   const film = byId(item.filmId);
   const progress = Math.max(8, 100 - Math.round((item.minutesLeft / 120) * 100));
   return (
-    <Link to={`/film/${film.id}`} className="continue-card">
+    <Link to={`/film/${film.id}`} className="continue-card" viewTransition onClick={markHeroArt}>
       <div className="continue-card-art">
         <img src={item.still} alt="" loading="lazy" />
         <span className="continue-card-play" aria-hidden="true">
