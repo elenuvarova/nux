@@ -18,7 +18,7 @@ export default function Hero() {
           {HERO.meta}
         </p>
         <div className="hero-actions">
-          <Link to={`/film/${film.id}`} className="btn btn-primary">
+          <Link to={`/watch/${film.id}`} className="btn btn-primary">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
               <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
             </svg>

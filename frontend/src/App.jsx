@@ -7,6 +7,7 @@ import Home from './pages/Home.jsx';
 import Browse from './pages/Browse.jsx';
 import MyList from './pages/MyList.jsx';
 import FilmDetail from './pages/FilmDetail.jsx';
+import Watch from './pages/Watch.jsx';
 import NotFound from './pages/NotFound.jsx';
 
 /* On forward navigation: scroll to top and move focus to the new page's
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/browse" element={<Browse />} />
           <Route path="/my-list" element={<MyList />} />
           <Route path="/film/:id" element={<FilmDetail />} />
+          <Route path="/watch/:id" element={<Watch />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
