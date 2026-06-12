@@ -340,7 +340,28 @@ export default function Watch() {
         </div>
       </div>
 
-      {/* bottom transport */}
+      {/* center transport — the Figma player anatomy: skip / play / skip
+          live in the middle of the screen, not the bottom bar */}
+      {started && trailer && (
+        <div className="player-center-transport">
+          <button type="button" className="player-iconbtn player-skipbtn" onClick={() => skip(-10)} aria-label="Back 10 seconds">
+            <IconSkip forward={false} />
+          </button>
+          <button
+            type="button"
+            className="player-iconbtn player-playbtn"
+            onClick={toggle}
+            aria-label={ended ? 'Replay' : playing ? 'Pause' : 'Play'}
+          >
+            {ended ? <IconReplay /> : playing ? <IconPause /> : <IconPlay />}
+          </button>
+          <button type="button" className="player-iconbtn player-skipbtn" onClick={() => skip(10)} aria-label="Forward 10 seconds">
+            <IconSkip forward />
+          </button>
+        </div>
+      )}
+
+      {/* bottom bar — scrubber + secondary controls only */}
       {started && trailer && (
         <div className="player-transport">
           <div className="player-scrub">
@@ -366,62 +387,38 @@ export default function Watch() {
             <span className="metadata player-time">{fmt(duration)}</span>
           </div>
           <div className="player-controls">
-            {/* left: volume */}
-            <div className="player-controls-left">
-              <div className="player-volume">
-                <button type="button" className="player-iconbtn" onClick={toggleMute} aria-label={muted || volume === 0 ? 'Unmute' : 'Mute'}>
-                  {muted || volume === 0 ? (
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M2.5 7v4h3l4 3.5v-11L5.5 7h-3z" fill="currentColor" stroke="none" />
-                      <path d="M12.5 6.5l4 5M16.5 6.5l-4 5" />
-                    </svg>
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-                      <path d="M2.5 7v4h3l4 3.5v-11L5.5 7h-3z" fill="currentColor" stroke="none" />
-                      <path d="M12.5 6.5a3.5 3.5 0 0 1 0 5M14.5 4.5a6.3 6.3 0 0 1 0 9" />
-                    </svg>
-                  )}
-                </button>
-                <input
-                  type="range"
-                  className="player-volume-slider"
-                  min="0"
-                  max="100"
-                  step="1"
-                  value={muted ? 0 : volume}
-                  onChange={(e) => applyVolume(Number(e.target.value))}
-                  aria-label="Volume"
-                  style={{ '--fill': `${muted ? 0 : volume}%` }}
-                />
-              </div>
+            <div className="player-volume">
+              <button type="button" className="player-iconbtn" onClick={toggleMute} aria-label={muted || volume === 0 ? 'Unmute' : 'Mute'}>
+                {muted || volume === 0 ? (
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2.5 7v4h3l4 3.5v-11L5.5 7h-3z" fill="currentColor" stroke="none" />
+                    <path d="M12.5 6.5l4 5M16.5 6.5l-4 5" />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+                    <path d="M2.5 7v4h3l4 3.5v-11L5.5 7h-3z" fill="currentColor" stroke="none" />
+                    <path d="M12.5 6.5a3.5 3.5 0 0 1 0 5M14.5 4.5a6.3 6.3 0 0 1 0 9" />
+                  </svg>
+                )}
+              </button>
+              <input
+                type="range"
+                className="player-volume-slider"
+                min="0"
+                max="100"
+                step="1"
+                value={muted ? 0 : volume}
+                onChange={(e) => applyVolume(Number(e.target.value))}
+                aria-label="Volume"
+                style={{ '--fill': `${muted ? 0 : volume}%` }}
+              />
             </div>
-
-            {/* center: skip / play / skip */}
-            <div className="player-controls-center">
-              <button type="button" className="player-iconbtn" onClick={() => skip(-10)} aria-label="Back 10 seconds">
-                <IconSkip forward={false} />
-              </button>
-              <button
-                type="button"
-                className="player-iconbtn player-playbtn"
-                onClick={toggle}
-                aria-label={ended ? 'Replay' : playing ? 'Pause' : 'Play'}
-              >
-                {ended ? <IconReplay /> : playing ? <IconPause /> : <IconPlay />}
-              </button>
-              <button type="button" className="player-iconbtn" onClick={() => skip(10)} aria-label="Forward 10 seconds">
-                <IconSkip forward />
-              </button>
-            </div>
-
-            {/* right: fullscreen */}
-            <div className="player-controls-right">
-              <button type="button" className="player-iconbtn" onClick={goFullscreen} aria-label="Fullscreen">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M7 2.5H2.5V7M11 2.5h4.5V7M7 15.5H2.5V11M11 15.5h4.5V11" />
-                </svg>
-              </button>
-            </div>
+            <span className="player-spacer" />
+            <button type="button" className="player-iconbtn" onClick={goFullscreen} aria-label="Fullscreen">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M7 2.5H2.5V7M11 2.5h4.5V7M7 15.5H2.5V11M11 15.5h4.5V11" />
+              </svg>
+            </button>
           </div>
         </div>
       )}
