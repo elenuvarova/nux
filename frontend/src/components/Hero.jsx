@@ -1,24 +1,46 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { byId, HERO } from '../data/catalog.js';
+import { byId, HERO_ROTATION } from '../data/catalog.js';
 import { useMyList } from '../lib/useMyList.js';
 import './Hero.css';
 
+function metaLine(film) {
+  return [film.genre, film.year, film.runtime, film.rating ? `★ ${film.rating}` : null].filter(Boolean).join(' · ');
+}
+
 export default function Hero() {
-  const film = byId(HERO.filmId);
+  const [i, setI] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const slide = HERO_ROTATION[i];
+  const film = byId(slide.filmId);
   const { has, toggle } = useMyList();
   const saved = has(film.id);
 
+  // auto-advance unless reduced-motion or hovered
+  useEffect(() => {
+    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const t = setInterval(() => setI((n) => (n + 1) % HERO_ROTATION.length), 8000);
+    return () => clearInterval(t);
+  }, [paused]);
+
   return (
-    <section className="hero" aria-label={`Featured: ${film.title}`}>
-      <div className="hero-art">
-        <img src={film.backdrop2 || film.backdrop} alt="" fetchpriority="high" />
+    <section
+      className="hero"
+      aria-label={`Featured: ${film.title}`}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="hero-art" key={film.id}>
+        <img src={film.backdrop2 || film.backdrop || film.poster} alt="" fetchpriority="high" />
       </div>
       <div className="hero-content">
-        <p className="eyebrow">{HERO.eyebrow}</p>
-        <h1 className="hero-title" tabIndex={-1}>{film.title}</h1>
+        <p className="eyebrow">{slide.eyebrow}</p>
+        <h1 className="hero-title" tabIndex={-1}>
+          {film.title}
+        </h1>
         <p className="hero-meta">
           <span className="hero-badge">{film.type}</span>
-          {HERO.meta}
+          {metaLine(film)}
         </p>
         <div className="hero-actions">
           <Link to={`/watch/${film.id}`} className="btn btn-primary">
@@ -27,7 +49,7 @@ export default function Hero() {
             </svg>
             Play
           </Link>
-          <button type="button" className="btn btn-secondary" onClick={() => toggle(film.id)} aria-pressed={saved}>
+          <button type="button" className="btn btn-secondary" onClick={() => toggle(film.id, film.title)} aria-pressed={saved}>
             {saved ? (
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M2.5 7.5 6 11l5.5-7" />
@@ -46,6 +68,19 @@ export default function Hero() {
             </svg>
             More Info
           </Link>
+        </div>
+        <div className="hero-dots" role="tablist" aria-label="Featured titles">
+          {HERO_ROTATION.map((s, n) => (
+            <button
+              key={s.filmId}
+              type="button"
+              role="tab"
+              aria-selected={n === i}
+              aria-label={byId(s.filmId).title}
+              className={n === i ? 'hero-dot hero-dot--on' : 'hero-dot'}
+              onClick={() => setI(n)}
+            />
+          ))}
         </div>
       </div>
     </section>

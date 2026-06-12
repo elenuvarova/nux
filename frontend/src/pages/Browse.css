@@ -54,6 +54,51 @@
   display: none;
 }
 
+/* ── recent searches dropdown ────────────────────────────────── */
+.browse-recent {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  z-index: 20;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  background: rgb(13 12 11 / 0.96);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    inset 0 0 0 1px var(--white-a08),
+    var(--shadow-overlay);
+}
+
+.browse-recent-head {
+  font: var(--type-eyebrow);
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: var(--space-2) var(--space-3);
+}
+
+.browse-recent-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font: var(--type-body);
+  text-align: left;
+}
+
+.browse-recent-row svg {
+  color: var(--icon-tertiary);
+}
+
+.browse-recent-row:hover {
+  background: var(--white-a08);
+}
+
 .browse-clear {
   position: absolute;
   right: var(--space-3);

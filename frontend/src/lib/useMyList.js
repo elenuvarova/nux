@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { toast } from './toast.js';
 
 const KEY = 'nux-my-list';
 
@@ -32,8 +33,15 @@ export function useMyList() {
 
   const has = useCallback((id) => list.includes(id), [list]);
 
-  const toggle = useCallback((id) => {
-    write(ids.includes(id) ? ids.filter((x) => x !== id) : [id, ...ids]);
+  const toggle = useCallback((id, title) => {
+    const adding = !ids.includes(id);
+    write(adding ? [id, ...ids] : ids.filter((x) => x !== id));
+    const label = title || 'Title';
+    if (adding) {
+      toast(`Added to My List`, { action: { label: 'Undo', onClick: () => write(read().filter((x) => x !== id)) } });
+    } else {
+      toast(`Removed from My List`, { action: { label: 'Undo', onClick: () => write([id, ...read()]) } });
+    }
   }, []);
 
   return { list, has, toggle };

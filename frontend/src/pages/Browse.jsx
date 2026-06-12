@@ -42,6 +42,23 @@ export default function Browse() {
     return () => clearTimeout(t);
   }, []);
 
+  // recent searches (localStorage) + focus state for the suggestions panel
+  const [focused, setFocused] = useState(false);
+  const [recent, setRecent] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('nux-recent-search') || '[]');
+    } catch {
+      return [];
+    }
+  });
+  const remember = (q) => {
+    const v = q.trim();
+    if (v.length < 2) return;
+    const next = [v, ...recent.filter((x) => x.toLowerCase() !== v.toLowerCase())].slice(0, 6);
+    setRecent(next);
+    localStorage.setItem('nux-recent-search', JSON.stringify(next));
+  };
+
   const films = useMemo(() => {
     let list = FILMS;
     if (chip === 'Films') list = list.filter((f) => f.type === 'FILM');
@@ -55,6 +72,14 @@ export default function Browse() {
     }
     return list;
   }, [chip, query]);
+
+  // remember a query once it settles and actually matched something
+  useEffect(() => {
+    if (!query.trim() || films.length === 0) return undefined;
+    const t = setTimeout(() => remember(query), 900);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, films.length]);
 
   // the one game / one course live behind their chips (real detail pages)
   const extras = !query && chip === 'Games' ? [EXTRAS.game] : !query && chip === 'Courses' ? [EXTRAS.course] : [];
@@ -80,8 +105,34 @@ export default function Browse() {
             placeholder="Titles, genres, years…"
             value={query}
             onChange={(e) => update({ q: e.target.value })}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setTimeout(() => setFocused(false), 150)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') remember(query);
+              if (e.key === 'Escape') update({ q: '' });
+            }}
             aria-label="Search the catalog"
           />
+          {focused && !query && recent.length > 0 && (
+            <div className="browse-recent" role="listbox" aria-label="Recent searches">
+              <p className="browse-recent-head">Recent</p>
+              {recent.map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  className="browse-recent-row"
+                  role="option"
+                  onMouseDown={() => update({ q: r })}
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="7" cy="7" r="5.2" />
+                    <path d="M7 4.2V7l1.8 1.1" />
+                  </svg>
+                  {r}
+                </button>
+              ))}
+            </div>
+          )}
           {query && (
             <button type="button" className="browse-clear" onClick={() => update({ q: '' })} aria-label="Clear search">
               <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
@@ -110,10 +161,10 @@ export default function Browse() {
           <h2 className="headline">Genres</h2>
           <div className="genre-grid">
             {GENRES.map((g) => (
-              <button type="button" className="genre-card" key={g.id} onClick={() => update({ q: g.label })}>
+              <Link to={`/genre/${g.id}`} className="genre-card" key={g.id}>
                 <img src={g.image} alt="" loading="lazy" />
                 <span>{g.label}</span>
-              </button>
+              </Link>
             ))}
           </div>
         </section>

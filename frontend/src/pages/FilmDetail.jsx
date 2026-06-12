@@ -61,7 +61,7 @@ export default function FilmDetail() {
           </svg>
           Play
         </Link>
-        <button type="button" className="btn btn-secondary" onClick={() => toggle(film.id)} aria-pressed={saved}>
+        <button type="button" className="btn btn-secondary" onClick={() => toggle(film.id, film.title)} aria-pressed={saved}>
           {saved ? (
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M2.5 7.5 6 11l5.5-7" />

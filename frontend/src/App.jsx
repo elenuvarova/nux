@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import NavBar from './components/NavBar.jsx';
 import TabBar from './components/TabBar.jsx';
 import Footer from './components/Footer.jsx';
+import ToastHost from './components/ToastHost.jsx';
+import OfflineBanner from './components/OfflineBanner.jsx';
 import Home from './pages/Home.jsx';
 import Browse from './pages/Browse.jsx';
 import MyList from './pages/MyList.jsx';
@@ -16,6 +18,7 @@ import Auth from './pages/Auth.jsx';
 import Welcome from './pages/Welcome.jsx';
 import Info from './pages/Info.jsx';
 import Collection from './pages/Collection.jsx';
+import Genre from './pages/Genre.jsx';
 import NotFound from './pages/NotFound.jsx';
 
 /* On forward navigation: scroll to top and move focus to the new page's
@@ -61,12 +64,15 @@ export default function App() {
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/collection/:slug" element={<Collection />} />
+          <Route path="/genre/:id" element={<Genre />} />
           <Route path="/p/:slug" element={<Info />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
       {!bare && <Footer />}
       {!bare && <TabBar />}
+      <OfflineBanner />
+      <ToastHost />
     </div>
   );
 }

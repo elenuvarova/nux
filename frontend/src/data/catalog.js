@@ -309,6 +309,14 @@ export const HERO = {
   meta: 'Epic · 1962 · 3h 47m · ★ 8.3',
 };
 
+// rotating featured titles on the Home hero (all have landscape art)
+export const HERO_ROTATION = [
+  { filmId: 'lawrence-of-arabia', eyebrow: 'NUX Exclusive' },
+  { filmId: 'the-third-man', eyebrow: 'Restored in 4K' },
+  { filmId: 'black-narcissus', eyebrow: 'Editor’s Pick' },
+  { filmId: 'the-red-shoes', eyebrow: 'The Powell & Pressburger Collection' },
+];
+
 // Honest pairs only: each still actually belongs to the film it labels.
 export const CONTINUE_WATCHING = [
   { filmId: 'the-third-man', still: still('still-third-man-660.jpg'), minutesLeft: 31 },
