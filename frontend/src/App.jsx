@@ -8,6 +8,9 @@ import Browse from './pages/Browse.jsx';
 import MyList from './pages/MyList.jsx';
 import FilmDetail from './pages/FilmDetail.jsx';
 import Watch from './pages/Watch.jsx';
+import Profile from './pages/Profile.jsx';
+import Settings from './pages/Settings.jsx';
+import Welcome from './pages/Welcome.jsx';
 import NotFound from './pages/NotFound.jsx';
 
 /* On forward navigation: scroll to top and move focus to the new page's
@@ -27,14 +30,17 @@ function RouteReset() {
 
 export default function App() {
   // the player owns the whole screen — app chrome hides on /watch
-  const isPlayer = useLocation().pathname.startsWith('/watch/');
+  const { pathname } = useLocation();
+  const isPlayer = pathname.startsWith('/watch/');
+  const isOnboarding = pathname === '/welcome';
+  const bare = isPlayer || isOnboarding;
   return (
     <div className="grain">
       <a href="#main" className="skip-link">
         Skip to content
       </a>
       <RouteReset />
-      {!isPlayer && <NavBar />}
+      {!bare && <NavBar />}
       <div id="main">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -42,11 +48,14 @@ export default function App() {
           <Route path="/my-list" element={<MyList />} />
           <Route path="/film/:id" element={<FilmDetail />} />
           <Route path="/watch/:id" element={<Watch />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/welcome" element={<Welcome />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-      {!isPlayer && <Footer />}
-      {!isPlayer && <TabBar />}
+      {!bare && <Footer />}
+      {!bare && <TabBar />}
     </div>
   );
 }

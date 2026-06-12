@@ -25,9 +25,9 @@ export default function NavBar() {
             </svg>
             <span>Search</span>
           </Link>
-          <button type="button" className="nav-avatar" aria-label="Profile">
+          <Link to="/profile" className="nav-avatar" aria-label="Profile">
             <img src="/assets/avatar-user.jpg" alt="" />
-          </button>
+          </Link>
         </div>
       </div>
     </header>

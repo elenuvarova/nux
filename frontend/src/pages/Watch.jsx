@@ -16,9 +16,47 @@ function fmt(sec) {
   return `${h ? h + ':' : ''}${mm}:${String(s).padStart(2, '0')}`;
 }
 
-/* NUX player — the Figma player anatomy in code: full-bleed stage,
-   top scrim with back + title, bottom transport with an amber scrubber.
-   YouTube is only the video engine (controls=0, driven via IFrame API). */
+const IconPlay = () => (
+  <svg width="18" height="18" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+    <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
+  </svg>
+);
+const IconPause = () => (
+  <svg width="18" height="18" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+    <rect x="2.5" y="1.8" width="3.2" height="10.4" rx="0.8" />
+    <rect x="8.3" y="1.8" width="3.2" height="10.4" rx="0.8" />
+  </svg>
+);
+const IconReplay = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M16.5 10a6.5 6.5 0 1 1-1.9-4.6" />
+    <path d="M16.5 2.5V6h-3.5" />
+  </svg>
+);
+const IconSkip = ({ forward }) => (
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+    <path
+      d={forward ? 'M11 4.2a6.8 6.8 0 1 0 6.8 6.8' : 'M11 4.2a6.8 6.8 0 1 1-6.8 6.8'}
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <path
+      d={forward ? 'M14.6 1.6 17.8 4.2l-3.2 2.6' : 'M7.4 1.6 4.2 4.2l3.2 2.6'}
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <text x="11" y="13.6" textAnchor="middle" fontSize="7" fontWeight="700" fill="currentColor" stroke="none" fontFamily="Inter, sans-serif">
+      10
+    </text>
+  </svg>
+);
+
+/* NUX player — Figma player anatomy in code. YouTube is only the engine:
+   controls=0 behind pointer-events:none; paused state is covered by our
+   own scrim so YT chrome (title, related, logo) never shows. */
 export default function Watch() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -28,10 +66,17 @@ export default function Watch() {
 
   const [started, setStarted] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [buffering, setBuffering] = useState(false);
+  const [everPlayed, setEverPlayed] = useState(false);
   const [ended, setEnded] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [volume, setVolume] = useState(() => {
+    const v = Number(localStorage.getItem('nux-volume'));
+    return Number.isFinite(v) && v > 0 && v <= 100 ? v : 80;
+  });
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [buffered, setBuffered] = useState(0);
   const [idle, setIdle] = useState(false);
 
   const hostRef = useRef(null);
@@ -39,6 +84,8 @@ export default function Watch() {
   const playerRef = useRef(null);
   const idleTimer = useRef(null);
   const seeking = useRef(false);
+  const clickTimer = useRef(null);
+  const bufferTimer = useRef(null);
 
   const wake = useCallback(() => {
     setIdle(false);
@@ -46,7 +93,7 @@ export default function Watch() {
     idleTimer.current = setTimeout(() => setIdle(true), 3000);
   }, []);
 
-  // create the engine when playback starts
+  // engine
   useEffect(() => {
     if (!started || !trailer) return undefined;
     let disposed = false;
@@ -58,18 +105,28 @@ export default function Watch() {
         playerVars: { autoplay: 1, controls: 0, rel: 0, playsinline: 1, iv_load_policy: 3, disablekb: 1 },
         events: {
           onReady: (e) => {
+            e.target.setVolume(volume);
             setDuration(e.target.getDuration() || 0);
             wake();
           },
           onStateChange: (e) => {
             const S = window.YT.PlayerState;
             setPlaying(e.data === S.PLAYING);
+            // delay the spinner ~400ms so micro-stalls don't flicker it
+            clearTimeout(bufferTimer.current);
+            if (e.data === S.BUFFERING) {
+              bufferTimer.current = setTimeout(() => setBuffering(true), 400);
+            } else {
+              setBuffering(false);
+            }
+            if (e.data === S.PLAYING) {
+              setEverPlayed(true);
+              setEnded(false);
+              setDuration((d) => d || e.target.getDuration() || 0);
+            }
             if (e.data === S.ENDED) {
               setEnded(true);
               setIdle(false);
-            } else if (e.data === S.PLAYING) {
-              setEnded(false);
-              setDuration((d) => d || e.target.getDuration() || 0);
             }
           },
         },
@@ -79,6 +136,7 @@ export default function Watch() {
         if (p?.getCurrentTime && !seeking.current) {
           setCurrent(p.getCurrentTime() || 0);
           if (!duration && p.getDuration) setDuration(p.getDuration() || 0);
+          if (p.getVideoLoadedFraction) setBuffered(p.getVideoLoadedFraction() * 100);
         }
       }, 250);
     });
@@ -92,49 +150,122 @@ export default function Watch() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [started, trailer?.yt]);
 
-  if (!film) return <NotFound message="We couldn't find that title in the catalog." />;
-
-  const art = film.backdrop || film.poster;
-
-  const toggle = () => {
+  const toggle = useCallback(() => {
     const p = playerRef.current;
     if (!p) return;
     if (ended) {
       p.seekTo(0, true);
       p.playVideo();
       setEnded(false);
-    } else if (playing) p.pauseVideo();
+    } else if (p.getPlayerState?.() === window.YT?.PlayerState.PLAYING) p.pauseVideo();
     else p.playVideo();
     wake();
-  };
-  const skip = (delta) => {
-    const p = playerRef.current;
-    if (!p?.getCurrentTime) return;
-    p.seekTo(Math.max(0, Math.min(duration, p.getCurrentTime() + delta)), true);
-    wake();
-  };
-  const onSeek = (e) => {
-    const v = Number(e.target.value);
-    setCurrent(v);
-    playerRef.current?.seekTo?.(v, true);
-    wake();
-  };
-  const toggleMute = () => {
+  }, [ended, wake]);
+
+  const skip = useCallback(
+    (delta) => {
+      const p = playerRef.current;
+      if (!p?.getCurrentTime) return;
+      const next = Math.max(0, Math.min(duration || Infinity, p.getCurrentTime() + delta));
+      p.seekTo(next, true);
+      setCurrent(next);
+      wake();
+    },
+    [duration, wake]
+  );
+
+  const applyVolume = useCallback(
+    (v) => {
+      const p = playerRef.current;
+      setVolume(v);
+      if (v > 0) localStorage.setItem('nux-volume', String(v));
+      if (!p) return;
+      p.setVolume(v);
+      if (v === 0) {
+        p.mute();
+        setMuted(true);
+      } else {
+        p.unMute();
+        setMuted(false);
+      }
+      wake();
+    },
+    [wake]
+  );
+
+  const toggleMute = useCallback(() => {
     const p = playerRef.current;
     if (!p) return;
-    if (muted) p.unMute();
-    else p.mute();
-    setMuted(!muted);
+    if (muted || volume === 0) {
+      const v = volume === 0 ? 60 : volume;
+      p.setVolume(v);
+      p.unMute();
+      setVolume(v);
+      setMuted(false);
+    } else {
+      p.mute();
+      setMuted(true);
+    }
     wake();
-  };
-  const goFullscreen = () => {
-    const el = stageRef.current;
-    if (document.fullscreenElement) document.exitFullscreen?.();
-    else el?.requestFullscreen?.();
-    wake();
-  };
+  }, [muted, volume, wake]);
 
+  const goFullscreen = useCallback(() => {
+    if (document.fullscreenElement) document.exitFullscreen?.();
+    else stageRef.current?.requestFullscreen?.();
+    wake();
+  }, [wake]);
+
+  // keyboard map (universal player conventions)
+  useEffect(() => {
+    if (!started) return undefined;
+    const onKey = (e) => {
+      if (e.target.matches('input, textarea, select')) return;
+      switch (e.key.toLowerCase()) {
+        case ' ':
+        case 'k':
+          e.preventDefault();
+          toggle();
+          break;
+        case 'arrowleft':
+          e.preventDefault();
+          skip(-5);
+          break;
+        case 'arrowright':
+          e.preventDefault();
+          skip(5);
+          break;
+        case 'j':
+          skip(-10);
+          break;
+        case 'l':
+          skip(10);
+          break;
+        case 'arrowup':
+          e.preventDefault();
+          applyVolume(Math.min(100, volume + 10));
+          break;
+        case 'arrowdown':
+          e.preventDefault();
+          applyVolume(Math.max(0, volume - 10));
+          break;
+        case 'm':
+          toggleMute();
+          break;
+        case 'f':
+          goFullscreen();
+          break;
+        default:
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [started, toggle, skip, applyVolume, toggleMute, goFullscreen, volume]);
+
+  if (!film) return <NotFound message="We couldn't find that title in the catalog." />;
+
+  const art = film.backdrop || film.poster;
   const progress = duration ? (current / duration) * 100 : 0;
+  const covered = started && (!everPlayed || (!playing && !buffering));
 
   return (
     <main
@@ -145,7 +276,7 @@ export default function Watch() {
     >
       {!started ? (
         trailer ? (
-          <button type="button" className="player-facade" onClick={() => setStarted(true)}>
+          <button type="button" className="player-facade" onClick={() => { setStarted(true); wake(); }}>
             <img src={art} alt="" />
             <span className="player-bigplay" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 14 14" fill="currentColor">
@@ -167,8 +298,29 @@ export default function Watch() {
           </div>
         )
       ) : (
-        <div className="player-video" onClick={toggle}>
+        <div
+          className="player-video"
+          onClick={() => {
+            // mobile convention: a tap that reveals hidden controls must not toggle
+            if (window.matchMedia('(pointer: coarse)').matches && idle) {
+              wake();
+              return;
+            }
+            // debounce vs double-click so click+fullscreen never flicker
+            clearTimeout(clickTimer.current);
+            clickTimer.current = setTimeout(toggle, 250);
+          }}
+          onDoubleClick={() => {
+            clearTimeout(clickTimer.current);
+            goFullscreen();
+          }}
+        >
           <div ref={hostRef} />
+          {/* our pause cover — hides YouTube's paused-state chrome entirely */}
+          <div className={`player-cover ${covered ? 'player-cover--on' : ''}`} aria-hidden="true">
+            <img src={art} alt="" />
+          </div>
+          {buffering && !covered && <span className="player-spinner" aria-hidden="true" />}
         </div>
       )}
 
@@ -188,6 +340,18 @@ export default function Watch() {
         </div>
       </div>
 
+      {/* center state icon on pause */}
+      {started && covered && everPlayed && !ended && (
+        <button type="button" className="player-centerplay" onClick={toggle} aria-label="Play">
+          <IconPlay />
+        </button>
+      )}
+      {started && ended && (
+        <button type="button" className="player-centerplay" onClick={toggle} aria-label="Replay">
+          <IconReplay />
+        </button>
+      )}
+
       {/* bottom transport */}
       {started && trailer && (
         <div className="player-transport">
@@ -199,60 +363,62 @@ export default function Watch() {
               max={duration || 0}
               step="0.1"
               value={Math.min(current, duration || 0)}
-              onChange={onSeek}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                setCurrent(v);
+                playerRef.current?.seekTo?.(v, true);
+                wake();
+              }}
               onPointerDown={() => (seeking.current = true)}
               onPointerUp={() => (seeking.current = false)}
               aria-label="Seek"
-              style={{ '--fill': `${progress}%` }}
+              aria-valuetext={`${fmt(current)} of ${fmt(duration)}`}
+              style={{ '--fill': `${progress}%`, '--buffered': `${Math.max(buffered, progress)}%` }}
             />
             <span className="metadata player-time">{fmt(duration)}</span>
           </div>
           <div className="player-controls">
             <button type="button" className="player-iconbtn" onClick={() => skip(-10)} aria-label="Back 10 seconds">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M10 3.5A6.5 6.5 0 1 1 3.5 10" />
-                <path d="M6.5 1.5 3.5 4l3 2.5" />
-                <text x="7" y="14" fontSize="6.5" fill="currentColor" stroke="none" fontFamily="inherit">10</text>
-              </svg>
+              <IconSkip forward={false} />
             </button>
-            <button type="button" className="player-iconbtn player-playbtn" onClick={toggle} aria-label={ended ? 'Replay' : playing ? 'Pause' : 'Play'}>
-              {ended ? (
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M3.5 8a6.5 6.5 0 1 1 1 5" />
-                  <path d="M3.5 4v4h4" />
-                </svg>
-              ) : playing ? (
-                <svg width="18" height="18" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-                  <rect x="2.5" y="1.8" width="3.2" height="10.4" rx="0.8" />
-                  <rect x="8.3" y="1.8" width="3.2" height="10.4" rx="0.8" />
-                </svg>
-              ) : (
-                <svg width="18" height="18" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-                  <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
-                </svg>
-              )}
+            <button
+              type="button"
+              className="player-iconbtn player-playbtn"
+              onClick={toggle}
+              aria-label={ended ? 'Replay' : playing ? 'Pause' : 'Play'}
+            >
+              {ended ? <IconReplay /> : playing ? <IconPause /> : <IconPlay />}
             </button>
             <button type="button" className="player-iconbtn" onClick={() => skip(10)} aria-label="Forward 10 seconds">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M10 3.5A6.5 6.5 0 1 0 16.5 10" />
-                <path d="M13.5 1.5 16.5 4l-3 2.5" />
-                <text x="7" y="14" fontSize="6.5" fill="currentColor" stroke="none" fontFamily="inherit">10</text>
-              </svg>
+              <IconSkip forward />
             </button>
             <span className="player-spacer" />
-            <button type="button" className="player-iconbtn" onClick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'}>
-              {muted ? (
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M2.5 7v4h3l4 3.5v-11L5.5 7h-3z" fill="currentColor" stroke="none" />
-                  <path d="M12.5 6.5l4 5M16.5 6.5l-4 5" />
-                </svg>
-              ) : (
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-                  <path d="M2.5 7v4h3l4 3.5v-11L5.5 7h-3z" fill="currentColor" stroke="none" />
-                  <path d="M12.5 6.5a3.5 3.5 0 0 1 0 5M14.5 4.5a6.3 6.3 0 0 1 0 9" />
-                </svg>
-              )}
-            </button>
+            <div className="player-volume">
+              <button type="button" className="player-iconbtn" onClick={toggleMute} aria-label={muted || volume === 0 ? 'Unmute' : 'Mute'}>
+                {muted || volume === 0 ? (
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2.5 7v4h3l4 3.5v-11L5.5 7h-3z" fill="currentColor" stroke="none" />
+                    <path d="M12.5 6.5l4 5M16.5 6.5l-4 5" />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+                    <path d="M2.5 7v4h3l4 3.5v-11L5.5 7h-3z" fill="currentColor" stroke="none" />
+                    <path d="M12.5 6.5a3.5 3.5 0 0 1 0 5M14.5 4.5a6.3 6.3 0 0 1 0 9" />
+                  </svg>
+                )}
+              </button>
+              <input
+                type="range"
+                className="player-volume-slider"
+                min="0"
+                max="100"
+                step="1"
+                value={muted ? 0 : volume}
+                onChange={(e) => applyVolume(Number(e.target.value))}
+                aria-label="Volume"
+                style={{ '--fill': `${muted ? 0 : volume}%` }}
+              />
+            </div>
             <button type="button" className="player-iconbtn" onClick={goFullscreen} aria-label="Fullscreen">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M7 2.5H2.5V7M11 2.5h4.5V7M7 15.5H2.5V11M11 15.5h4.5V11" />
