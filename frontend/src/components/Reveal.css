@@ -2,8 +2,8 @@
   opacity: 0;
   transform: translateY(18px);
   transition:
-    opacity 600ms var(--ease-out) var(--reveal-delay, 0ms),
-    transform 600ms var(--ease-out) var(--reveal-delay, 0ms);
+    opacity var(--dur-reveal) var(--ease-out) var(--reveal-delay, 0ms),
+    transform var(--dur-reveal) var(--ease-out) var(--reveal-delay, 0ms);
   will-change: opacity, transform;
 }
 

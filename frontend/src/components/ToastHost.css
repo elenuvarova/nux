@@ -24,7 +24,7 @@
     var(--shadow-overlay);
   font: var(--type-button);
   color: var(--text-primary);
-  animation: toast-in 260ms var(--ease-out);
+  animation: toast-in var(--dur-toast) var(--ease-out);
 }
 
 .toast-check {
