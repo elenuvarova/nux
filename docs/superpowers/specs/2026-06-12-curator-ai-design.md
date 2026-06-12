@@ -19,7 +19,7 @@ This is genuinely on-brand: the whole premise of an editorial platform
 Curator makes that the front door.
 
 ### Why this is technically clean
-The catalog is **38 films** (`frontend/src/data/catalog.js`) with rich metadata.
+The catalog is **21 films** (`frontend/src/data/catalog.js`) with rich metadata.
 The whole catalog fits in a single prompt — **no RAG, no embeddings, no vector
 store**. The model is given the full catalog and returns only film **ids**,
 which the server validates against the real catalog. The model physically
