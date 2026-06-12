@@ -26,13 +26,15 @@ function RouteReset() {
 }
 
 export default function App() {
+  // the player owns the whole screen — app chrome hides on /watch
+  const isPlayer = useLocation().pathname.startsWith('/watch/');
   return (
     <div className="grain">
       <a href="#main" className="skip-link">
         Skip to content
       </a>
       <RouteReset />
-      <NavBar />
+      {!isPlayer && <NavBar />}
       <div id="main">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -43,8 +45,8 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-      <Footer />
-      <TabBar />
+      {!isPlayer && <Footer />}
+      {!isPlayer && <TabBar />}
     </div>
   );
 }

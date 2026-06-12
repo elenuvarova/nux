@@ -1,85 +1,57 @@
-.watch {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: calc(64px + var(--space-8)) var(--space-8) 0;
-  display: grid;
-  gap: var(--space-6);
-}
+/* NUX player — full-bleed stage per the Figma player screens:
+   ink-950 surface, top scrim with back+title, bottom transport
+   with the amber scrubber. Controls auto-hide while playing. */
 
-.watch-top {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.watch-back {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-default);
-  color: var(--icon-primary);
-  background: var(--surface-raised);
-  transition: border-color var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
-}
-
-.watch-back:hover {
-  border-color: var(--border-strong);
-  background: var(--surface-hover);
-}
-
-.watch-title {
-  font: var(--type-display-m);
-  letter-spacing: var(--track-display);
-}
-
-/* ── Stage ───────────────────────────────────────────────────── */
-.watch-stage {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
+.player {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
   background: var(--surface-sunken);
-  box-shadow:
-    inset 0 0 0 1px var(--white-a08),
-    var(--shadow-overlay);
+  overflow: hidden;
 }
 
-.watch-frame {
+/* ── video engine ────────────────────────────────────────────── */
+.player-video {
   position: absolute;
   inset: 0;
+}
+
+.player-video iframe {
   width: 100%;
   height: 100%;
   border: 0;
+  pointer-events: none; /* NUX transport drives the player */
 }
 
-.watch-facade {
+/* ── facade / unavailable ────────────────────────────────────── */
+.player-facade {
   position: absolute;
   inset: 0;
   width: 100%;
   display: grid;
   place-items: center;
+  align-content: center;
+  gap: var(--space-4);
   text-align: center;
 }
 
-.watch-facade img {
+.player-facade img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
-.watch-facade::after {
+.player-facade::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgb(13 12 11 / 0.72), rgb(13 12 11 / 0.25) 50%, rgb(13 12 11 / 0.45));
+  background: linear-gradient(to top, rgb(7 6 6 / 0.8), rgb(7 6 6 / 0.3) 50%, rgb(7 6 6 / 0.55));
 }
 
-.watch-play {
+.player-bigplay {
   position: relative;
   z-index: 1;
   display: grid;
@@ -92,52 +64,185 @@
   transition: transform var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
 }
 
-.watch-facade:hover .watch-play {
+.player-facade:hover .player-bigplay {
   transform: scale(1.06);
   background: var(--action-primary-hover);
 }
 
-.watch-cta {
+.player-facade-cta {
   position: relative;
   z-index: 1;
-  margin-top: var(--space-4);
   font: var(--type-button);
   color: var(--text-primary);
 }
 
-.watch-facade--off {
+.player-facade--off {
   cursor: default;
 }
 
-.watch-empty {
+.player-missing {
   position: relative;
   z-index: 1;
   display: grid;
   gap: var(--space-3);
   justify-items: center;
-}
-
-.watch-empty-sub {
   color: var(--text-secondary);
 }
 
-.watch-synopsis {
-  font: var(--type-essay);
+/* ── top chrome ──────────────────────────────────────────────── */
+.player-top {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  padding-top: calc(var(--space-5) + env(safe-area-inset-top, 0px));
+  background: linear-gradient(to bottom, rgb(7 6 6 / 0.72), transparent);
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.player-title {
+  font: 600 20px/1.2 var(--font-display);
+  letter-spacing: var(--track-display);
+}
+
+.player-titles .metadata {
+  margin-top: 2px;
+}
+
+/* ── transport ───────────────────────────────────────────────── */
+.player-transport {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-6);
+  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, rgb(7 6 6 / 0.82), transparent);
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.player-scrub {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.player-time {
+  min-width: 44px;
+  text-align: center;
   color: var(--text-secondary);
-  max-width: 64ch;
-  padding-bottom: var(--space-8);
+}
+
+/* the NUX scrubber: hairline track, amber played, paper handle */
+.player-scrub input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.player-scrub input[type='range']::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(to right, var(--amber-500) var(--fill, 0%), var(--white-a18) var(--fill, 0%));
+}
+
+.player-scrub input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -4.5px;
+  border-radius: var(--radius-full);
+  background: var(--paper-100);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.5);
+}
+
+.player-scrub input[type='range']::-moz-range-track {
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--white-a18);
+}
+
+.player-scrub input[type='range']::-moz-range-progress {
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--amber-500);
+}
+
+.player-scrub input[type='range']::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--paper-100);
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.player-spacer {
+  flex: 1;
+}
+
+.player-iconbtn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  color: var(--icon-primary);
+  transition: background-color var(--dur-base) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.player-iconbtn:hover {
+  background: var(--white-a08);
+}
+
+.player-iconbtn:active {
+  transform: scale(0.94);
+}
+
+.player-playbtn {
+  background: var(--surface-inverse);
+  color: var(--icon-inverse);
+}
+
+.player-playbtn:hover {
+  background: var(--paper-invert);
+}
+
+/* ── idle: chrome fades, cursor hides ────────────────────────── */
+.player--idle {
+  cursor: none;
+}
+
+.player--idle .player-top,
+.player--idle .player-transport {
+  opacity: 0;
+  pointer-events: none;
 }
 
 @media (max-width: 768px) {
-  .watch {
-    padding: calc(56px + var(--space-4)) var(--space-4) 0;
+  .player-top {
+    padding: var(--space-4);
+    padding-top: calc(var(--space-4) + env(safe-area-inset-top, 0px));
   }
 
-  .watch-title {
-    font: 600 22px/1.15 var(--font-display);
+  .player-transport {
+    padding: var(--space-3) var(--space-4);
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
   }
 
-  .watch-play {
+  .player-bigplay {
     width: 64px;
     height: 64px;
   }
