@@ -10,6 +10,7 @@ const KEY = 'nux-my-list';
 // localStorage so the feature still works without an account.
 let ids = readGuest();
 let authed = false;
+let configSeq = 0; // guards against a stale fetch overwriting a newer account
 const subs = new Set();
 
 function readGuest() {
@@ -32,14 +33,19 @@ function setIds(next) {
 
 // called by AuthProvider when the signed-in user changes
 export async function configureMyList(user) {
+  const token = ++configSeq;
   authed = !!user;
   if (user) {
+    let next;
     try {
       const r = await api.get('/list');
-      ids = Array.isArray(r.list) ? r.list : [];
+      next = Array.isArray(r.list) ? r.list : [];
     } catch {
-      ids = [];
+      next = [];
     }
+    // a newer configure() ran while we awaited — drop this stale response
+    if (token !== configSeq) return;
+    ids = next;
   } else {
     ids = readGuest();
   }
@@ -48,11 +54,12 @@ export async function configureMyList(user) {
 
 function applyToggle(id, title) {
   const adding = !ids.includes(id);
-  setIds(adding ? [id, ...ids] : ids.filter((x) => x !== id));
+  const next = adding ? [id, ...ids] : ids.filter((x) => x !== id);
+  setIds(next);
   if (authed) {
     (adding ? api.post('/list', { filmId: id }) : api.del(`/list/${id}`)).catch(() => {});
   } else {
-    localStorage.setItem(KEY, JSON.stringify(ids));
+    localStorage.setItem(KEY, JSON.stringify(next));
   }
   toast(adding ? 'Added to My List' : 'Removed from My List', {
     action: { label: 'Undo', onClick: () => applyToggle(id, title) },

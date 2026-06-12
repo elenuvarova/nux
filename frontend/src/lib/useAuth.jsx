@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { api } from "./api.js";
+import { api, onUnauthorized } from "./api.js";
 import { configureMyList } from "./useMyList.js";
 import { configureWatchHistory } from "./useWatchHistory.js";
 
@@ -17,6 +17,10 @@ export function AuthProvider({ children }) {
       .catch(() => setUser(null))
       .finally(() => setReady(true));
   }, []);
+
+  // a 401 on any non-auth endpoint means the session expired server-side —
+  // drop the user so protected UI reverts to the signed-out state
+  useEffect(() => onUnauthorized(() => setUser(null)), []);
 
   // re-point My List + Continue Watching at the backend (or localStorage
   // for guests) whenever the signed-in user changes
@@ -39,8 +43,15 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = useCallback(async () => {
-    await api.post("/auth/logout");
-    setUser(null);
+    // best-effort: clear the local session even if the network call fails,
+    // so sign-out never gets stuck
+    try {
+      await api.post("/auth/logout");
+    } catch {
+      /* ignore — we sign out locally regardless */
+    } finally {
+      setUser(null);
+    }
   }, []);
 
   const updateProfile = useCallback(async (patch) => {

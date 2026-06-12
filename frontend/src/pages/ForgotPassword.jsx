@@ -25,8 +25,15 @@ export default function ForgotPassword() {
       // the response is always generic — no account enumeration
       await api.post('/auth/forgot', { email });
       setSent(true);
-    } catch {
-      setSent(true); // still show the generic confirmation
+    } catch (err) {
+      // a genuine network drop or 5xx means we can't say the mail was sent —
+      // ask the user to retry. Deliberate 4xx responses stay generic so we
+      // never reveal whether the account exists.
+      if (!err.status || err.status >= 500) {
+        setError('Something went wrong — please try again.');
+      } else {
+        setSent(true); // still show the generic confirmation
+      }
     } finally {
       setBusy(false);
     }
@@ -68,7 +75,7 @@ export default function ForgotPassword() {
                 error={error}
                 autoComplete="email"
               />
-              <button type="submit" className="btn btn-primary auth-submit" disabled={busy}>
+              <button type="submit" className="btn btn-primary auth-submit" disabled={busy} aria-busy={busy}>
                 {busy ? 'Sending…' : 'Send reset link'}
               </button>
             </form>

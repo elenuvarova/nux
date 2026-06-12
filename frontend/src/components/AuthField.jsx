@@ -30,7 +30,6 @@ export default function AuthField({ label, id, type = 'text', value, onChange, e
             onClick={() => setShown((s) => !s)}
             aria-label={shown ? 'Hide password' : 'Show password'}
             aria-pressed={shown}
-            tabIndex={-1}
           >
             {shown ? (
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

@@ -167,7 +167,7 @@ export default function Browse() {
           <h2 className="headline">Genres</h2>
           <div className="genre-grid">
             {GENRES.map((g) => (
-              <Link to={`/genre/${g.id}`} className="genre-card" key={g.id}>
+              <Link to={`/genre/${g.id}`} className="genre-card" key={g.id} aria-label={g.label}>
                 <img src={g.image} alt="" loading="lazy" />
                 <span>{g.label}</span>
               </Link>
@@ -190,7 +190,7 @@ export default function Browse() {
             {extras.map((x) => (
               <Link to={`/title/${x.id}`} className="poster-card" key={x.id} viewTransition>
                 <div className="poster-card-art">
-                  <img src={x.poster} alt="" loading="lazy" />
+                  <img src={x.poster} alt={`${x.title}, ${x.type}`} loading="lazy" />
                   <span className="poster-card-badge">{x.type}</span>
                 </div>
                 <p className="poster-card-title">{x.title}</p>

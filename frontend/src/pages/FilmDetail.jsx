@@ -102,7 +102,7 @@ export default function FilmDetail() {
             <div className="fd-cast">
               {film.cast.map((person) => (
                 <div className="fd-cast-card" key={person.name}>
-                  <img src={person.photo} alt="" loading="lazy" />
+                  <img src={person.photo} alt={person.name} loading="lazy" />
                   <p className="poster-card-title">{person.name}</p>
                   <p className="metadata">{person.role}</p>
                 </div>

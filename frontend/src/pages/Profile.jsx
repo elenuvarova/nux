@@ -63,8 +63,12 @@ export default function Profile() {
   const navigate = useNavigate();
 
   const signOut = async () => {
-    await logout();
-    navigate('/signin');
+    // always land on sign-in, even if the logout request failed
+    try {
+      await logout();
+    } finally {
+      navigate('/signin');
+    }
   };
 
   // signed-out state: prompt to sign in instead of faking an account

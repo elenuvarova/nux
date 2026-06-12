@@ -23,6 +23,9 @@ export default function Home() {
   if (!ready) {
     return (
       <main>
+        <h1 className="sr-only" tabIndex={-1}>
+          Home
+        </h1>
         <div className="home-hero-skeleton" />
         <div className="home-rails">
           <SkeletonRail />

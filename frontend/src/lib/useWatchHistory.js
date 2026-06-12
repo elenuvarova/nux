@@ -8,6 +8,7 @@ const KEY = 'nux-continue';
 // an empty list, so the Home rail is hidden rather than faking progress.
 let items = readGuest();
 let authed = false;
+let configSeq = 0; // guards against a stale fetch overwriting a newer account
 const subs = new Set();
 
 function readGuest() {
@@ -24,14 +25,19 @@ function notify() {
 }
 
 export async function configureWatchHistory(user) {
+  const token = ++configSeq;
   authed = !!user;
   if (user) {
+    let next;
     try {
       const r = await api.get('/history');
-      items = Array.isArray(r.history) ? r.history : [];
+      next = Array.isArray(r.history) ? r.history : [];
     } catch {
-      items = [];
+      next = [];
     }
+    // a newer configure() ran while we awaited — drop this stale response
+    if (token !== configSeq) return;
+    items = next;
   } else {
     items = readGuest();
   }
@@ -50,12 +56,13 @@ export function useWatchHistory() {
   // per title, capped at 8
   const record = useCallback((id, frac, at) => {
     const f = Math.min(0.95, Math.max(0.04, frac || 0.1));
-    items = [{ id, frac: f, at }, ...items.filter((x) => x.id !== id)].slice(0, 8);
+    const next = [{ id, frac: f, at }, ...items.filter((x) => x.id !== id)].slice(0, 8);
+    items = next;
     notify();
     if (authed) {
       api.put('/history', { filmId: id, frac: f }).catch(() => {});
     } else {
-      localStorage.setItem(KEY, JSON.stringify(items));
+      localStorage.setItem(KEY, JSON.stringify(next));
     }
   }, []);
 

@@ -1,5 +1,6 @@
-import { Routes, Route, useLocation, useNavigationType } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigationType } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
+import { useAuth } from './lib/useAuth.jsx';
 import NavBar from './components/NavBar.jsx';
 import TabBar from './components/TabBar.jsx';
 import Footer from './components/Footer.jsx';
@@ -41,6 +42,16 @@ function RouteReset() {
   return null;
 }
 
+/* Gate for signed-in-only routes. Waits for the session to resolve, then
+   redirects guests to sign-in (remembering where they were headed). */
+function RequireAuth({ children }) {
+  const { user, ready } = useAuth();
+  const location = useLocation();
+  if (!ready) return <div className="route-fallback" aria-hidden="true" />;
+  if (!user) return <Navigate to="/signin" state={{ from: location }} replace />;
+  return children;
+}
+
 export default function App() {
   // the player owns the whole screen — app chrome hides on /watch
   const { pathname } = useLocation();
@@ -54,7 +65,7 @@ export default function App() {
       </a>
       <RouteReset />
       {!bare && <NavBar />}
-      <div id="main">
+      <div id="main" tabIndex={-1}>
         <Suspense fallback={<div className="route-fallback" aria-hidden="true" />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -63,9 +74,9 @@ export default function App() {
             <Route path="/film/:id" element={<FilmDetail />} />
             <Route path="/title/:id" element={<TitleDetail />} />
             <Route path="/watch/:id" element={<Watch />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/downloads" element={<Downloads />} />
+            <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+            <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+            <Route path="/downloads" element={<RequireAuth><Downloads /></RequireAuth>} />
             <Route path="/signin" element={<Auth mode="signin" />} />
             <Route path="/signup" element={<Auth mode="signup" />} />
             <Route path="/forgot" element={<ForgotPassword />} />

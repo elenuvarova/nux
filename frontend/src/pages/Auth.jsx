@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useAuth } from '../lib/useAuth.jsx';
 import AuthField from '../components/AuthField.jsx';
@@ -19,7 +19,10 @@ export default function Auth({ mode = 'signin' }) {
   const signup = mode === 'signup';
   usePageTitle(signup ? 'Create account' : 'Sign in');
   const navigate = useNavigate();
+  const location = useLocation();
   const auth = useAuth();
+  // where to land after auth: back to the gated page that bounced us, or home
+  const dest = location.state?.from?.pathname || '/';
   const [values, setValues] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [busy, setBusy] = useState(false);
@@ -44,7 +47,7 @@ export default function Auth({ mode = 'signin' }) {
     try {
       if (signup) await auth.signup(values.email, values.name, values.password);
       else await auth.login(values.email, values.password);
-      navigate('/');
+      navigate(dest, { replace: true });
     } catch (err) {
       const mapped = SERVER_ERRORS[err.code] || { field: 'password', msg: 'Something went wrong — try again.' };
       const next2 = { [mapped.field]: mapped.msg };
@@ -54,6 +57,9 @@ export default function Auth({ mode = 'signin' }) {
       setBusy(false);
     }
   };
+
+  // already signed in: don't show the form, bounce to the destination
+  if (auth.ready && auth.user) return <Navigate to={dest} replace />;
 
   return (
     <main className="auth">
@@ -89,7 +95,7 @@ export default function Auth({ mode = 'signin' }) {
               Forgot password?
             </Link>
           )}
-          <button type="submit" className="btn btn-primary auth-submit" disabled={busy}>
+          <button type="submit" className="btn btn-primary auth-submit" disabled={busy} aria-busy={busy}>
             {busy ? 'One moment…' : signup ? 'Create account' : 'Sign in'}
           </button>
         </form>

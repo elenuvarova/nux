@@ -14,23 +14,29 @@ export default function Hero() {
   const slide = HERO_ROTATION[i];
   const film = byId(slide.filmId);
   const { has, toggle } = useMyList();
-  const saved = has(film.id);
 
-  // auto-advance unless reduced-motion or hovered
+  // auto-advance unless paused or reduced-motion. Depending on `i` restarts
+  // the timer on every slide change (auto or manual), so a click resets it.
   useEffect(() => {
     if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-    const t = setInterval(() => setI((n) => (n + 1) % HERO_ROTATION.length), 8000);
-    return () => clearInterval(t);
-  }, [paused]);
+    const t = setTimeout(() => setI((n) => (n + 1) % HERO_ROTATION.length), 8000);
+    return () => clearTimeout(t);
+  }, [paused, i]);
+
+  if (!film) return null;
+  const saved = has(film.id);
+  const count = HERO_ROTATION.length;
 
   return (
     <section
       className="hero"
+      aria-roledescription="carousel"
       aria-label={`Featured: ${film.title}`}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
     >
-      <div className="hero-art" key={film.id}>
+      <div className="hero-art" key={film.id} aria-live="off">
         <img src={film.backdrop2 || film.backdrop || film.poster} alt="" fetchpriority="high" />
       </div>
       <div className="hero-content">
@@ -69,14 +75,31 @@ export default function Hero() {
             More Info
           </Link>
         </div>
-        <div className="hero-dots" role="tablist" aria-label="Featured titles">
+        <div className="hero-dots" role="group" aria-label="Featured titles">
+          <button
+            type="button"
+            className="hero-pause"
+            onClick={() => setPaused((p) => !p)}
+            aria-pressed={paused}
+            aria-label={paused ? 'Play featured slideshow' : 'Pause featured slideshow'}
+          >
+            {paused ? (
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+                <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+                <rect x="2.5" y="1.8" width="3.2" height="10.4" rx="0.8" />
+                <rect x="8.3" y="1.8" width="3.2" height="10.4" rx="0.8" />
+              </svg>
+            )}
+          </button>
           {HERO_ROTATION.map((s, n) => (
             <button
               key={s.filmId}
               type="button"
-              role="tab"
-              aria-selected={n === i}
-              aria-label={byId(s.filmId).title}
+              aria-label={`Go to slide ${n + 1} of ${count}`}
+              aria-current={n === i ? 'true' : undefined}
               className={n === i ? 'hero-dot hero-dot--on' : 'hero-dot'}
               onClick={() => setI(n)}
             />

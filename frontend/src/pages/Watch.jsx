@@ -89,6 +89,7 @@ export default function Watch() {
   const { record } = useWatchHistory();
 
   const [started, setStarted] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [buffering, setBuffering] = useState(false);
   const [everPlayed, setEverPlayed] = useState(false);
@@ -180,6 +181,12 @@ export default function Watch() {
           if (p.getVideoLoadedFraction) setBuffered(p.getVideoLoadedFraction() * 100);
         }
       }, 250);
+    }).catch(() => {
+      // YouTube engine failed to load (offline, blocked, timeout) — fall back
+      if (!disposed) {
+        setStarted(false);
+        setLoadError(true);
+      }
     });
     return () => {
       disposed = true;
@@ -377,8 +384,21 @@ export default function Watch() {
       onFocusCapture={wake}
     >
       {!started ? (
-        trailer ? (
-          <button type="button" className="player-facade" onClick={() => { setStarted(true); wake(); }}>
+        trailer && !loadError ? (
+          <button
+            type="button"
+            className="player-facade"
+            onClick={() => {
+              // don't spin up a player that can never load when offline
+              if (!navigator.onLine) {
+                setLoadError(true);
+                return;
+              }
+              setLoadError(false);
+              setStarted(true);
+              wake();
+            }}
+          >
             <img src={art} alt="" />
             <span className="player-bigplay" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 14 14" fill="currentColor">
@@ -392,7 +412,11 @@ export default function Watch() {
             <img src={art} alt="" />
             <div className="player-missing">
               <p className="display-m">Trailer unavailable</p>
-              <p>We couldn't license a trailer for this title yet.</p>
+              <p>
+                {loadError
+                  ? "We couldn't load the player. Check your connection and try again."
+                  : "We couldn't license a trailer for this title yet."}
+              </p>
               <Link to={`/film/${film.id}`} className="btn btn-secondary">
                 Back to film page
               </Link>

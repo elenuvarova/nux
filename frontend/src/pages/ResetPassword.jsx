@@ -32,6 +32,7 @@ export default function ResetPassword() {
     setBusy(true);
     try {
       await api.post('/auth/reset', { token, password });
+      setPassword(''); // don't keep the new password in component state
       setDone(true);
     } catch (err) {
       setError(ERRORS[err.code] || 'Something went wrong — try again.');
@@ -84,7 +85,7 @@ export default function ResetPassword() {
                 autoComplete="new-password"
                 hint="At least 8 characters."
               />
-              <button type="submit" className="btn btn-primary auth-submit" disabled={busy}>
+              <button type="submit" className="btn btn-primary auth-submit" disabled={busy} aria-busy={busy}>
                 {busy ? 'Updating…' : 'Update password'}
               </button>
             </form>
