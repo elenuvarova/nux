@@ -1,0 +1,800 @@
+{
+  "summary": "Exhaustive audit: Figma (tokens/visual/UX) + web (tokens/a11y/responsive/perf), adversarially verified",
+  "agentCount": 16,
+  "logs": [
+    "[stall] agent \"verify:figma-visual-big\" stalled (no progress) after 833s — retrying (1/5)",
+    "[stall] agent \"verify:figma-visual-big\" stalled (no progress) after 193s — retrying (2/5)"
+  ],
+  "result": {
+    "figma-tokens": [
+      {
+        "title": "Semantic variable action/secondary has a raw (non-alias) value in Hi-Fi mode",
+        "severity": "minor",
+        "where": "Wireframe variable collection (VariableCollectionId:2:13) > action/secondary",
+        "detail": "The rule is that every Wireframe-collection semantic variable aliases a primitive in BOTH modes (raw scrim colors exempt). action/secondary aliases Primitives/grey/0 in Wireframe mode but its Hi-Fi mode value is a raw #FFFFFF @0% (fully transparent white), not an alias. It is not a scrim, so it is not covered by the known-intentional exemption. Fix option: add a whiteA/00 primitive and alias it, keeping the whiteA ramp the single source for white-alpha values.",
+        "evidence": "Dump: {Wireframe: alias:Primitives/grey/0, Hi-Fi: #FFFFFF@0%}. All 33 other semantic vars alias primitives in both modes except the 3 exempt surface/scrim* vars and border/danger (separate finding). 0 dangling aliases, 0 missing mode values.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly on the live file. Wireframe collection (VariableCollectionId:2:13) > action/secondary: Wireframe mode = alias:grey/0, Hi-Fi mode = raw #FFFFFF@0% — not an alias. Re-scan of all 34 vars in the collection found the only other non-alias values are the 3 surface/scrim* vars (exempt) and border/danger (separate finding), matching the evidence. Not a scrim, so the intentional exemption does not apply; it breaks the stated both-modes alias rule. Minor is right: zero rendered impact (fully transparent) but a structural breach in the core token system."
+      },
+      {
+        "title": "Semantic variable border/danger has a raw value in Wireframe mode that also diverges from the status/danger primitive",
+        "severity": "minor",
+        "where": "Wireframe variable collection (VariableCollectionId:2:13) > border/danger",
+        "detail": "border/danger aliases Primitives/status/danger in Hi-Fi mode but holds a raw #C73329 in Wireframe mode — not an alias, and a different red from the status/danger primitive (#B3554D). Not a scrim, so not exempt. Either alias status/danger in both modes or add a wireframe-tier danger primitive.",
+        "evidence": "Dump: {Wireframe: #C73329 (raw), Hi-Fi: alias:Primitives/status/danger}. Primitive status/danger = #B3554D.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly. border/danger: Wireframe mode = raw #C73329@100% (not an alias), Hi-Fi mode = alias:status/danger; primitive status/danger = #B3554D. Both the alias-rule breach and the color divergence (two different reds, #C73329 vs #B3554D) are confirmed by direct variable dump. Not a scrim, not on the intentional list. Minor is appropriate — it is the one semantic var whose two modes can drift to genuinely different danger reds."
+      },
+      {
+        "title": "6 unstyled TEXT nodes on Hi-Fi screens page (excluding the 3 known-intentional NUX wordmarks)",
+        "severity": "minor",
+        "where": "🌒 Screens — Hi-Fi (571:1404): 585:1315, 595:832, 595:835, 595:838, 595:841, 595:863",
+        "detail": "9 TEXT nodes have textStyleId === '' (out of 156 text nodes outside instance interiors, shelf excluded). 3 are NUX wordmarks (554:1255, 592:500, 595:917 — known-intentional, not flagged). The remaining 6 are real drift: (1) Game Detail — iPhone > Content > header > meta 'Action-Adventure · 2026 · Cloud Play' (585:1315) is hand-set Inter Medium 12 — a near-miss of HiFi/Metadata (Inter Medium 12.5), so it silently diverges from the style; (2) Film Detail — Desktop > Content > Tabs: 4 tab labels 'More Like This'/'Cast & Crew'/'Details'/'Reviews' (595:832/835/838/841) are unstyled Inter Semi Bold 22 — coincidentally identical to tvOS/Label metrics; no desktop tab style exists in the ramp; (3) Film Detail — Desktop > Content > Details heading (595:863) is unstyled Inter Semi Bold 28 matching no local style (HiFi/Page Title is 34). Apply existing styles or add the missing HiFi tab/section-label styles.",
+        "evidence": "unstyledCount=9 of 156 TEXT; fonts: Inter Medium 12 (vs style 12.5), Inter Semi Bold 22 ×4, Inter Semi Bold 28. Plus Jakarta Sans usage on this page: 0.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly. Scan of page 571:1404 (shelf x<-1000 and instance interiors excluded): 156 TEXT nodes, 9 with textStyleId === ''. Three are the intentional NUX wordmarks (554:1255, 592:500, 595:917 — correctly not flagged). The remaining 6 match the finding precisely: 585:1315 'Action-Adventure · 2026 · Cloud Play' Inter Medium 12 (local HiFi/Metadata style is Inter Medium 12.5 — confirmed near-miss); 595:832/835/838/841 desktop tab labels Inter Semi Bold 22 (matches tvOS/Label metrics; no desktop tab style exists in the local ramp — verified); 595:863 'Details' Inter Semi Bold 28 (no local Inter 28 style; HiFi/Page Title is 34). PJS usage on the page = 0, as claimed. Minor is right."
+      },
+      {
+        "title": "Wireframe TabBar variants carry 8 raw DROP_SHADOW effects instead of an effect style",
+        "severity": "nit",
+        "where": "🧩 Components (1:2) > Showcase > Section/ORGANISMS > TabBar > Selected=Home/Browse/MyList > Frame (95:16, 95:50, 95:55, 95:86, 95:91, 95:122 + 2 more)",
+        "detail": "The wireframe TabBar's floating-bar frames use hard-coded DROP_SHADOW effects while every peer component on the page uses shared effect styles (Focus/Ring ×22, Focus/Ring Inverse ×8, Elevation/Card Hover ×9, Focus/tvOS Lift ×5). The Hi-Fi TabBar equivalent is clean (uses HiFi/Glass). Promote the shadow to an effect style or apply an existing one.",
+        "evidence": "rawEffects n=8 on page 1:2, all inside TabBar variant frames; rawEffects n=0 on 557:334 and 571:1404.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly. Page 1:2 scan (instance interiors excluded): exactly 8 nodes with effects and empty effectStyleId, all DROP_SHADOW, all at path Showcase > Section/ORGANISMS > grid > tile > TabBar > Selected=Home/Browse/MyList/Profile > Frame (95:16, 95:50, 95:55, 95:86, 95:91, 95:122, 95:127, 95:158). Raw-effect count on 557:334 and 571:1404 is 0, confirming the Hi-Fi equivalents are clean. Shared effect styles (Focus/Ring, Focus/Ring Inverse, Elevation/Card Hover, Focus/tvOS Lift, HiFi/Glass) exist and are the page norm. Nit is the right severity for a wireframe-tier styling inconsistency."
+      },
+      {
+        "title": "Effect-style colors are hard-coded hex, and Focus/Ring's dark stop drifts 1 bit from grey/900",
+        "severity": "nit",
+        "where": "Local effect styles: Focus/Ring (S:c2de5169…), HiFi/Focus Ring (S:cc3a192b…)",
+        "detail": "Effect styles duplicate token values as raw hex instead of binding color variables: HiFi/Focus Ring hard-codes #C8922A (amber/500) and #0D0C0B (ink/900) — if amber/500 ever shifts, the focus ring won't follow. Additionally Focus/Ring's dark spread uses #1C1C1F while the grey/900 primitive is #1C1C1E — a 1-bit blue-channel drift indicating it was typed by hand rather than derived from the token.",
+        "evidence": "Effect dump: Focus/Ring = [DROP_SHADOW s4 #1C1C1F@100%, DROP_SHADOW s2 #FFFFFF@100%]; grey/900 = #1C1C1E. HiFi/Focus Ring = [s4 #C8922A@100%, s2 #0D0C0B@100%].",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly. Effect-style dump shows boundVariables = none on every effect of all 8 local effect styles. Focus/Ring (S:c2de5169) = [DROP_SHADOW spread 4 #1C1C1F@100%, spread 2 #FFFFFF@100%]; grey/900 primitive = #1C1C1E — the 1-bit blue-channel drift (0x1F vs 0x1E) is real and consistent with a hand-typed value. HiFi/Focus Ring (S:cc3a192b) = [spread 4 #C8922A@100%, spread 2 #0D0C0B@100%], duplicating amber/500 and ink/900 as raw hex with no variable binding, so an amber/500 change would not propagate. Nit is right — values currently render correctly; this is future-drift risk plus one invisible 1-bit divergence."
+      },
+      {
+        "title": "Design System page Foundations doc frames use off-scale unbound corner radii (10/20px)",
+        "severity": "nit",
+        "where": "🎨 Design System (0:1) > 🎨 Foundations board 96:70 (radius 20) and ~30 swatch frames e.g. 96:75/96:79/96:83 (radius 10)",
+        "detail": "31 non-instance frames on the Design System page have non-zero corner radius neither bound to a radius/* variable nor on the radius scale (10 and 20 sit between radius/sm=8, radius/md=12, radius/lg=16). These are documentation-board chrome, not shipped components, but the token spec page itself not eating its own dog food is worth a sweep.",
+        "evidence": "radius n=31 on page 0:1; values 20 (board) and 10 (palette swatches). Note: the radius=5 hits initially flagged on 1:2/557:334 were verified to be COMPONENT_SET variant containers (Figma's default purple-frame radius) — false positive, excluded.",
+        "verdict": "confirmed",
+        "verifyReason": "Substance reproduced; count slightly overstated. On page 0:1, 96:70 (🎨 Foundations board) has unbound radius 20 and the palette swatch frames (96:75, 96:79, 96:83, …) have unbound radius 10 — I measure 20 frames at r=10 plus 1 at r=20 (21 nodes at the cited 10/20 values, vs the claimed ~31; my full off-scale total is 28 including 6 at r=3 and 1 at r=28 the finding did not cite). Radius scale confirmed as {4,6,8,12,16,24,32,9999}, so 10 and 20 are genuinely off-scale and 96:70/96:75-class nodes are genuinely unbound. The COMPONENT_SET radius=5 false-positive exclusion also checks out (I excluded them and found none). Documentation chrome only — nit is correct despite the count delta."
+      },
+      {
+        "title": "2 unstyled demo texts in the Hi-Fi Foundations amber row on the Design System page",
+        "severity": "nit",
+        "where": "🎨 Design System (0:1) > 🌒 Hi-Fi Foundations > amber > amber-row > cta 'Play' (556:6) and ghost 'My List' (556:8)",
+        "detail": "The two button-label specimens in the amber demo row are raw Inter Semi Bold 15 with no text style (closest: UI/Button-LG Inter Semi Bold 16 or HiFi/Card Title Inter Semi Bold 15). Tiny, but they sit on the foundations spec board that defines the rules.",
+        "evidence": "Page 0:1 scan: unstyledText n=2 of 103 TEXT nodes; both Inter Semi Bold 15.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly. Page 0:1 scan: 103 TEXT nodes outside instances, exactly 2 with empty textStyleId — 556:6 'Play' and 556:8 'My List' at 🌒 Hi-Fi Foundations > amber > amber-row > cta/ghost, both raw Inter Semi Bold 15. HiFi/Card Title (Inter Semi Bold 15) exists with identical metrics, so a style could be applied trivially. Tiny spec-board specimens — nit is the right severity."
+      },
+      {
+        "title": "Wireframe Player iPhone status-bar time '9:41' is the only unstyled text on the wireframes page",
+        "severity": "nit",
+        "where": "📐 Screens — Wireframes (616:334) > Player — iPhone > 9:41 (627:2555)",
+        "detail": "One stray unstyled TEXT node (out of 156) — every other wireframe screen's status bar text is styled or lives inside the StatusBar component instance. Apply the matching style or swap in the StatusBar component for consistency with the other 32 screens.",
+        "evidence": "Page 616:334 scan: unstyledText n=1; rawFill/rawStroke/pad/radius all 0; PJS hits (n=36) are the intended wireframe font, not flagged.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly. Page 616:334 scan (instance interiors excluded): 156 TEXT nodes, exactly 1 unstyled — 627:2555 '9:41' (Inter Semi Bold 15) under Player — iPhone. The 36 Plus Jakarta Sans hits on this page are the intended wireframe font per the known-intentional list and were correctly not flagged. One stray node out of 33 screens — nit is right."
+      }
+    ],
+    "figma-tokens:refuted": [
+      "Leftover staging frame '🎯 SF Source — Batch 3 (paste here)' pollutes the 🧩 Components library page — The raw-token hits do reproduce (3 raw SOLID fills #BDBDBD/#1C1C1F/#6E6E73, the page's only 2 unstyled texts 308:158/308:159, 1 unbound padding 40/40/40/40 + itemSpacing 20, all inside 308:157), but the finding's load-bearing claim is factually wrong: the frame is parked at x = -3000, y = 40 — well past the x < -1000 parking line. The finding explicitly asserts 'Unlike the hi-fi asset shelf it is not parked at x < -1000', which measurement contradicts. It therefore matches the file's established off-canvas-parking convention for intentional staging/scratch areas (same pattern as the known-intentional asset shelf), and the suggested fix ('move it off-page') is already effectively in place. The visible working area of the Components page is token-clean. At most this is housekeeping (delete the scratch frame eventually), not a token violation."
+    ],
+    "figma-visual-iphone": [
+      {
+        "title": "Player plays off-catalog title 'The Substance' (which Search says doesn't exist)",
+        "severity": "minor",
+        "where": "iPhone Player 588:1251 (title bar), cross-ref NoResults 585:1257",
+        "detail": "The player's title reads 'The Substance' — not in the canonical catalog. Worse, the NoResults screen explicitly shows the query 'substanse' returning zero results ('We couldn't find anything for \"substanse\"'), so the app is shown playing a film its own search says it doesn't have. The video surface is also pure black with no film still, which compounds the unfinished look. Swap the player title to a catalog film and ideally add a dimmed frame still.",
+        "evidence": "Crop /tmp/nux-audit/z6-player-status.png shows 'The Substance' centered in the player top bar; /tmp/nux-audit/noresults.png shows the 'substanse' no-results state.",
+        "verdict": "downgraded",
+        "verifyReason": "Core fact confirmed: Player 588:1251 top bar is TEXT 'The Substance' (Inter Semi Bold 16, x97 y61) — not in the 21-film catalog, MANIFEST.json, or EXTRAS; it is leftover wireframe filler ('The Substance'/'The Bear' everywhere, per memory) that escaped the hi-fi real-content pass. But both aggravators justifying 'major' fail: (1) NoResults 585:1257 shows a deliberately MISSPELLED query — copy reads 'We couldn't find anything for \"substanse\". Check the spelling…' — a misspelled-query demo, which does not assert the film is absent (if anything the pairing is coherent); (2) the pure-black video surface matches the established dark fullscreen player treatment on both wireframe and hi-fi players (and tvOS), a scope choice not a defect. What remains is one off-universe text string fixable with a single override → minor."
+      },
+      {
+        "title": "CourseDetail rating value missing/clipped after star in metadata row",
+        "severity": "major",
+        "where": "iPhone CourseDetail 585:1341 (meta row under 'The Art of Editing')",
+        "detail": "Meta row reads 'COURSE | by A. Okonkwo · 12 lessons · 4h 30m (18) ★' — the star glyph is the last element, sitting ~15px from the right screen edge with NO numeric rating after it. Sibling detail screens show '★ 7.1' (FilmDetail 581:1283, GameDetail 585:1302). The row is too long for 393pt and the rating number is clipped or its text node is empty. Either shorten the row (e.g. drop the '18' pill — an age rating on an editing course is also questionable content) or wrap/move the rating.",
+        "evidence": "Pixel-level crop /tmp/nux-audit/z8-course-star-edge.png shows star then solid black to the frame edge; PIL scan found 0 light pixels right of x=378. Compare /tmp/nux-audit/z7-fd-titlemeta.png ('★ 7.1' fits with margin on FilmDetail).",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced and measured. The rating text is NOT empty — TEXT '7.1' (Inter Regular 14) exists at x=383 w=16 (extends to x=399 on a 393pt screen) inside HiFi/Rating instance (x=365 w=34), but the parent 'meta' frame clips at x=377 (x16 + w361), so '7.1' is 100% clipped and even the star (ic/star.fill x365–379) loses its last 2px. Rendered-pixel scan of the live render: 0 light pixels at x≥378 in the meta band; rightmost light pixel x=376. Visible truncated content on a hi-fi detail screen where sibling FilmDetail/GameDetail show '★ 7.1' intact — major stands."
+      },
+      {
+        "title": "Home hero has no top scrim — status bar, NUX wordmark and header icons barely legible on light poster art",
+        "severity": "major",
+        "where": "iPhone Home 554:1251 (top 130px of hero)",
+        "detail": "White status glyphs (wifi/battery especially), the white serif NUX wordmark, and the borderless white cast + avatar header icons all sit directly on the light tan 'LAWRENCE OF ARABIA' poster lettering/sky with no darkening scrim. Contrast is far below comfortable legibility. FilmDetail 581:1283 handles the same problem correctly with a dark top scrim behind its status bar. Add the same top gradient scrim to the Home hero.",
+        "evidence": "Crop /tmp/nux-audit/z10-home-top.png — battery/wifi icons over cream 'OF ARABIA' area, white-on-tan; compare /tmp/nux-audit/z6-fd-status.png where FilmDetail status glyphs sit on a dimmed band.",
+        "verdict": "confirmed",
+        "verifyReason": "Legibility failure reproduced and measured, though the mechanism claim is wrong: Home hero 554:1251 carries the IDENTICAL top scrim as FilmDetail 581:1283 (GRADIENT_LINEAR rgba(13,12,11) alpha 0.6→0 over the top 20%, xform [[0,1,0],[-1,0,1]]) — FD only reads better because its art is darker. The scrim decays to ~0 by y≈94 while the wordmark/header row sits at y60–91 over light poster sky: measured background luminance behind status icons med 0.42–0.59 → white glyphs ≈1.65–2.2:1; behind the NUX wordmark med 0.79 → ≈1.25:1; behind cast/avatar icons up to 0.88 → ≈1.12:1 (near-invisible, confirmed visually). Real major defect; fix = strengthen/extend the existing scrim, not add a missing one."
+      },
+      {
+        "title": "Player status bar shows time but drops the right icon cluster",
+        "severity": "minor",
+        "where": "iPhone Player 588:1251 (status bar)",
+        "detail": "Only '9:41' renders at top-left; signal/wifi/battery are absent (every other screen shows the full set), and the home indicator is also missing. If the intent is immersive playback chrome, the time should hide too; if not, the right cluster should be present. Current half-hidden state reads as an unfinished status bar component.",
+        "evidence": "Crop /tmp/nux-audit/z6-player-status.png: '9:41' present, top-right corner empty above the AirPlay icon.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced programmatically: Player 588:1251 top-level children are [Icon(close), 'The Substance', Icon(airplay), transport, Icon×3, HiFi/Scrubber, '9:41'] — a bare '9:41' TEXT at x24 y14 with no StatusBar instance; findAll for wifi/battery/cellular/HomeIndicator returns 0 nodes, and the rendered top-right corner is empty. Every other hi-fi iPhone screen carries the full HiFi/StatusBar + HiFi/HomeIndicator. The half-state (time without cluster, no home indicator) reads unfinished rather than deliberately immersive — minor confirmed."
+      },
+      {
+        "title": "Offline screen CTA says 'Browse' while copy points to Downloads",
+        "severity": "minor",
+        "where": "iPhone Offline 585:1297 (empty-state CTA)",
+        "detail": "Supporting copy reads 'Check your connection and try again. Downloaded titles are still available.' but the single amber CTA is 'Browse' — an action that requires a network connection and which the copy doesn't mention. The CTA should be 'Go to Downloads' (or 'Retry'), matching the promise in the copy. The identical 'Browse' button is correct on NoResults/MyList but was seemingly copy-pasted here.",
+        "evidence": "/tmp/nux-audit/offline.png — wifi-slash icon, 'You're offline', Downloads-referencing copy, amber 'Browse' button.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: Offline 585:1297 texts = 'You're offline' / 'Check your connection and try again. Downloaded titles are still available.' / single CTA label 'Browse' (y508). Browse needs a connection; the copy promises Downloads and a retry, neither of which the CTA offers. Note the wireframe Offline (228:534) used 'Retry', supporting the copy-paste hypothesis from the NoResults/MyList empty states. Minor is right."
+      },
+      {
+        "title": "Downloads rows use inconsistent metadata patterns",
+        "severity": "minor",
+        "where": "iPhone Downloads 588:1396 (list rows)",
+        "detail": "Lawrence of Arabia shows genre + size ('Epic · 2.1 GB'), Aftersun shows size only ('1.1 GB'), The Wicker Man shows size + expiry ('1.4 GB · Expires in 3 days'), Senna shows state only ('Downloading · 62%'). Genre appears on exactly one row. Pick one schema (e.g. size always; genre always or never; expiry/state as a second element) and apply it to all four rows. Poster thumbnails themselves are honest (LoA art, Senna yellow poster, Aftersun still, burning Wicker Man).",
+        "evidence": "/tmp/nux-audit/downloads.png — compare subtitle lines of the four rows.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced from text nodes on 588:1396: 'Epic · 2.1 GB' (Lawrence) / 'Downloading · 62%' (Senna) / '1.1 GB' (Aftersun) / '1.4 GB · Expires in 3 days' (Wicker Man). The state variety (downloading, expiring) is defensible showcase content, but the two SAME-state completed rows use different schemas — genre appears on exactly one of four rows — which is genuine metadata-schema drift within one list. Minor confirmed."
+      },
+      {
+        "title": "Profile and Settings use different list-row treatments",
+        "severity": "nit",
+        "where": "iPhone Profile 588:1310 vs Settings 588:1351",
+        "detail": "Profile menu rows (Downloads, Notifications, Subscription & Billing, Settings, Help & Support, Sign out) are flat full-bleed rows with hairline separators and no container, while Settings rows sit in rounded grouped cards with PLAYBACK/NOTIFICATIONS/ACCOUNT section headers. Two adjacent utility screens in the same flow should share one list component (the Settings grouped-card pattern looks like the more finished one).",
+        "evidence": "Crops /tmp/nux-audit/z9-profile-rows.png (flat hairline rows) vs /tmp/nux-audit/z9-settings-rows.png (rounded card groups).",
+        "verdict": "downgraded",
+        "verifyReason": "Reproduced visually: Profile 588:1310 = flat full-bleed rows with hairline separators; Settings 588:1351 = rounded inset-grouped cards under PLAYBACK/NOTIFICATIONS/ACCOUNT headers. However both are canonical iOS list idioms — plain lists for navigation menus, inset-grouped for settings controls — and Apple's own apps differentiate exactly this way (HIG-conformant), so the split is defensible by screen purpose rather than an unfinished state. A shared row component would be tidier; that makes it a nit, not minor."
+      },
+      {
+        "title": "Auth screen headings set in Fraunces while every other functional screen uses Inter",
+        "severity": "nit",
+        "where": "iPhone SignIn 588:1268 ('Welcome back') and SignUp 588:1288 ('Create your account')",
+        "detail": "Per the typography rule, Fraunces is for content/theme headings and Inter for functional UI. Browse, My List, Profile, Settings, Downloads all use Inter bold large titles, but both auth headings are serif (Fraunces). If this is a deliberate 'brand moment' it should be documented; otherwise switch to Inter to match the functional-screen heading style. The two auth screens are at least consistent with each other (fields, Apple button, link rows all align).",
+        "evidence": "/tmp/nux-audit/signin.png and /tmp/nux-audit/signup.png serif headings vs sans titles in /tmp/nux-audit/browse.png, /tmp/nux-audit/settings.png.",
+        "verdict": "downgraded",
+        "verifyReason": "Reproduced: 'Welcome back' and 'Create your account' are Fraunces SemiBold 28, vs Inter Semi Bold 34 large titles on Browse/My List/Profile/Settings/Downloads. But the finding missed that BOTH desktop onboarding screens also head in Fraunces (NUX 36; 'Cinema for Curious Minds' 40; 'What kinds of stories move you?' 40) — auth + onboarding form a consistent brand-surface set, the same four roots that deliberately received the brand grain overlay. The serif treatment is therefore a coherent brand-moment convention across all welcome surfaces, not one-off drift; at most it deserves a one-line documentation note → nit."
+      },
+      {
+        "title": "Active 'All' filter chip shows a remove (X) affordance",
+        "severity": "nit",
+        "where": "iPhone Browse 581:1251 and NoResults 585:1257 (filter chip row)",
+        "detail": "The selected 'All' chip renders with an X-to-remove icon, but 'All' is the default/unfiltered state — removing it is semantically meaningless. The X affordance belongs on actual applied filters (Films, a Genre, etc.), not on 'All'. Both screens are at least consistent with each other.",
+        "evidence": "/tmp/nux-audit/browse.png and /tmp/nux-audit/noresults.png — amber 'All ✕' chip at left of the chip row.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced programmatically and visually: on Browse 581:1251 the 'All' chip is FilterChip {Type: Selected, State: Default} with a visible ic/xmark (amber 'All ✕'), and NoResults 585:1257 shows the same selected 'All'. The X is baked into the design-system Selected variant, but on the default unfiltered 'All' state a dismiss affordance is semantically meaningless — the component would need an X-less Selected variant for defaults. Correctly scoped as a nit."
+      }
+    ],
+    "figma-visual-iphone:refuted": [
+      "Off-catalog film 'Get Carter' in Continue Watching rail — Reproduced visually (2nd CW card = Michael Caine still labeled 'Get Carter / 47m left') but the premise is wrong. The project's documented content rule is still↔own-film honesty + genre-section matching, not membership in the web app's 21-title FILMS array. Project memory (2026-06-12 category-mismatch fix) explicitly rules: 'In Figma Continue rows Get Carter / Matter of Life and Death are fine — labels match their stills (those films exist in the mock catalog).' Get Carter has two entries in design/posters/MANIFEST.json (the 35-entry Figma content pool). The pair is honest and owner-accepted — intentional, not a defect.",
+      "Search for 'the third man' surfaces The Red Shoes as a Top Result, with a monochrome thumbnail — Content reproduces ('the third man' → The Third Man, Film · 1949 + The Red Shoes, Film · 1948) but it is the documented content map from the real-content pass ('Search query «the third man» → Third Man/Red Shoes results'), and the b/w Red Shoes rehearsal still was deliberately sourced in the landscape-stills batch for search slots. A static mock does not model a relevance algorithm — a second loosely-related row is standard demo filler — and the finding itself concedes the thumb is honest. No defect to act on.",
+      "Hero 'My List' action sits bare over busy poster faces — Premise wrong: the CTA is not unscrimmed. The hero's 5-stop bottom scrim Rectangle (y140–472) sits directly behind the CTA row ('My List' label at y401), and measured legibility is comfortable — background luminance behind/around the label: median 0.12, p90 0.21 → white label ≈4.0:1 worst-case and ~6:1 typical (the poster's portrait strip is dark there). Scrim layers are explicitly known-intentional layout glue, and a bare icon+label secondary action beside a filled Play pill over scrimmed hero art is the established pattern across FD/Game/Course action rows and standard streaming heroes. 'Fragile against lighter artwork' is hypothetical for a static screen whose art and scrim are fixed."
+    ],
+    "figma-visual-big": [
+      {
+        "title": "Non-catalog films used on Desktop Home and tvOS screens (Get Carter, A Matter of Life and Death)",
+        "severity": "major",
+        "where": "Desktop Home 595:675 (Continue Watching); tvOS Home 599:132 (Continue Watching); tvOS Detail 599:150 (More Like This); tvOS Browse 599:168 (grid)",
+        "detail": "Desktop Home's Continue Watching rail contains labeled cards 'Get Carter' and 'A Matter of Life and Death' — neither is in the 21-title canonical catalog. The same Get Carter still (Michael Caine, yellow 'MICHAEL CAINE' title frame) reappears in tvOS Home Continue Watching, tvOS Detail More Like This, and the tvOS Browse grid; the same B&W 'A Matter of Life and Death' group still reappears in tvOS Home. tvOS Detail's More Like This also includes a coronation/throne-room still that matches no catalog film (suspected third non-catalog asset, unlabeled so unprovable). Replace these card assets/labels with catalog titles.",
+        "evidence": "Desktop CW card labels read 'Get Carter' and 'A Matter of Life and Death' at 2x zoom; identical stills identified on all three tvOS screens.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced via text labels AND image-fill hashes. Desktop Browse 595:744 ('Showing 21 titles') enumerates exactly 21 catalog titles; 'Get Carter' and 'A Matter of Life and Death' are not among them yet are literal text labels on Desktop Home CW (x=300 and x=1080, y=820). Hash proof of still reuse: Get Carter fill beec13038b8f appears on Desktop Home CW, tvOS Home CW (x=428), tvOS Detail More Like This (x=1092), and tvOS Browse row 2 (x=760 — the yellow MICHAEL CAINE frame visible in render); AMOLAD fill 77a243b7ceec appears on Desktop Home CW, tvOS Home CW (x=1424), and tvOS Browse row 1 (x=760). The hedged coronation-still claim is correctly marked unprovable (unlabeled hash d566bfe03b39). Severity major is right for non-catalog content on 4 screens."
+      },
+      {
+        "title": "tvOS Player plays 'The Substance' — not in catalog and contradicts the No-Results screens",
+        "severity": "major",
+        "where": "tvOS Player 599:236",
+        "detail": "Player overlay title is 'The Substance / Thriller · 2026', which is not one of the 21 canonical titles. Worse, the iPad and Desktop Browse No-Results screens (592:623, 595:887) are built around the search 'substanse' returning nothing — so the demo universe simultaneously claims the title doesn't exist and is being played on tvOS. Swap the player content to a catalog film (e.g. The Third Man, matching tvOS Search) or rename.",
+        "evidence": "Player title text 'The Substance — Thriller · 2026' at top-left; No-results copy: 'We couldn't find anything for \"substanse\"'.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. tvOS Player 599:236 text nodes: 'The Substance' (x=96,y=80, 36pt) and 'Thriller · 2026' (y=136). Not one of the 21 catalog titles. Both No-Results screens (595:887 and 592:623) carry the copy 'We couldn't find anything for \"substanse\"', so the demo universe simultaneously denies and plays the title. Self-contradiction across the flagship demo set justifies major."
+      },
+      {
+        "title": "The Red Shoes genre label inconsistent: Drama vs Romance on two Desktop screens",
+        "severity": "major",
+        "where": "Desktop Home 595:675 (Trending Now) vs Desktop Browse 595:744 (Comedy & Romance section)",
+        "detail": "Desktop Home Trending Now labels The Red Shoes '1948 · Drama'; Desktop Browse places it in 'Comedy & Romance' labeled '1948 · Romance'. This is exactly the consistency trap flagged in the catalog ('Romance-or-Drama, check consistency'). Pick one genre and apply it everywhere (note: if Drama is chosen, the film must also move out of the Comedy & Romance section).",
+        "evidence": "2x crops: Trending card 2 reads '1948 · Drama'; Browse section card 4 reads '1948 · Romance'.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly. Desktop Home 595:675 Trending Now card 2: 'The Red Shoes' + '1948 · Drama' (x=210, y=1211). Desktop Browse 595:744 Comedy & Romance card 4: 'The Red Shoes' + '1948 · Romance' (x=550, y=1348). Same film, two genres, and the film sits inside a Romance-named section on one of them — the stated consistency trap. Major is right."
+      },
+      {
+        "title": "Star ratings and age certificate diverge between tvOS and iPad/Desktop for the same films",
+        "severity": "major",
+        "where": "tvOS Home 599:132 + tvOS Detail 599:150 vs iPad Home 592:498, iPad FilmDetail 592:542, Desktop Home 595:675, Desktop FilmDetail 595:803",
+        "detail": "Lawrence of Arabia hero meta: ★ 7.1 on iPad and Desktop, ★ 8.3 on tvOS Home. The Third Man: ★ 7.1 with cert '18' on iPad/Desktop FilmDetail, but ★ 8.1 with cert 'PG' on tvOS Detail. The tvOS values look like real IMDb/BBFC data while the other platforms still carry the 7.1/18 wireframe stub — align all platforms to one data set.",
+        "evidence": "Zoomed meta rows: 'Epic · 1962 · 3h 47m · ★ 7.1' (iPad/Desktop) vs '★ 8.3' (tvOS); '1h 44m · (18) · ★ 7.1' vs '1949 · 1h 44m · ★ 8.1 · PG'.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced on all six screens. Lawrence of Arabia hero meta: '7.1' on iPad Home 592:498 (x=236) and Desktop Home 595:675 (x=252) vs 'Epic · 1962 · 3h 47m · ★ 8.3' on tvOS Home 599:132. The Third Man: '7.1' + cert '18' on iPad FilmDetail 592:542 and Desktop FilmDetail 595:803 vs '1949 · 1h 44m · ★ 8.1 · PG' on tvOS Detail 599:150. Same titles, two data sets. Major confirmed."
+      },
+      {
+        "title": "Desktop Browse No-Results shows 'Showing 240 titles' above a 'No results' empty state",
+        "severity": "major",
+        "where": "Desktop Browse — No Results 595:887",
+        "detail": "The results-count line says 'Showing 240 titles' while the empty state directly below says 'No results — we couldn't find anything for \"substanse\"'. The two states contradict each other on one screen; the count should read 'Showing 0 titles' or be hidden in the no-results state. (Populated Desktop Browse 595:744 correctly says 'Showing 21 titles'.)",
+        "evidence": "Full-frame screenshot of 595:887: count line at y≈272 and 'No results' headline at y≈443 both visible.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced on 595:887: text node 'Showing 240 titles' at y=265 directly above 'No results' (y=432) and 'We couldn't find anything for \"substanse\"' (y=470). Populated Desktop Browse 595:744 reads 'Showing 21 titles', so the 240 is doubly wrong (stale stub AND contradicting the empty state on the same screen). Major is right for a self-contradicting single screen."
+      },
+      {
+        "title": "iPad Browse title count (240) disagrees with Desktop Browse (21) for the same catalog",
+        "severity": "minor",
+        "where": "iPad Browse 592:591 vs Desktop Browse 595:744",
+        "detail": "iPad's populated Browse says 'Showing 240 titles'; Desktop's populated Browse says 'Showing 21 titles' (which matches the 21-title catalog). The iPad screen still carries the '240' stub from the wireframes page (wireframe Desktop Browse 134:207 also says 240). Update iPad (and the No-Results screens) to the real count.",
+        "evidence": "2x crop of iPad Browse header vs native Desktop Browse 'Showing 21 titles' line.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. iPad Browse 592:591 (frame name 'Browse — iPad · Hi-Fi') reads 'Showing 240 titles' (y=333); Desktop Browse 595:744 reads 'Showing 21 titles' (y=265), matching the 21-title catalog. Cross-platform data mismatch, no on-screen contradiction — minor is right."
+      },
+      {
+        "title": "Genre-section honesty on Desktop Browse: 'Horror & Thriller' includes Sci-Fi and Crime titles",
+        "severity": "minor",
+        "where": "Desktop Browse 595:744, 'Horror & Thriller' section",
+        "detail": "Section contains Under the Skin (catalog genre: Sci-Fi) and Sexy Beast (catalog genre: Crime) alongside the four true Horror titles and The Third Man (Film-Noir). The Third Man is defensible — its own Details table on 595:803 reads 'Film-Noir · Thriller'. Sexy Beast-as-thriller is a stretch and Under the Skin is the clearest mismatch; its card label even reads '2013 · Sci-Fi' inside a Horror & Thriller section. Either retitle the bucket (e.g. 'Horror, Thriller & Sci-Fi') or move the cards. Drama (7/7), Comedy & Romance, and Documentary & Epic sections are clean; no film appears twice within any rail/section anywhere.",
+        "evidence": "Section crop shows Peeping Tom, Don't Look Now, The Wicker Man, Saint Maud, The Third Man, Under the Skin ('2013 · Sci-Fi'), Sexy Beast ('2000 · Crime').",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. The Horror & Thriller section on 595:744 contains exactly: Peeping Tom, Don't Look Now, The Wicker Man, Saint Maud (Horror), The Third Man ('1949 · Film-Noir'), Under the Skin ('2013 · Sci-Fi'), Sexy Beast ('2000 · Crime'). Third Man is defensible — its Details table on 595:803 reads 'Film-Noir · Thriller'. Under the Skin's own card label contradicts its bucket. Drama (7/7), Comedy & Romance, Documentary & Epic sections verified clean; no duplicate within any rail. Minor is right."
+      },
+      {
+        "title": "Desktop My List page heading off-grid (x=80 instead of x=40)",
+        "severity": "minor",
+        "where": "Desktop My List 595:907",
+        "detail": "Measured via plugin API: the 'My List' page heading sits at x=80, y=112 while every other desktop screen puts its heading/rail titles on the 40px margin (Browse heading x=40 y=104; Home rail headings x=40; nav and footer NUX x=40 on all screens). The heading is indented 40px and dropped 8px relative to the shared grid.",
+        "evidence": "use_figma read-only probe: MyList '\"My List\" x=80 y=112' vs NoResults '\"Browse\" x=40 y=104'; side-by-side 3x crops confirm visually.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced by independent measurement: 'My List' heading on 595:907 at x=80, y=112 (34pt). Comparators: 'Browse' heading x=40, y=104 on both 595:744 and 595:887; all rail headings on 595:675 at x=40; nav NUX x=40 y=20 and footer NUX x=40 on every desktop screen. 40px indent + 8px drop confirmed exactly as stated."
+      },
+      {
+        "title": "Active-nav underline missing on Desktop My List screen",
+        "severity": "minor",
+        "where": "Desktop My List 595:907 top nav",
+        "detail": "On Desktop Home and Browse/No-Results, the active nav item is bold with a short underline beneath it ('Home', 'Browse'). On the My List screen, 'My List' is bold but has no underline, so the active-state treatment is inconsistent across the desktop set.",
+        "evidence": "3x nav crops: underline visible under 'Browse' on 595:887, absent under 'My List' on 595:907.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced at node level: each desktop nav item carries an 'indicator' rectangle (16x2). On 595:675 the Home indicator is visible=true (y=41); on 595:744 and 595:887 the Browse indicator is visible=true (y=41); on 595:907 ALL three indicators are visible=false — no underline at all. 3x nav crops confirm: underline under 'Home' on Home, none under 'My List' on My List (which shows only the brighter active text color). Minor is right."
+      },
+      {
+        "title": "iPad header inconsistent: NUX wordmark, search and avatar only on Home",
+        "severity": "minor",
+        "where": "iPad Home 592:498 vs iPad Browse 592:591, My List 592:586, No Results 592:623",
+        "detail": "iPad Home's top bar has the NUX wordmark (left), centered nav pills, and search + avatar (right). The other three iPad screens show only the centered nav pills — no wordmark, no search icon, no avatar. Search being on-page on Browse explains the search icon, but the missing wordmark and avatar make the header read as a different component per screen.",
+        "evidence": "2x header crops: full header on Home; pills-only header on Browse/My List/No Results.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. iPad Home 592:498 header contains NUX text (x=20,y=42), HiFi/NavButton with ic/magnifyingglass (x=746), and HiFi/Avatar (x=782) plus nav pills at y=50. Screens 592:586, 592:591 and 592:623 contain only the four nav pill texts (at y=54, also 4px lower) — no NUX text node, no search button, no avatar anywhere in their trees. Minor confirmed."
+      },
+      {
+        "title": "Desktop No-Results references query 'substanse' but the nav search field is empty",
+        "severity": "minor",
+        "where": "Desktop Browse — No Results 595:887",
+        "detail": "Desktop Browse has no on-page search bar (search lives in the top nav), yet on the No-Results screen the nav search field shows the empty 'Search' placeholder while the empty state quotes the query 'substanse'. The state is impossible — the typed query should be visible in the nav search input (iPad's No-Results correctly shows 'substanse' in its on-page search bar).",
+        "evidence": "Full-frame: nav input placeholder 'Search' + empty-state copy quoting \"substanse\".",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. On 595:887 the only search-related text in the nav is the placeholder 'Search' (x=1106,y=22); 'substanse' appears solely in the empty-state copy (y=470). iPad No-Results 592:623 correctly shows 'substanse' inside its on-page search field (x=78,y=177), proving the intended pattern exists. Impossible state confirmed, minor."
+      },
+      {
+        "title": "tvOS Browse grid fills only the top half of the screen and its cards are unlabeled",
+        "severity": "minor",
+        "where": "tvOS Browse 599:168",
+        "detail": "Below the filter chips there are two rows of five landscape stills ending at ~y=600; the bottom ~45% of the 1080px frame is empty black, which reads as unfinished next to the other dense screens. The cards also carry no title/metadata labels, unlike iPad/Desktop Browse — combined with stills-only artwork, several cards are unidentifiable (and one is the non-catalog Get Carter still). Add a third row or center the grid, and consider focused-state labels.",
+        "evidence": "Bottom-half crop of 599:168 shows empty canvas below row 2.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. 599:168 has exactly ten 300x169 PosterCards in two rows at y=272 and y=489; the grid ends at y=658, leaving the bottom ~422px (~39%) of the 1080px frame empty black (finding said ~45% — slightly overstated but materially right). Text extraction shows zero card labels (only nav + filter chips). Get Carter still (hash beec13038b8f) confirmed in row 2 at x=760. Minor is right."
+      },
+      {
+        "title": "Synopsis text crosses the bright 'MAN' backdrop letterforms on FilmDetail (Desktop and tvOS)",
+        "severity": "minor",
+        "where": "Desktop FilmDetail 595:803; tvOS Detail 599:150",
+        "detail": "The Third Man backdrop has huge light-grey title letterforms. The grey body-copy synopsis lines run across them: on Desktop the line ends ('an old fr…', 'won the Grand Prix at Cannes') sit on the bright glyphs with visibly reduced contrast; on tvOS the synopsis sits directly on the light 'MAN' letters with only a partial scrim. Headline and buttons are fine; deepen the scrim behind the synopsis block or shorten its measure. (Hero scrims on Home screens across all platforms are good.)",
+        "evidence": "3x crop dfd-syn: grey text over light letterform at right line-ends; tvOS meta crop shows same condition.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced and quantified. Desktop 595:803: synopsis text is rgb(176,169,158), luminance ~170/255; sampled background under the right line-ends reaches luminance 170 — locally near 1:1 contrast where lines cross the glyph ('an old friend —', 'won the Grand Prix at Cannes'). tvOS 599:150: background under the synopsis reaches luminance 98 vs text 170 ≈ 2.7:1, below the 4.5:1 body-text threshold. Headline/buttons sit on darker areas and are fine. Minor confirmed."
+      },
+      {
+        "title": "tvOS Player transport controls sit inside the overscan-unsafe bottom band",
+        "severity": "nit",
+        "where": "tvOS Player 599:236",
+        "detail": "The pause button's white focus ring bottom edge is ~40px from the bottom of the 1080px frame, and the subtitle/volume glyphs ~55px — inside Apple's recommended ~60px tvOS title-safe inset. Nothing touches the edge, but on overscanning TVs the focus ring could clip. Nudge the transport row up ~20-25px. Otherwise the player is correct: amber progress, single white focus ring on pause, safe top placement of the title.",
+        "evidence": "Pixel measurement on native 1920x1080 render: ring bottom ≈ y=1040.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced by geometry: the three HiFi/tvOS/PlayerControl instances sit at y=950, h=88 — bottoms at y=1038, i.e. 42px from the 1080px frame edge (finding claimed ~40px); subtitle/volume Icon instances at y=984, h=40 — bottoms at y=1024, 56px from edge (claimed ~55px). Both inside Apple's ~60px tvOS title-safe inset. Screenshot confirms white focus ring on pause and amber progress (matching the intentional conventions). Nit is right."
+      },
+      {
+        "title": "Desktop hero title 'Lawrence of Arabia' wraps to two lines at 1440px",
+        "severity": "nit",
+        "where": "Desktop Home 595:675 hero",
+        "detail": "The hero title wraps 'Lawrence of / Arabia' on the widest screen, while iPad (834px) and tvOS fit it on one line. The text container appears artificially narrow; widen it so the desktop hero matches the single-line treatment elsewhere (or keep the wrap intentionally consistent).",
+        "evidence": "Hero crops: two-line on desktop, one-line on iPad h2 and tvOS tvh-meta.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. Desktop Home title node: 80pt, bounding box 483x166 = two lines; crop shows 'Lawrence of / Arabia'. iPad 592:498: 40pt, h=43 = one line; tvOS 599:132: 96pt in a 960px-wide node, h=98 = one line. The desktop container (~483px within a 1440px frame) is the constraint. Nit confirmed."
+      },
+      {
+        "title": "'New Releases' rail on Desktop Home contains 1940s films",
+        "severity": "nit",
+        "where": "Desktop Home 595:675, New Releases rail",
+        "detail": "The rail includes The Third Man (1949 · Film-Noir) and Brief Encounter (1945 · Romance) under a 'New Releases' heading. For a classics service the intended meaning is probably 'newly added' — retitle to 'New on NUX' / 'Recently Added' to keep the label honest. No duplicate within the rail itself.",
+        "evidence": "Rail crop labels: 'The Third Man 1949 · Film-Noir', 'Brief Encounter 1945 · Romance'.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. Under the 'New Releases' heading (y=1643) on 595:675: 'The Third Man' + '1949 · Film-Noir' (x=890) and 'Brief Encounter' + '1945 · Romance' (x=1060). No duplicates within the rail. Semantic labeling quibble for a classics service — nit is right."
+      },
+      {
+        "title": "Duration format inconsistency: '96m left' on iPad Continue Watching",
+        "severity": "nit",
+        "where": "iPad Home 592:498, Continue Watching (The Red Shoes card)",
+        "detail": "Progress labels read '31m left / 47m left / 22m left / 96m left / 58m left'. Everywhere else durations over 60 minutes use h+m format ('3h 47m', '1h 44m'); '96m left' should be '1h 36m left'.",
+        "evidence": "2x crop h4 top row of card sublabels.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: iPad Home 592:498 CW sublabels read '31m left / 47m left / 22m left / 96m left / 58m left', with '96m left' under The Red Shoes (x=506,y=904), while every duration over 60m elsewhere uses h+m ('3h 47m', '1h 44m'). Additionally the same '96m left' string appears on Desktop Home CW under Lawrence of Arabia (x=820,y=844), so the defect is slightly broader than stated — still a nit."
+      }
+    ],
+    "figma-visual-big:refuted": [],
+    "web-tokens": [
+      {
+        "title": "Hardcoded drop shadow bypasses --shadow-card-hover token (x2)",
+        "severity": "minor",
+        "where": "frontend/src/components/TabBar.css:29 and TabBar.css:66",
+        "detail": "Both the tab pill and the floating search button declare `box-shadow: inset 0 0 0 1px var(--white-a08), 0 12px 40px rgb(0 0 0 / 0.45)`. The drop-shadow layer has identical geometry to the token --shadow-card-hover (0 12px 40px rgb(0 0 0 / 0.55)) but a one-off 0.45 alpha, creating a near-duplicate shadow value outside the elevation system. Either reuse the token or promote a --shadow-bar token; as written it will silently drift if the elevation tokens are retuned.",
+        "evidence": "box-shadow:\n  inset 0 0 0 1px var(--white-a08),\n  0 12px 40px rgb(0 0 0 / 0.45);  /* token is rgb(0 0 0 / 0.55) */",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. TabBar.css lines 27-29 and 64-66 both declare `0 12px 40px rgb(0 0 0 / 0.45)`; tokens.css:131 defines --shadow-card-hover as `0 12px 40px rgb(0 0 0 / 0.55)` — identical geometry, one-off alpha. Production bundle (index-D-lcfRyp.css) contains exactly 2x `12px 40px #00000073` (0x73 = 0.451 alpha) on .tabbar/.tabbar-search vs 1x the token value `12px 40px rgb(0 0 0 / .55)`. Not covered by the intentional list: that exemption is for rgb(13 12 11 / X) page-color scrims and 1-3px hairlines; this is a pure-black drop shadow with non-trivial geometry. Even if the lighter alpha is a deliberate choice for the glass bar, the finding already accommodates that (promote a --shadow-bar token), so it cannot be refuted as intentional. Minor is correctly calibrated for a near-duplicate elevation value that will drift if tokens are retuned."
+      },
+      {
+        "title": "Continue-card play glyph sized off the 4px grid (34px box, 10px padding)",
+        "severity": "minor",
+        "where": "frontend/src/components/Rail.css:162-164",
+        "detail": ".continue-card-play svg uses width/height 34px and padding 10px — neither is on the 4px spacing grid and neither is a 1-3px hairline detail. Every sibling dimension in the file is grid-conformant (168/296/124 columns, 4px outline-offset). 32px or 36px box with 8px or 12px (--space-2/--space-3) padding would land on-system with no visible change.",
+        "evidence": ".continue-card-play svg {\n  width: 34px;\n  height: 34px;\n  padding: 10px;",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. Rail.css:162-164 has `width: 34px; height: 34px; padding: 10px` and the prod bundle ships `width:34px;height:34px;padding:10px` verbatim. 34 and 10 are not multiples of 4 and are far above the 1-3px hairline allowance; with the global border-box reset the inner glyph renders 14px — also off-grid. A codebase-wide width scan confirms 34px is the only off-grid fixed control dimension in the frontend (22/24/32/52/76/96/108/124/132/152/168/200/220/296 are all on-grid; 150 is filed separately). One overstatement in the detail: 'every sibling dimension in the file is grid-conformant' overlooks `padding: 3px 5px` on the badge at Rail.css:107, though that is hairline-scale and does not affect the core claim. Unlike the fluid minmax nit, this is a fixed rendered dimension, so minor is the right severity."
+      },
+      {
+        "title": "View-transition motion bypasses --dur-*/--ease-* tokens",
+        "severity": "minor",
+        "where": "frontend/src/styles/global.css:120-137",
+        "detail": "::view-transition-group(hero-art) hardcodes animation-duration: 420ms and animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1) — the bezier is a byte-for-byte duplicate of --ease-out, and CSS custom properties DO resolve inside ::view-transition pseudo-elements (they inherit from :root), so var(--ease-out) would work. ::view-transition-old/new(root) likewise hardcodes 240ms. Neither 420 nor 240 exists on the duration ramp (150/200/300); if longer morph durations are intentional, they should be promoted to tokens (e.g. --dur-morph). The reduced-motion override correctly kills these, so this is a consistency issue only.",
+        "evidence": "::view-transition-group(hero-art) {\n  animation-duration: 420ms;\n  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); /* == --ease-out */\n...\n::view-transition-old(root), ::view-transition-new(root) { animation-duration: 240ms; }",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. global.css:120-122 hardcodes `animation-duration: 420ms; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1)` and lines 134-136 hardcode 240ms; prod bundle ships them as `.42s`/`.24s` with `cubic-bezier(.16,1,.3,1)`. The bezier is byte-identical to --ease-out (tokens.css:136), and the technical claim is correct — ::view-transition pseudo-elements are children of the root element and inherit custom properties from :root, so var(--ease-out) would resolve. Neither 420 nor 240 is on the duration ramp (--dur-fast/base/slow = 150/200/300ms, tokens.css:137-139). The mitigating claim also checks out: global.css:150-154 sets `animation: none !important` on all view-transition pseudos under prefers-reduced-motion. Pure consistency issue with a correct fix path; minor is right."
+      },
+      {
+        "title": "Browse grid min column 150px is the only off-grid card dimension",
+        "severity": "nit",
+        "where": "frontend/src/pages/Browse.css:204",
+        "detail": "The mid-breakpoint poster grid uses `repeat(auto-fill, minmax(150px, 1fr))`; 150 is not a multiple of 4, while every other card width in the codebase is on-grid (108, 124, 168, 200, 296). It is a fluid-grid minimum (the rendered width is fractional anyway), so impact is nil — 148px or 152px would make the system airtight.",
+        "evidence": "grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* siblings use 200px/108px */",
+        "verdict": "confirmed",
+        "verifyReason": "Core claim reproduced with one mislabel. Browse.css:204 does contain `repeat(auto-fill, minmax(150px, 1fr))` (also in the prod bundle as `minmax(150px,1fr)`), and a codebase-wide scan confirms 150 is the only non-multiple-of-4 grid minimum/card width (siblings: 200 at line 114, 152 at line 179, 108 at line 209; rails use 168/296/124/132/96 — all on-grid). Correction to the 'where/detail': line 204 is the .genre-grid (3:2 genre tiles) inside the `@media (max-width: 768px)` block — the MOBILE genre grid, not a 'mid-breakpoint poster grid'; the actual poster grid (.browse-grid) uses 152px desktop / 108px mobile, and the evidence comment 'siblings use 200px/108px' mixes the two grids. The mislabel does not change validity or impact: it is a fluid-grid minimum with fractional rendered widths, so impact is nil and nit is the right severity."
+      }
+    ],
+    "web-tokens:refuted": [
+      "Footer wordmark set at 18px — not on the type ramp — The value reproduces (Footer.css:16 `font: 600 18px/1 var(--font-display)`, prod ships `font:600 18px/1`), but the finding matches the known-intentional rule: NUX wordmark sizes are explicitly allowed to vary per platform/context — the same rationale that exempts wordmark TEXT instances on hi-fi Figma screens from carrying a style. The web footer (18px, tertiary color) vs NavBar (24px) is exactly that sanctioned per-context variance; the wordmark is a logo treatment exempt from the type ramp by design, not a type-ramp violation. The finding itself concedes this ('the design system explicitly allows NUX wordmark sizes to vary per platform/context'), leaving only optional process advice (add a ramp step), which is not a defect. Per the verification rules, findings matching the intentional list must be refuted."
+    ],
+    "web-a11y": [
+      {
+        "title": "Filter chips use role=tablist/tab without the ARIA tabs keyboard pattern or tabpanels",
+        "severity": "major",
+        "where": "frontend/src/pages/Browse.jsx:58-70",
+        "detail": "The chip row is announced as a tablist (`role=\"tablist\" aria-label=\"Content type\"`, each chip `role=\"tab\" aria-selected`), but none of the required tabs behavior exists: no roving tabindex (all five chips stay in the Tab order), no Left/Right arrow-key handling, no `aria-controls`, and no element with `role=\"tabpanel\"`. Screen-reader users hear \"tab, 1 of 5, selected\", expect arrow-key navigation per the ARIA APG, and get nothing. Content remains reachable (they are real buttons), but the announced role lies about the interaction model. WCAG 4.1.2 Name, Role, Value (and 2.1.1 Keyboard via the pattern's expected operability). Fix: these are filters, not tabs — drop tablist/tab and use plain toggle buttons with `aria-pressed` (or a labelled radiogroup); alternatively implement the full APG tabs pattern (roving tabindex + arrow keys + tabpanel).",
+        "evidence": "<div className=\"browse-chips\" role=\"tablist\" aria-label=\"Content type\"> … <button type=\"button\" role=\"tab\" aria-selected={chip === c} … onClick={() => setChip(c)}> — no onKeyDown, no tabIndex management, no aria-controls/tabpanel anywhere in the file",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced at Browse.jsx:58-70: role=\"tablist\" + role=\"tab\" + aria-selected on all five chips, with zero supporting pattern — no onKeyDown, no tabIndex management, no aria-controls, and no role=\"tabpanel\" anywhere in the file or src/. Deployed bundle contains the same 'tablist'. Attempted refutation failed: chips remain operable via Tab+Enter (so not a blocker), but the announced role promises arrow-key navigation and panel association that don't exist — a genuine 4.1.2 role-mismatch on the page's primary filter control. Not covered by any known-intentional item. Major stands."
+      },
+      {
+        "title": "Live search/filter results are never announced (no status message)",
+        "severity": "major",
+        "where": "frontend/src/pages/Browse.jsx:88-106",
+        "detail": "Typing in the search field or clicking a chip re-renders the results heading, the `browse-count`, and the empty state with no `aria-live`/`role=\"status\"` region. A screen-reader user typing a query gets no feedback that results changed, how many matched, or that \"Nothing here yet\" appeared. WCAG 4.1.3 Status Messages (AA). Fix: add `aria-live=\"polite\"` (or role=status) to an element announcing e.g. \"12 results\" — the existing `<span className=\"browse-count\">` at line 91 is a natural host, or a visually-hidden status node debounced per keystroke.",
+        "evidence": "<h2 className=\"headline\">{query ? `Results for “${query}”` : 'All Titles'}<span className=\"browse-count\">{films.length}</span></h2> … {films.length > 0 ? … : <div className=\"browse-empty\">} — no aria-live anywhere in src/",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: grep for aria-live / role=\"status\" across src/ and the deployed JS bundle returns nothing. Browse.jsx:88-106 re-renders the heading, browse-count, and \"Nothing here yet\" empty state silently on every keystroke/chip click. Clear WCAG 4.1.3 (AA) gap on the core search interaction; the suggested host (browse-count span at line 91) exists as described. Major is right."
+      },
+      {
+        "title": "document.title is static across all SPA routes",
+        "severity": "major",
+        "where": "frontend/index.html:6 (+ no title management in src/pages/*)",
+        "detail": "The title is set once to \"NUX — Cinema for Curious Minds\" and never updated on route change — /browse, /my-list, and /film/:id all keep the same title, so screen-reader users and browser history/tabs cannot distinguish views. WCAG 2.4.2 Page Titled. Fix: set `document.title` per route (e.g. a small useEffect in each page or a shared <Title> helper): \"Browse — NUX\", \"My List — NUX\", `${film.title} — NUX`. Pairs with the route-focus finding below.",
+        "evidence": "<title>NUX — Cinema for Curious Minds</title>; grep for `document.title` in frontend/src returns nothing",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: index.html:6 sets \"NUX — Cinema for Curious Minds\" once; grep for document.title in src/ and in the deployed bundle returns zero hits; curl of the live site shows the same single title. Four routes (/, /browse, /my-list, /film/:id) are indistinguishable in tabs/history/AT. Combined with findings 2 and 4 this is the only navigation signal left, and it's absent — major confirmed."
+      },
+      {
+        "title": "No focus management on route change — focus drops to <body> after poster → detail navigation",
+        "severity": "major",
+        "where": "frontend/src/App.jsx:11-15",
+        "detail": "ScrollToTop only calls `window.scrollTo(0,0)`. When a PosterCard link is activated, the card unmounts on navigation and focus is lost to <body>; nothing announces the new view and the next Tab press restarts from the document top with no context. WCAG 2.4.3 Focus Order (route announcement also supports 4.1.3). Fix: on pathname change move focus to the new page's h1 (`tabIndex={-1}` + `.focus({preventScroll:true})`) or add a visually-hidden route announcer.",
+        "evidence": "function ScrollToTop() { const { pathname } = useLocation(); useEffect(() => window.scrollTo(0, 0), [pathname]); return null; } — no .focus() call or live region in the app shell",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced at App.jsx:11-15: ScrollToTop runs only window.scrollTo(0,0); no .focus() call, tabIndex={-1}, or live-region announcer exists anywhere in src/. PosterCard (Rail.jsx:23) unmounts on navigation, so focus falls to <body>. With no title change (finding 3) and no status region (finding 2), an SR user activating a poster gets literally no signal that anything happened. Major is right for an SPA whose every interaction is route navigation."
+      },
+      {
+        "title": "Footer copyright uses --text-disabled: 2.69:1 contrast, fails AA",
+        "severity": "major",
+        "where": "frontend/src/components/Footer.css:36-38 (rendered at Footer.jsx:13)",
+        "detail": "`.footer-copy { color: var(--text-disabled) }` paints real, non-disabled content text (\"© 2026 NUX\") in paper-700 #5c564c on ink-900 #0d0c0b at 12.5px = 2.69:1, far below the 4.5:1 requirement for small text. The disabled-control exemption does not apply to static text. WCAG 1.4.3 Contrast (Minimum). One-token fix: use `--text-tertiary` (paper-500 = 5.15:1, passes).",
+        "evidence": "Computed: contrast(#5c564c, #0d0c0b) = 2.69:1. Footer.jsx: <span className=\"footer-copy\">© 2026 NUX</span>",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly: Footer.css:36-38 .footer-copy { color: var(--text-disabled) } → paper-700 #5c564c on ink-900 #0d0c0b; independently recomputed contrast = 2.69:1 at 12.5px (inherits .footer-links 12.5px font). Same rule in deployed CSS (footer-copy{color:var(--text-disabled)}). \"© 2026 NUX\" is static text rendered via Footer on every route, so this is an unconditional 1.4.3 failure (the disabled exemption indeed doesn't apply); the proposed --text-tertiary fix passes at 5.15:1. Unconditional AA text-contrast failures are conventionally rated serious — major stands."
+      },
+      {
+        "title": "Focus indicator is box-shadow with outline:none — invisible in forced-colors / Windows High Contrast Mode",
+        "severity": "minor",
+        "where": "frontend/src/styles/global.css:60-64",
+        "detail": "`:focus-visible { outline: none; box-shadow: var(--focus-ring); }` — forced-colors mode strips box-shadows but honors outlines, so keyboard focus becomes completely invisible there. WCAG 2.4.7 Focus Visible (forced-colors context). Fix: replace `outline: none` with `outline: 2px solid transparent; outline-offset: 2px;` — invisible normally (box-shadow still shows), but forced-colors repaints the transparent outline. The amber two-layer ring itself (ink-900 inset + amber-500, 7.07:1 vs page) is otherwise excellent. Note Browse.css:48-51 also sets `input:focus { outline: none }` but the global :focus-visible ring plus the amber border still applies to text inputs, so that rule alone is not a failure.",
+        "evidence": ":focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-xs); } with --focus-ring: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--border-focus)",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: global.css:60-64 and the deployed CSS both ship :focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:var(--radius-xs)}. Forced-colors mode forces box-shadow to none but honors outline-style:none, so keyboard focus is invisible there; the transparent-outline fix is the standard remedy. The caveat about Browse.css:48-51 input:focus is accurate (amber border-color still indicates focus on the input). Scoped to forced-colors users only — minor is right."
+      },
+      {
+        "title": "Tertiary text on 72%-opacity glass chrome can fall below 4.5:1 over bright artwork",
+        "severity": "minor",
+        "where": "frontend/src/components/NavBar.css:8,43-44 and frontend/src/components/TabBar.css:24,38-40",
+        "detail": "Idle nav links (14px) and TabBar labels (10.5px) use --text-tertiary (paper-500) on `rgb(13 12 11 / 0.72)` + blur, fixed over scrolling content. On solid ink-900 the pair is 5.15:1 (pass), but the glass is only 72% opaque: over a bright blurred poster (#cccccc) the effective background is ~#424241 → paper-500 drops to 2.65:1; over #999999 → 3.32:1. The hero's top scrim protects the initial state, but mid-scroll bright art sits directly under both bars. WCAG 1.4.3 Contrast (Minimum). Fix: use --text-secondary (paper-300: 4.32:1 even over the #cccccc worst case) for idle chrome text, or raise the glass alpha to ~0.85.",
+        "evidence": "Computed: 0.72×ink-900 over #cccccc = #424241; contrast(#8a8275, #424241) = 2.65:1; paper-300 = 4.32:1; paper-100 = 8.77:1",
+        "verdict": "confirmed",
+        "verifyReason": "Math reproduces exactly: NavBar.css:8 and TabBar.css:24 both use rgb(13 12 11 / 0.72) fixed glass; 0.72×ink-900 composited over #cccccc = #424241, and paper-500 on that = 2.65:1 (over #999999 = 3.32:1); paper-300 = 4.32:1 and paper-100 = 8.77:1 over the same worst case, matching the proposed fix. Idle nav links (NavBar.css:43-44, 14px tertiary) and TabBar labels (10.5px tertiary) are real. Failure is conditional on bright content scrolling under the bars (catalog art is mostly dark), so minor — not major — is the right call. Confirmed as filed."
+      },
+      {
+        "title": "Active desktop nav link is distinguished visually by lightness alone",
+        "severity": "nit",
+        "where": "frontend/src/components/NavBar.css:54-56",
+        "detail": "`.nav-links a.active { color: var(--text-primary) }` — the only visual difference between the current page link (paper-100) and the others (paper-500) is text lightness; no underline, weight, or marker. React Router's NavLink does add `aria-current=\"page\"` automatically, so AT users are covered, and the ~3.3:1 luminance step is perceivable — but low-vision users scanning the bar get no shape cue, and hover uses a similar lightness shift. WCAG 1.4.1 Use of Color (visual-only aspect; programmatic state passes). Fix: add a small underline/dot to `.active` — the mobile TabBar already does this right (filled paper-100 pill, 17:1).",
+        "evidence": ".nav-links a { color: var(--text-tertiary) } / .nav-links a.active { color: var(--text-primary) } — no other declaration changes",
+        "verdict": "downgraded",
+        "verifyReason": "Facts reproduce (NavBar.css:54-56: only color changes, paper-500 → paper-100; same in deployed CSS), but there is no normative WCAG failure: NavLink emits aria-current=\"page\" (react-router-dom 7.17.0), and the measured luminance delta between active and idle link text is 3.31:1 — above the 3:1 distinguishability threshold (G183-style), with a hover color shift and the amber focus ring as additional cues. The finding itself concedes 1.4.1's programmatic aspect passes. A purely visual-affordance enhancement (add an underline/dot) with no conformance failure is a nit, not a minor."
+      },
+      {
+        "title": "Touch targets under 44px: chips 36px, search-clear 24px, avatar 32px",
+        "severity": "minor",
+        "where": "frontend/src/pages/Browse.css:80 (chip), Browse.css:62-63 (browse-clear), frontend/src/components/NavBar.css:84-85 (nav-avatar)",
+        "detail": "All pass WCAG 2.2 AA 2.5.8 Target Size (Minimum, 24px) — chip height 36px, clear button exactly 24×24, avatar 32×32 — but all miss the 44px HIG/AAA guidance (2.5.5) on touch viewports: the chips and clear button are core mobile interactions, and the avatar stays visible at ≤768px. The clear button at exactly 24px inside the field is the hardest to hit. Fix: chips → 44px (or min-height 44 with same visual pill via padding), browse-clear → 32-44px hit area (padding, keep 12px glyph), avatar → 44px hit area. For completeness: TabBar items (~51×76) and tabbar-search (52×52) pass 44px; .rail-seeall (~13px tall, Rail.css:20) and footer links (12.5px/1, Footer.css:24) survive 2.5.8 only via the spacing exception — adding vertical padding would be cheap insurance.",
+        "evidence": ".chip { height: 36px; … } / .browse-clear { width: 24px; height: 24px; } / .nav-avatar { width: 32px; height: 32px; } — nav-avatar is not hidden in the ≤768px media query",
+        "verdict": "confirmed",
+        "verifyReason": "All measurements reproduce in source and deployed CSS: .chip{height:36px} (Browse.css:80), .browse-clear{width:24px;height:24px} (Browse.css:62-63), .nav-avatar{width:32px;height:32px} (NavBar.css:84-85), and the ≤768px media query hides only .nav-links and .nav-search, so the 32px avatar does stay visible on touch viewports. The finding correctly concedes everything passes WCAG 2.2 AA 2.5.8 (24px) — the gap is the 44px HIG/AAA bar. Given this project explicitly targets Apple HIG/iOS 26 conventions, minor (not nit) is fair, with the 24px in-field clear button as the sharpest case. Confirmed as filed."
+      },
+      {
+        "title": "No skip link to bypass the fixed header",
+        "severity": "minor",
+        "where": "frontend/src/App.jsx:17-31",
+        "detail": "Keyboard users tab through wordmark + 3 nav links + search + avatar (6 stops) on every page before reaching content. WCAG 2.4.1 Bypass Blocks is technically satisfied via landmarks (header/nav[aria-label]/main/footer are all present and correct — verified on all four pages, exactly one h1 each, no heading-level skips), but landmarks only help AT users; sighted keyboard users get nothing. Fix: a visually-hidden-until-focused \"Skip to content\" link before <NavBar /> targeting the page <main>.",
+        "evidence": "App shell renders <NavBar /> before <Routes>; no skip link element exists in the codebase (grep 'skip' returns nothing)",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: no skip link in App.jsx:17-31 or anywhere in src/ or the deployed bundle (grep 'skip'/'Skip to content' returns nothing). Landmark claims verified — header/nav[aria-label=Primary]/main/footer present, one h1 per page (Hero, Browse, MyList, FilmDetail) — so 2.4.1 has a sufficient technique (ARIA11) and this is not a normative failure; but sighted keyboard users face 6 chrome tab stops, compounded by finding 4 (focus resets to body on every route change, forcing the full re-traverse). Minor is the right level."
+      },
+      {
+        "title": "Cast photo alt duplicates the adjacent visible name",
+        "severity": "minor",
+        "where": "frontend/src/pages/FilmDetail.jsx:64",
+        "detail": "`<img src={person.photo} alt={person.name} />` is immediately followed by `<p className=\"poster-card-title\">{person.name}</p>`, so screen readers announce each cast member twice (\"Joseph Cotten, image. Joseph Cotten, Holly Martins\"). Not a 1.1.1 Non-text Content failure (an alternative exists) but a redundancy defect against the project's otherwise consistent decorative-alt strategy — every other img (hero, posters, stills, genres, editorial, avatar) correctly uses alt=\"\" with adjacent text, all verified. Fix: alt=\"\" on the cast photo, matching the rest.",
+        "evidence": "<img src={person.photo} alt={person.name} loading=\"lazy\" /> <p className=\"poster-card-title\">{person.name}</p> <p className=\"metadata\">{person.role}</p>",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced at FilmDetail.jsx:64: alt={person.name} immediately followed by the identical visible name at line 65 — each cast member announced twice. The consistency claim verified by grep: all seven other <img> instances in the codebase (Browse genre, Home editorial, FilmDetail hero, both Rail cards, NavBar avatar, Hero backdrop) use alt=\"\" with adjacent text. Not a 1.1.1 failure, as the finding states, but a real SR-verbosity/consistency defect on every detail page. Minor confirmed."
+      },
+      {
+        "title": "Genre cards are <button> elements with no action",
+        "severity": "nit",
+        "where": "frontend/src/pages/Browse.jsx:78-83",
+        "detail": "Each genre card is a real `<button type=\"button\">` (good semantics) but has no onClick — it focuses, announces as a button, and does nothing when activated. Same scope-cut family as the stubbed Play/See-all/footer links, so filed as nit only: when genre filtering ships, wire it; until then consider `aria-disabled` or rendering as a non-interactive element so AT users aren't promised an action.",
+        "evidence": "<button type=\"button\" className=\"genre-card\" key={g.id}><img …/><span>{g.label}</span></button> — no onClick handler",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced at Browse.jsx:78-83: real <button type=\"button\"> with no onClick — focusable, announced as actionable, does nothing. Checked against the known-intentional list: genre cards are NOT among the enumerated scope cuts (See-all, footer anchors, Play, avatar, Games/Courses chips, My List), and the policy for that family permits nit-level flagging, which is exactly how it's filed. Confirmed at nit."
+      },
+      {
+        "title": "Stray declaration: .poster-card outline-offset has no effect",
+        "severity": "nit",
+        "where": "frontend/src/components/Rail.css:58",
+        "detail": "`.poster-card { outline-offset: 4px }` is dead: the global `:focus-visible` rule replaces the outline with a box-shadow ring (outline: none), so outline-offset never renders. Either remove it, or — if the intent was a breathing-room focus ring on posters — it dovetails with the forced-colors fix: switch the global rule to a transparent outline and this offset starts working. Code-hygiene scan otherwise clean: all .map() calls keyed (film ids, item.filmId, person.name, label, chip string, g.id), `viewTransition` is a valid react-router v7 Link prop, and lowercase `fetchpriority` passes through React 18 without console warnings.",
+        "evidence": ".poster-card { display: grid; gap: var(--space-2); outline-offset: 4px; } vs global.css :focus-visible { outline: none; box-shadow: var(--focus-ring); }",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: Rail.css:58 ships outline-offset:4px on .poster-card (also in deployed CSS: .poster-card{display:grid;gap:var(--space-2);outline-offset:4px}) while global.css:60-64 sets outline:none in :focus-visible, so the offset never renders — dead code, correctly noted as dovetailing with the forced-colors fix. Side claims verified: react-router-dom 7.17.0 (viewTransition is a valid v7 Link prop), react 18.3.1 (lowercase fetchpriority passes through without warnings), and every .map() in Browse/FilmDetail/TabBar/Rail call sites is keyed. Nit confirmed."
+      },
+      {
+        "title": "Verified pass (no action): tertiary metadata contrast, document basics, reduced motion, keyboard reach",
+        "severity": "nit",
+        "where": "frontend/src/styles/tokens.css:51,122 / global.css:113-117,140-156 / index.html:2-6",
+        "detail": "Refuting the brief's suspected failure: --text-tertiary paper-500 #8a8275 on page ink-900 #0d0c0b measures 5.15:1 (not ~4.6:1), so 12.5px metadata, hero meta, fd-details dt, and browse-count all PASS 4.5:1 on solid surfaces (on raised ink-800: 4.84:1, also passes — placeholder included; the only tertiary risk is the translucent-glass case filed separately). Also verified passing: html lang=\"en\", descriptive title, viewport without maximum-scale/user-scalable locks (1.4.4); amber-500 eyebrows 7.07:1; ink-900-on-amber-500 buttons 7.07:1; active chip/TabBar pill 17.03:1; prefers-reduced-motion kills all animations, transitions AND ::view-transition-* pseudos (2.3.3 coverage incl. the poster→hero morph); every action is a real <a>/<button> and keyboard-reachable including both TabBar tabs and the detached search FAB; the two \"Primary\" nav landmarks are never exposed simultaneously (mutually exclusive display:none at the 768px breakpoint); Browse search input has type=\"search\" + aria-label; search autofocus via ?search=1 is user-initiated.",
+        "evidence": "Computed: contrast(#8a8275,#0d0c0b)=5.15:1; contrast(#8a8275,#161412)=4.84:1; contrast(#c8922a,#0d0c0b)=7.07:1; contrast(#f2efe9,#0d0c0b)=17.03:1",
+        "verdict": "confirmed",
+        "verifyReason": "All spot-checks independently reproduce: contrast(#8a8275,#0d0c0b)=5.15:1, contrast(#8a8275,#161412)=4.84:1 (search input bg is ink-800, placeholder included), contrast(#c8922a,#0d0c0b)=7.07:1, contrast(#f2efe9,#0d0c0b)=17.03:1, ink-900-on-amber 7.07:1. html lang=\"en\" and viewport without scale locks confirmed in index.html and on the live site; prefers-reduced-motion block (global.css:140-156) covers animations, transitions, AND all four ::view-transition-* pseudos; the two aria-label=\"Primary\" navs are mutually exclusive at 768px (NavBar.css:104-107 hides .nav-links; TabBar.css:10/75-79 shows .tabbar-wrap only ≤768); all actions are <a>/<button>/NavLink including TabBar items and the detached search FAB; Browse input has type=\"search\" + aria-label; ?search=1 autofocus is reached only via explicit Search links (NavBar.jsx:21, TabBar.jsx:49). Pass-verification stands."
+      }
+    ],
+    "web-a11y:refuted": [],
+    "web-responsive": [
+      {
+        "title": "Film detail page overflows horizontally at every viewport below ~1440px — body sections pinned at intrinsic rail width",
+        "severity": "blocker",
+        "where": "/film/the-third-man + /film/brief-encounter at 1280x800 (144px), 1024x768 (400px), 834x1112 (590px), 768x1024 (204px), 390x844 (582px), 360x780 (612px); root cause frontend/src/pages/FilmDetail.css:74-80 (.fd-body { display: grid })",
+        "detail": "On every /film/* route, document.scrollingElement.scrollWidth exceeds innerWidth at all tested widths under 1440 (it fits at 1440/1920 by luck: 1424 <= 1425 available). The whole page pans sideways into dead black space; the 'More Like This' rail and 'Cast & Crew' row do NOT scroll internally (rail-scroll scrollWidth == clientWidth), so users reach cards/details values by dragging the page; the rail's 'See all' link sits at x=899-956 on a 390px screen, and details dd values extend to x=736 (e.g. 'Joseph Cotten, Alida Valli, Orson Welles' is ~2 screens to the right). Mechanism: .fd-body is display:grid, so section.rail/.fd-section are grid items whose min-width:auto resolves to the rail's intrinsic min-content width — desktop: 7 posters x 168px + 6 x 20px gap + 2 x 64px padding = exactly 1424px; <=768 media query: 7 x 124px + 6 x 12px + 2 x 16px + scroll padding = 972px. Home is unaffected because rails there sit in a block container. Live-verified fix on production DOM: adding `.fd-body > * { min-width: 0; max-width: 100%; }` collapses overflow to 0 and makes both .rail-scroll and .fd-cast proper internal scrollers (also works: making .fd-body display:block; NOT sufficient: grid-template-columns: minmax(0,1fr) alone, or min-width:0 alone — Chromium still sizes the track to the scroll container's intrinsic width without the max-width clamp).",
+        "evidence": "Sweep offenders: section.fd-section/section.rail right=1424,left=0 at 1280/1024/834; right=972 at 768/390/360. Screenshot audit-834-film.jpeg shows nav+hero at 834px with body sections extending to 1424px; audit-390-film.jpeg shows sections laid out across 972px vs 390px viewport. Fix test: overflow 582 -> -15, railScrollable false -> true, railW 972 -> 375.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced from code + deployed bundle (index-D-lcfRyp.css identical to source). FilmDetail.css:74-80 has .fd-body{display:grid}; grid items .rail/.fd-section keep overflow:visible so min-width:auto = min-content contribution, which includes the inner scroll container's full content (the scroll container .rail-scroll is not the grid item, so the zero-automatic-minimum rule does not apply). Token math matches the claim exactly: desktop 7x168 + 6x20 (--space-5:20px) + 2x64 (--space-16:64px) = 1424px; <=768: 7x124 + 6x12 (--space-3) + 2x16 (--space-4) = 972px (rail-scroll's 8px padding nets out against its -8px margin). All six reported overflow deltas equal track-minus-viewport precisely (144/400/590/204/582/612), and related for the-third-man yields exactly 7 PosterCards (18 FILM candidates, slice(0,7)). No min-width:0 or max-width clamp exists anywhere in the production CSS. Home.css confirms .home-rails is a plain block, so only /film/* is hit — consistent. Core content page unusable below 1440 (page pans into dead space, rails not internally scrollable): blocker is the right severity."
+      },
+      {
+        "title": "Footer links permanently hidden behind floating TabBar at <=768 — no bottom padding compensation on any page",
+        "severity": "major",
+        "where": "All routes (/, /browse, /my-list, /film/*, /browse?search=1) at 768x1024, 390x844, 360x780; frontend/src/components/TabBar.css:4-16 (fixed, bottom:12px, z-index:100) — no matching padding-bottom anywhere in src/**.css",
+        "detail": "The iOS-26 floating tab bar is position:fixed at the bottom with z-index 100, but no page, footer, or body rule adds bottom padding at <=768 (grep over all CSS finds zero padding-bottom compensation). At maximum scroll the footer's link row (About / Help / Privacy / Terms / (c) 2026 NUX) sits inside the tab bar's box and can never be scrolled clear of it: at 390x844 the links' bottom edge is y=820 while the tab bar occupies y=773-832; at 768x1024 links bottom=1000 vs bar 953-1012; at 360x780 links bottom=750-756 vs bar 709-768. The pill and the detached search circle (pointer-events:auto) visually cover and intercept taps on these links — they are illegible and mostly untappable on phones. /my-list at 768 escapes only because the page is shorter than the viewport. Fix: add ~96px bottom padding to the footer (or main) inside the <=768 media query, e.g. padding-bottom: calc(76px + env(safe-area-inset-bottom) + var(--space-6)).",
+        "evidence": "Screenshot audit-390-footer-tabbar.jpeg (scrolled to scrollTop=4085, the max) shows 'About' half-behind the pill's left edge and '(c) 2026 NUX' behind the search circle. Sweep behindTabbar arrays list all 5 footer links + wordmark overlapping the tab bar box on every scrollable route at 768/390/360.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced from code: TabBar.css:4-16 is position:fixed, bottom:calc(12px + safe-area), z-index:100, display:flex at <=768, with pointer-events:auto on .tabbar and .tabbar-search. grep over all source CSS AND the deployed bundle finds zero padding-bottom declarations — no inset compensation exists. Geometry checks out: footer-inner's only bottom inset is 24px (--space-6), so at max scroll the links row bottom sits 24px above the viewport bottom (844-24=820, matching the reported y=820), inside the pill's computed zone (pill height ~59.5px -> y 772.5-832, matching reported 773-832). Both bars are horizontally centered (~308px pill+search vs ~327px links row) so they overlap. App.jsx renders Footer+TabBar on every route. The links being #anchor stubs is on the intentional list, but this finding is about occlusion/missing content inset, which is not — and it breaks the iOS floating-tab-bar pattern the project explicitly emulates, on every scrollable route on phones. Major stands."
+      },
+      {
+        "title": "Footer floats mid-screen on short pages — ~240px of bare page background below it (no sticky-footer layout)",
+        "severity": "minor",
+        "where": "/my-list at 1440x900 and 834x1112 (also 1920x1080); frontend/src/styles/global.css:17-24 (body has min-height:100vh but #root has no flex column layout)",
+        "detail": "On routes whose content is shorter than the viewport (My List with 6 items), the footer renders directly after the grid and ~240px (1440x900) / ~150px (834) of empty ink-900 background hangs below it, making the page look unfinished. Standard fix: #root { min-height: 100vh|100dvh; display: flex; flex-direction: column; } with main { flex: 1; } so the footer anchors to the viewport bottom on short pages.",
+        "evidence": "Screenshot audit-1440-mylist.jpeg: footer bottom at ~y=660 of a 900px viewport with dead space below; audit-834-mylist.jpeg shows the same pattern.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced from code: global.css:17-24 gives body min-height:100vh but no CSS file in src (or the deployed bundle) contains any #root rule or flex-column page shell; main has no flex:1. MyList.jsx renders exactly 6 PosterCards (SAVED array), one grid row at 1440 -> page shorter than 900px viewport, so the footer sits directly after the grid with bare ink-900 below. The exact ~240px figure comes from their screenshot, but the mechanism is unambiguous from code and the proposed fix is standard. Minor (cosmetic, short routes only) is the right severity."
+      },
+      {
+        "title": "Backdrop-less film fallback blows a 2:3 poster up into the 78vh wide-screen hero — giant cropped credits text on desktop/tablet",
+        "severity": "minor",
+        "where": "/film/brief-encounter at 1440x900 and 834x1112; frontend/src/pages/FilmDetail.jsx:26 (src={film.backdrop || film.poster}) + FilmDetail.css:14-18 (object-fit: cover)",
+        "detail": "Brief Encounter (no backdrop, no synopsis, no cast) falls back to the portrait poster as hero art. object-fit:cover crops a 2:3 image into a ~16:6 region, so at 1440 the hero is dominated by a heavily magnified slice of the poster's credits block ('CELIA JOHNSON / TREVOR HOWARD / STANLEY HOLLOWAY...') — low-res, awkward focal crop, and visually competes with the real H1 underneath. At 390 (portrait viewport) the same fallback composes acceptably. Everything else about the fallback is correct: cast section properly omitted, details table shows only Genre/Release, no 'undefined' text, no console errors. Suggest a poster-specific hero treatment (blurred poster fill + scrim, or shorter hero) when film.backdrop is absent.",
+        "evidence": "Screenshot audit-1440-film-fallback.jpeg vs audit-390-film-fallback.jpeg; live DOM: .fd-art img naturalWidth/Height ratio 2:3 stretched over a 1440x~630 box.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced from code: catalog.js:34 shows brief-encounter has poster only (no backdrop, synopsis, or cast); FilmDetail.jsx:26 uses src={film.backdrop || film.poster}; .fd-hero{min-height:78vh} + .fd-art img{object-fit:cover; width/height:100%} (FilmDetail.css:1-18) means a 2:3 portrait image is width-fit to 1440px (~2160px tall) and center-cropped to ~700px — a ~3.4x magnified low-res middle slice. The claim that the visible slice is specifically the credits block rests on their screenshot, but the crop-magnification defect itself is unambiguous from code, and the secondary claims check out (cast section conditionally omitted via {film.cast && ...}, details reduce to Genre/Release since only genre and year exist, details.filter removes undefined values). At 390x844 the hero box (~0.59 aspect) nearly matches 2:3, so phone composes acceptably — consistent. Minor confirmed: one film, fallback path, content still readable."
+      },
+      {
+        "title": "Details table keeps the fixed 160px dt column at phone widths — values squeezed to ~174px once the overflow bug is fixed",
+        "severity": "minor",
+        "where": "/film/the-third-man at 390x844 and 360x780; frontend/src/pages/FilmDetail.css:94-100 (.fd-details-row { grid-template-columns: 160px 1fr; gap: var(--space-6) })",
+        "detail": "There is no <=768 override for .fd-details-row, so the label column stays 160px + 24px gap. Today this is masked by the page-level overflow (dd values render at x=200-736 on a 972px-wide section); once finding #1 is fixed the dd column gets 390 - 32 (padding) - 160 - 24 = 174px (144px at 360) — long values like the 3-name Cast row wrap to 3+ lines against a half-empty label column. Recommend narrowing dt (e.g. 96px) and gap to var(--space-4) under 768px, or stacking dt above dd.",
+        "evidence": "Live measurement at 390: sectionW=972, dtW=160, ddW=536, ddRight=736 (pre-fix); simulated post-fix dd width 174px. dt strings are short ('Director', 'Runtime') — max ~70px of actual text.",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced from code: FilmDetail.css:94-100 hard-codes grid-template-columns:160px 1fr with gap --space-6 (24px), and the only <=768 media query (lines 145-156) adjusts just .fd-content/.fd-section padding and .fd-title — no .fd-details-row override, in source or the deployed bundle. Post-fix arithmetic verified with token values: 390 - 2x16 (--space-4 section padding) - 160 - 24 = 174px; 360 - 32 - 160 - 24 = 144px. The Cast dd is the 3-name slice(0,3) join ('Joseph Cotten, Alida Valli, Orson Welles', confirmed in catalog.js), ~250px+ at 14px, so 2-3+ wrapped lines against a half-empty 160px label column whose longest label ('Language'/'Director') needs ~70px. Correctly framed as latent (currently masked by finding 1). Minor is right."
+      }
+    ],
+    "web-responsive:refuted": [],
+    "web-perf": [
+      {
+        "title": "510KB PNG for a 32px avatar, loaded on every page",
+        "severity": "major",
+        "where": "frontend/src/components/NavBar.jsx:29 + NavBar.css:83 (https://nux.ontwrpn.com/assets/avatar-user.png)",
+        "detail": "avatar-user.png is 510,157 B at 600x600 px, but .nav-avatar renders it at 32x32 (64px needed @2x DPR) — ~9.4x linear / ~88x pixel-count oversize. NavBar mounts on every route, so this is 510KB of the cold-load on /, /browse, /my-list and /film/:id alike. A 64-96px JPEG/WebP crop would be ~3-8KB, a >99% saving and the single cheapest win in the whole audit.",
+        "evidence": "curl -sI: content-length: 510157; sips: 600x600; NavBar.css .nav-avatar { width: 32px; height: 32px }",
+        "verdict": "confirmed",
+        "verifyReason": "Fully reproduced. curl -sI returns content-length: 510157 with content-type: image/png; sips confirms 600x600. NavBar.css:83-89 renders .nav-avatar at 32x32px (img at 100%/object-fit:cover), i.e. 64px needed at 2x DPR — 9.4x linear / ~88x pixel-count oversize. App.jsx mounts <NavBar /> outside <Routes>, so the image is part of cold load on any entry route (/, /browse, /my-list, /film/:id). Largest single wasted asset relative to rendered size in the app; major is the right severity."
+      },
+      {
+        "title": "LCP hero image is 548KB and discovered only after JS executes",
+        "severity": "major",
+        "where": "frontend/src/components/Hero.jsx:11 (https://nux.ontwrpn.com/assets/stills/still-lawrence-of-arabia-2.jpg)",
+        "detail": "The Home hero backdrop (still-lawrence-of-arabia-2.jpg) is 548,448 B at 1600x669 — over the 400KB budget; a q~70 re-encode of the same 1600w frame should land ~250-300KB. Dimensions are fine for a full-width hero. Bigger issue: the URL lives in the JS bundle, and index.html has no <link rel=preload>, so the LCP request chain is HTML → 74.8KB JS (gzip) → React render → image fetch. fetchpriority=\"high\" is correctly set (verified in Hero.jsx, and React 18 passes the lowercase attribute through to the DOM) but only helps after late discovery. Add <link rel=\"preload\" as=\"image\" href=\"/assets/stills/still-lawrence-of-arabia-2.jpg\" fetchpriority=\"high\"> to index.html plus recompress.",
+        "evidence": "content-length: 548448; sips 1600x669; dist/index.html head contains only the JS/CSS tags — no preload",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced. content-length: 548448, sips 1600x669. The served index.html head contains exactly charset, viewport, title, the module script (/assets/index-NILHAvcl.js) and stylesheet — no <link rel=preload>, so the request chain is HTML → 74,837 B gzip JS → React render → image. Hero.jsx:11 does set fetchpriority=\"high\" (lowercase; React 18.3.1 per package.json passes unknown lowercase attrs to the DOM, so the claim about React 18 is accurate), which only helps after late discovery. Recompress + preload recommendation is sound. Major holds for the page's LCP asset."
+      },
+      {
+        "title": "Continue Watching stills ship 1600px wide for a ≤330px rail; two exceed 400KB",
+        "severity": "major",
+        "where": "frontend/src/data/catalog.js:80-84 (rendered by Rail.jsx ContinueCard, /assets/stills/*)",
+        "detail": "The 4 Continue Watching stills on / total 1,188,107 B near the top of the page: still-lawrence-of-arabia.jpg 411,131 B (1600x670) and still2-red-shoes.jpg 447,662 B (1600x1298) both break the 400KB cap; still-third-man.jpg 162,396 B and still-black-narcissus.jpg 166,918 B are 1600px wide too. ContinueCards render ≤330px wide (660px @2x), so sources carry ~2.4x linear / ~5.9x pixel-count excess. Resizing to 660w would cut this group ~75-80% (~1.19MB → ~0.25-0.30MB). Note still2-red-shoes doubles as the Red Shoes film-detail backdrop, so either keep a large variant for that route or serve two sizes.",
+        "evidence": "sips + stat: 411,131 B @1600x670; 447,662 B @1600x1298; 4-file sum 1,188,107 B; rendered ≤330px per rail spec",
+        "verdict": "confirmed",
+        "verifyReason": "All numbers exact: still-lawrence-of-arabia.jpg 411,131 B @1600x670, still2-red-shoes.jpg 447,662 B @1600x1298, still-third-man.jpg 162,396 B @1600x1196, still-black-narcissus.jpg 166,918 B @1600x1103; sum 1,188,107 B. Home.jsx renders the Continue Watching rail with wide=true → Rail.css .rail-scroll--wide grid-auto-columns: 296px, so the ≤330px render claim is correct (actually 296px, making the oversize slightly worse than stated). catalog.js confirms still2-red-shoes.jpg doubles as the-red-shoes' film-detail backdrop, so the two-size caveat is accurate. 1.19MB of above-the-fold-adjacent imagery justifies major."
+      },
+      {
+        "title": "Poster set is ~2.5x oversize: 3.15MB across 21 JPEGs for ≤220px cards",
+        "severity": "minor",
+        "where": "frontend/public/assets/posters/ (used by all 3 Home rails and the full /browse grid)",
+        "detail": "All 21 referenced posters are ~700x1050 px (86,969-235,044 B each, sum 3,146,274 B) but render at ≤220px wide (440px needed @2x) — ~1.6x linear / ~2.5x pixel-count more than needed even for retina. Heaviest: poster-lawrence-of-arabia.jpg 235,044 B, poster-third-man.jpg 215,714 B, poster-peeping-tom.jpg 206,099 B. Resizing to 440x660 would roughly halve the set to ~1.4-1.6MB, benefiting both / (21 posters across rails) and /browse (same 21 in the grid). All are loading=\"lazy\" (verified Rail.jsx:25), which softens but does not remove the cost — Chrome's lazy threshold (1250-2500px) fetches most of them shortly after load anyway.",
+        "evidence": "stat sum 3,146,274 B over 21 files; sips ~700x1050 each vs 220px (440 @2x) rendered",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly: 21 poster files sum 3,146,274 B; sips shows 684-756 x 1050 across the set; heaviest are poster-lawrence-of-arabia.jpg 235,044 B, poster-third-man.jpg 215,714 B, poster-peeping-tom.jpg 206,099 B. Render widths verified: Rail.css grid-auto-columns: 168px (desktop rails, 124px mobile) and Browse.css .browse-grid minmax(152px,1fr) (~170px at 1440w) — both under the claimed 220px, so the oversize ratio is actually slightly understated (~2.1x linear at 2x vs the stated 1.6x). loading=\"lazy\" confirmed on the PosterCard img in Rail.jsx. Minor is right: lazy-loaded, individually reasonable files, aggregate cost only."
+      },
+      {
+        "title": "Page-weight estimate: / ≈ 6.0MB fully loaded (~2.5MB first viewport), /browse ≈ 5.25MB images",
+        "severity": "minor",
+        "where": "https://nux.ontwrpn.com/ and /browse, desktop viewport",
+        "detail": "Cold / first-viewport: 417 B HTML + 74,837 B JS (gzip; 199,169 raw) + 6,183 B CSS (gzip; 25,145 raw) + 142,960 B fonts (3 latin woff2) + 65,880 B noise-grain.png + 510,157 B avatar + 548,448 B hero + 1,188,107 B CW stills = 2,536,989 B ≈ 2.54MB; with ~6 in-threshold Trending posters (~1.09MB) realistic initial load is ~3.6MB. Fully scrolled / adds the remaining posters (21 total: 3,146,274 B) and the editorial still still-matter-life-death.jpg (329,875 B, lazy, 1600x1278) → ≈ 6.01MB. /browse: 12 genre cards 2,099,761 B (1200x805 each — acceptable for ≤480px cards @2x at 1.25x) + 21 posters 3,146,274 B = 5,246,035 B images + ~224KB shell. ~93% of page weight is imagery; the avatar/hero/CW-still fixes above plus poster resizing would bring / under ~3MB. Code payload itself is healthy for a demo (75KB JS gzip, single bundle, no source maps leaked — .map URLs 404 and the bundle has no sourceMappingURL).",
+        "evidence": "curl size_download 74,837 (JS) / 6,183 (CSS); component sums measured via stat/sips listed per finding",
+        "verdict": "confirmed",
+        "verifyReason": "Every measurable component re-derived and matches: HTML 417 B, JS 74,837 B gzip (199,169 raw), CSS 6,183 B gzip (25,145 raw), latin font trio 142,960 B, noise-grain.png 65,880 B, avatar 510,157 B, hero 548,448 B, CW stills 1,188,107 B → 2,536,989 B exactly. Full /: + posters 3,146,274 B + still-matter-life-death.jpg 329,875 B (1600x1278, lazy, confirmed as EDITORIAL_PICK.image) = 6,013,138 B ≈ 6.01MB. /browse: 12 GENRES images sum exactly 2,099,761 B (1200x805 each) + 21 posters = 5,246,035 B. Source maps verified absent (.map → 404, no sourceMappingURL in bundle). One quibble that does not change totals: genre cards render ~205px via minmax(200px,1fr) at 1440w, not the assumed ≤480px, so genre imagery is less 'acceptable' than the finding allows — if anything the estimate is conservative. Minor is appropriate for an aggregate estimate."
+      },
+      {
+        "title": "index.html served with no Cache-Control — stale-HTML / white-screen window after deploys",
+        "severity": "minor",
+        "where": "https://nux.ontwrpn.com/ (nginx config)",
+        "detail": "The / response has etag + last-modified but zero Cache-Control header, so browsers apply heuristic freshness (~10% of time since last-modified). After a redeploy the old cached index.html can keep referencing the previous hashed bundle (e.g. /assets/index-NILHAvcl.js), which no longer exists in the new dist → 404 → blank app until revalidation. Add 'Cache-Control: no-cache' (or max-age=0, must-revalidate) for index.html / the SPA fallback location.",
+        "evidence": "curl -sI https://nux.ontwrpn.com/ | grep -ci cache-control → 0; assets are content-hashed so old filenames disappear on each build",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: curl -sI https://nux.ontwrpn.com/ returns etag \"6a2b9669-1a1\" and last-modified but zero cache-control header (grep -ci → 0), while assets are content-hashed (index-NILHAvcl.js / index-D-lcfRyp.css) and old filenames disappear on rebuild. Heuristic freshness (~10% of time-since-last-modified) creates a real, growing window where a cached index.html references a vanished bundle → 404 → blank SPA until revalidation. The proposed Cache-Control: no-cache on the SPA fallback is the standard fix. Minor is right: intermittent, self-healing, deploy-frequency-dependent."
+      },
+      {
+        "title": "HTML head: favicon request answered with index.html (200 text/html), no meta description, no OG tags",
+        "severity": "minor",
+        "where": "frontend/index.html head (https://nux.ontwrpn.com/favicon.ico)",
+        "detail": "There is no <link rel=\"icon\">, and /favicon.ico hits the SPA fallback: HTTP 200, content-type: text/html, content-length: 417 (it is literally index.html). Refines the known 'favicon 404s' — it never 404s, it 200s with HTML, so the browser retries instead of caching a miss and the tab icon stays blank. Head also lacks <meta name=\"description\"> and all og:/twitter: tags (only <title> exists), so shared links render bare — notable for a content platform demo. Fix: add a real favicon (even a 1KB SVG/PNG + link tag) and a description + og:title/og:description/og:image (a poster or hero still already on the domain).",
+        "evidence": "curl -sI /favicon.ico → 200, content-type: text/html, content-length: 417; dist/index.html head = charset, viewport, title, script, stylesheet only",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: curl -sI /favicon.ico → HTTP 200, content-type: text/html, content-length: 417, and the body is literally index.html (SPA fallback), so the browser never caches a miss — the 200-with-HTML refinement is accurate. The served head contains only charset, viewport, <title>, script and stylesheet: no <link rel=icon>, no <meta name=description>, no og:/twitter: tags. Not on the known-intentional list (which covers in-app anchor stubs, not document metadata). Minor fits for a publicly-deployed content-platform demo whose links will be shared."
+      },
+      {
+        "title": "Three variable font families shipped (~397KB in dist, ~143KB fetched/page); Newsreader serves a single CSS rule",
+        "severity": "nit",
+        "where": "frontend/src/main.jsx:4-6 + src/styles/tokens.css:106-108",
+        "detail": "Fontsource imports Fraunces + Inter + Newsreader variable fonts: 13 woff2 files, 406,548 B in dist. Thanks to unicode-range, a Latin page fetches 3 files = 142,960 B (Inter 48,256 + Fraunces 36,620 + Newsreader 58,084) — reasonable. But --font-essay (Newsreader) is used by exactly 1 selector vs 17 for --font-ui and 7 for --font-display; dropping it (or deferring to the editorial route) saves 58KB per cold load and 106KB in dist. Demo-scale judgement call — the tri-font system is a deliberate editorial identity.",
+        "evidence": "grep var(--font-essay) → 1 use; dist woff2 sum 406,548 B; latin trio 142,960 B",
+        "verdict": "confirmed",
+        "verifyReason": "Byte measurements all reproduce exactly: 13 woff2 in dist totalling 406,548 B; latin trio fetched per page = 142,960 B (Inter 48,256 + Fraunces 36,620 + Newsreader 58,084); dropping Newsreader saves 106,260 B in dist. One factual correction: the 'exactly 1 selector / single CSS rule' claim undercounts because grepping var(--font-essay) only hits the --type-essay token definition in tokens.css:128 — the token is consumed by 2 rules on 2 routes (.editorial-dek in Home.css:25 and .fd-synopsis in FilmDetail.css:63), so removing Newsreader changes visible body text on both Home and FilmDetail, not one obscure rule. The substance (58KB/cold-load for marginal use, deliberate tri-font identity, judgement call) and nit severity stand."
+      },
+      {
+        "title": "Hashed JS/CSS/font assets cached only 7 days instead of immutable 1 year",
+        "severity": "nit",
+        "where": "nginx config for /assets/ (https://nux.ontwrpn.com/assets/index-NILHAvcl.js)",
+        "detail": "Content-hashed bundles (index-NILHAvcl.js, index-D-lcfRyp.css, *-wght-normal-*.woff2) get 'cache-control: public, max-age=604800'. Since filenames change on every content change, these can safely be 'public, max-age=31536000, immutable', eliminating weekly revalidation. Keep 7d for the un-hashed /assets/posters|stills|genres|cast images — that value is appropriate there.",
+        "evidence": "curl -sI on JS/CSS/woff2 → cache-control: public, max-age=604800 on all",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced on all three asset classes: curl -sI on /assets/index-NILHAvcl.js, /assets/index-D-lcfRyp.css and /assets/inter-latin-wght-normal-Dx4kXJAl.woff2 each return cache-control: public, max-age=604800. Since Vite content-hashes these filenames, public, max-age=31536000, immutable is strictly safe, and the finding correctly carves out the un-hashed poster/still/genre images where 7d is appropriate. Pure optimization with no user-visible defect — nit is right."
+      },
+      {
+        "title": "No brotli — gzip only",
+        "severity": "nit",
+        "where": "nginx 1.31.1 @ nux.ontwrpn.com",
+        "detail": "Requesting with 'Accept-Encoding: br' returns no content-encoding (uncompressed); only gzip is served. Brotli would take the 74,837 B JS transfer to roughly 62-65KB and CSS from 6,183 B to ~5KB. Savings ~12KB/cold load — not worth a custom nginx build for a demo, but free if the base image gains the module.",
+        "evidence": "curl -sI -H 'Accept-Encoding: br' .../index-NILHAvcl.js → no content-encoding header; with gzip,br → content-encoding: gzip",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: requesting index-NILHAvcl.js with Accept-Encoding: br alone returns no content-encoding header (identity), and with gzip, br returns content-encoding: gzip; server is nginx/1.31.1. Savings estimate (~10-13KB on the 74,837 B gzip JS) is in the standard br-vs-gzip range. The finding itself concedes it is not worth a custom nginx build for a demo — nit is the correct severity."
+      },
+      {
+        "title": "~2.2MB of never-referenced images ship in every deploy",
+        "severity": "nit",
+        "where": "frontend/public/assets/stills/ + genres/ (vs src/data/catalog.js)",
+        "detail": "7 stills are referenced nowhere in src (grep 0 hits): still-get-carter.jpg, still-get-carter-2.jpg, still2-fallen-idol.jpg (441,453 B), still2-richard-iii.jpg, still2-third-man.jpg (402,838 B), still2-third-man-2.jpg, still2-zulu.jpg — 1,619,662 B total. Plus the EXTRAS images (genre-poster-neondrift.jpg 283,566 B, genre-poster-course.jpg 190,068 B, genre-welcome-bg.jpg 116,072 B ≈ 590KB) — EXTRAS is exported from catalog.js but imported by no page/component. None of this hits users' networks, it only bloats the image dir/Docker image by ~2.2MB; harmless at demo scale, prune when convenient.",
+        "evidence": "grep -rn for those filenames and EXTRAS across src/*.jsx → no consumers; stat sum 1,619,662 B (stills) + 589,706 B (extras)",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced exactly. Grep across src/ finds zero references for all 7 stills (still-get-carter.jpg 176,679 + still-get-carter-2.jpg 147,264 + still2-fallen-idol.jpg 441,453 + still2-richard-iii.jpg 170,390 + still2-third-man.jpg 402,838 + still2-third-man-2.jpg 167,583 + still2-zulu.jpg 113,455 = 1,619,662 B, matching the finding to the byte). EXTRAS is exported from catalog.js:129-145 but imported by no page/component (grep EXTRAS outside catalog.js → 0 hits); its three images sum 283,566 + 190,068 + 116,072 = 589,706 B. Correctly scoped as deploy/image-dir bloat only — these never hit user networks since the components referencing them are never rendered. Nit is right."
+      }
+    ],
+    "web-perf:refuted": [
+      "Fixed full-viewport grain overlay with mix-blend-mode adds a per-frame blend pass on scroll — Matches the known-intentional list: 'Web grain overlay = fixed .grain::after with noise PNG at 2.5% overlay blend — intentional.' The CSS facts do reproduce (global.css:72-83 has position:fixed; inset:0; z-index:9999; background 256px noise tile; opacity:0.025; mix-blend-mode:overlay; the PNG is 65,880 B), but the finding flags exactly the declared-intentional implementation and offers no measured regression — it is purely hypothetical ('fine on desktop GPUs', 'if jank is ever observed'), with no demonstrated jank on any target device. Per the verification rules, findings matching the intentional list must be refuted; keep the opacity-only fallback note as background knowledge, not a finding."
+    ],
+    "web-ux": [
+      {
+        "title": "\"More Like This\" genre logic is a no-op for films — every film page shows the same first-7 catalog entries",
+        "severity": "major",
+        "where": "frontend/src/pages/FilmDetail.jsx:10",
+        "detail": "related = FILMS.filter(f => f.id !== film.id && (f.genre === film.genre || f.type === film.type)).slice(0, 7). Since 19 of 21 titles share type 'FILM', the type fallback matches EVERY other film, so the genre test is irrelevant: every FILM detail page shows the identical list — The Third Man, Brief Encounter, Black Narcissus, The Red Shoes, Peeping Tom, Lawrence of Arabia, Billy Liar (minus self) — in catalog-definition order. Saint Maud (Horror) recommends a 1945 romance and a 1963 comedy and never reaches the other horrors defined later in the file. DOCs are fine (Senna → Touching the Void only, sparse but relevant). Fix: filter by genre first, then top up with same-type titles only if fewer than 7.",
+        "evidence": "const related = FILMS.filter((f) => f.id !== film.id && (f.genre === film.genre || f.type === film.type)).slice(0, 7);",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced by executing the real filter against catalog.js: saint-maud, aftersun and 45-years all return the identical list [the-third-man, brief-encounter, black-narcissus, the-red-shoes, peeping-tom, lawrence-of-arabia, billy-liar]; senna returns only [touching-the-void]. 19 of 21 titles are type FILM, so `f.type === film.type` matches every other film and the genre clause never influences the slice(0,7). Deployed bundle contains the same code (`genre===t.genre||i.type===t.type` … `slice(0,7)`). Saint Maud (Horror) indeed recommends Brief Encounter (Romance 1945) and Billy Liar (Comedy 1963) while Don't Look Now / The Wicker Man (Horror, catalog positions 9-10) never appear. Implemented relevance logic failing on every one of the 19 FILM detail pages justifies major."
+      },
+      {
+        "title": "Unknown /film/:id silently falls back to The Third Man under the wrong URL",
+        "severity": "minor",
+        "where": "frontend/src/pages/FilmDetail.jsx:8",
+        "detail": "const film = byId(id) || byId('the-third-man'). A deep-link typo (e.g. /film/the-wickerman) renders a full Third Man page while the address bar keeps the bogus id — the user gets the wrong film with no signal anything failed, and can share/bookmark the wrong URL. Should redirect to a 404/Browse state (or at least <Navigate to=\"/film/the-third-man\" replace>) instead of silently lying about identity.",
+        "evidence": "const film = byId(id) || byId('the-third-man');",
+        "verdict": "downgraded",
+        "verifyReason": "Reproduced: FilmDetail.jsx:8 `const film = byId(id) || byId('the-third-man')` and the deployed bundle contains `||vr(\"the-third-man\")`; live /film/the-wickerman returns 200 with the SPA shell, so the client renders The Third Man under the bogus URL. However, severity is overstated: every in-app link (PosterCard, Hero, ContinueCard) is generated from catalog ids, so no navigation path inside the app can produce an unknown id — it requires a hand-edited URL. The sibling finding for the identical failure family (catch-all `*` route rendering Home under any unknown URL) was rated minor; rendering a specific wrong film instead of Home is marginally worse but the same exposure class on a demo with no sharing features. Downgrade major → minor."
+      },
+      {
+        "title": "17 of 21 film pages use a ~250px portrait poster as a full-bleed 78vh backdrop and render nearly empty",
+        "severity": "major",
+        "where": "frontend/src/pages/FilmDetail.jsx:26 + frontend/src/data/catalog.js:34-66",
+        "detail": "Only the-third-man, black-narcissus, the-red-shoes and lawrence-of-arabia have a backdrop; everything else falls back to film.poster inside .fd-art (object-fit: cover, min-height 78vh full width — FilmDetail.css:1-18). Per MANIFEST.json the posters are tiny sources (Brief Encounter 228×350, Black Narcissus 260×389, Billy Liar 250×363…), so the hero is a heavily upscaled, heavily cropped blur on most titles. Those same 19 films also lack synopsis/runtime/rating/cast/director, so the page degrades to: eyebrow, title, bare year, two inert buttons, the broken More-Like-This rail, and a 2-row Details table (Genre/Release). Structurally it doesn't break, but the experience gap between the two 'complete' films and the rest is severe — either enrich the data or design an explicit reduced layout (poster-left card instead of fake backdrop hero).",
+        "evidence": "<img src={film.backdrop || film.poster} … /> ; MANIFEST.json: poster-brief-encounter.jpg w:228 h:350",
+        "verdict": "confirmed",
+        "verifyReason": "Counts verified: only the-third-man, black-narcissus, the-red-shoes, lawrence-of-arabia have `backdrop` (4 of 21 → 17 fall back to `film.poster` via FilmDetail.jsx:26), and FilmDetail.css sets .fd-hero min-height 78vh with object-fit: cover. Two factual corrections that don't change the verdict: (1) shipped posters are pre-upscaled to 1050px height — deployed poster-brief-encounter.jpg measures 684×1050, exactly 3x the 228×350 MANIFEST source — so the served file isn't 228px, but its pixel data is still a 3x interpolation of a tiny source, then cover-cropped into a full-width 78vh frame (~6x effective upscale at desktop widths, with ~60% of the portrait cropped away); (2) 'those same 19' slightly conflates sets — 19 lack synopsis/runtime/rating, 20 lack cast/director, while backdrop-less is 17 (black-narcissus and red-shoes have backdrops but no metadata). The substance holds: 17 of 21 detail pages degrade to eyebrow + title + bare year + two inert buttons + identical More-Like-This rail + 2-row details table under a blurry cropped-poster hero. Not on the intentional list; for the product's core page type this is a major experience gap."
+      },
+      {
+        "title": "Browse loses chip and search state after visiting a film and going back",
+        "severity": "minor",
+        "where": "frontend/src/pages/Browse.jsx:11-12",
+        "detail": "chip and query live in useState only; nothing is written to the URL (?search=1 is read but the live query/chip never sync to searchParams). Open Browse → select Documentaries → search '19' → tap a result → back: Browse remounts at All with an empty query and the user's filter context is gone. Mirror chip/query into search params (useSearchParams set) so back/forward and sharing preserve state. Side nit: because ?search=1 persists in the URL, returning back to /browse?search=1 re-fires the autofocus effect (Browse.jsx:15-17) and pops the keyboard on mobile.",
+        "evidence": "const [chip, setChip] = useState('All'); const [query, setQuery] = useState('');",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced in Browse.jsx:11-12: chip and query live only in useState; useSearchParams is read-only (only `params.has('search')` at line 16) and nothing ever writes state back to the URL. Navigating Browse → /film/:id unmounts Browse, so back remounts it at chip='All', query=''. The side nit is also real: NavBar.jsx:21 and TabBar.jsx:49 both link to /browse?search=1, so returning via back to that URL re-runs the [params] effect and refocuses the input on every remount. Minor is the right severity for in-session filter-state loss in a demo."
+      },
+      {
+        "title": "ScrollToTop fires on back/forward too — scroll position never restored",
+        "severity": "minor",
+        "where": "frontend/src/App.jsx:11-15",
+        "detail": "useEffect(() => window.scrollTo(0,0), [pathname]) runs on every pathname change including POP navigations, overriding the browser's native scroll restoration (and can produce a restore-then-jump flash). Back from a film to a 4-rail Home or a long Browse grid dumps the user at the top, losing their place — the costliest spot is mid-grid browsing. Gate it with useNavigationType() !== 'POP' (react-router v7) so pushes scroll to top but back restores position.",
+        "evidence": "useEffect(() => window.scrollTo(0, 0), [pathname]);",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced in App.jsx:11-15: `useEffect(() => window.scrollTo(0, 0), [pathname])` with no navigation-type gate, so POP navigations also scroll to top, defeating any native restoration attempt (history.scrollRestoration is never set, no <ScrollRestoration>). package.json pins react-router-dom ^7.17.0, where useNavigationType is available, so the proposed gate is implementable as stated. Back from FilmDetail to a 4-rail Home or the 21-card Browse grid lands at the top. Minor confirmed."
+      },
+      {
+        "title": "document.title is static on every route",
+        "severity": "minor",
+        "where": "frontend/index.html:6",
+        "detail": "Title is always 'NUX — Cinema for Curious Minds'; no component ever sets document.title. Film pages, Browse and My List are indistinguishable in tabs, history and bookmarks — for a content catalog the film title in the tab is table stakes. A 5-line useEffect in FilmDetail (and per-page titles) fixes it.",
+        "evidence": "<title>NUX — Cinema for Curious Minds</title> — only occurrence; grep for document.title in src returns nothing",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: grep over frontend/src for `document.title` and `Helmet` returns zero hits; the only title is index.html:6 'NUX — Cinema for Curious Minds', and the live HTML served at https://nux.ontwrpn.com/ (and every SPA route, e.g. /film/the-wickerman, /filmz — all 200 with the same 417-byte shell) carries that single static title. All routes are indistinguishable in tabs/history. Minor confirmed for a content catalog."
+      },
+      {
+        "title": "EXTRAS (Neon Drift game, Art of Editing course) is dead data while the Games/Courses chips show 'coming soon'",
+        "severity": "nit",
+        "where": "frontend/src/data/catalog.js:129-146 + frontend/src/pages/Browse.jsx:23",
+        "detail": "EXTRAS is exported but imported nowhere (grep confirms catalog.js is the only hit), and Browse hard-empties the list for those chips: if (chip === 'Games' || chip === 'Courses') list = []. So the catalog ships a finished game record (title, meta, synopsis, generated poster in public/assets/genres) and a course record, yet the chip that should surface them says 'This shelf is coming soon'. Either wire EXTRAS into those chips (one card each beats an empty state) or delete the dead export and its two unused poster assets.",
+        "evidence": "if (chip === 'Games' || chip === 'Courses') list = []; — while EXTRAS.game/EXTRAS.course exist unused",
+        "verdict": "downgraded",
+        "verifyReason": "Facts reproduced: grep confirms EXTRAS appears only at its definition (catalog.js:129) — no imports anywhere — and Browse.jsx:23 hard-empties Games/Courses; the assets genre-poster-neondrift.jpg, genre-poster-course.jpg AND genre-welcome-bg.jpg (a third unused asset the finding missed) ship in frontend/public/assets/genres unused. But the user-facing half of this finding — the empty Games/Courses shelves — is explicitly on the known-intentional list ('Games/Courses chips intentionally show an empty state', flag as nit at most). What survives adversarial review is purely dead-code housekeeping: one unused export and three unused images. That is nit, not minor."
+      },
+      {
+        "title": "Genre cards are inert buttons — a new dead-end not on the known-stub list; 5 of 12 genres have zero titles",
+        "severity": "minor",
+        "where": "frontend/src/pages/Browse.jsx:79 + frontend/src/data/catalog.js:113-126",
+        "detail": "Each genre card renders as <button type=\"button\"> with no onClick — it affords tapping (hover styles, button semantics) and does nothing. This is not in the known-intentional list (which covers See all/footer/Play/avatar/chips). Cheapest honest fix: onClick={() => setQuery(g.label)} — the search filter already matches genre. Note also the grid advertises Thriller, History, Animation, Art House and Musical, none of which has a single catalog title (catalog genres are Film-Noir/Romance/Drama/Horror/Epic/Comedy/Crime/Sci-Fi/Documentary), so once wired those five land on the empty state; conversely Film-Noir and Epic exist but get no card.",
+        "evidence": "<button type=\"button\" className=\"genre-card\" key={g.id}> — no onClick handler",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: Browse.jsx:79 renders each genre as `<button type=\"button\" className=\"genre-card\">` with no onClick — 12 focusable, hover-styled buttons that do nothing. The enumerated intentional list (See all/footer/Play/avatar/chips empty state/My List) does not include genre cards, so it cannot be refuted as known scope. Taxonomy mismatch verified against catalog.js: present genres are Film-Noir, Romance, Drama, Horror, Epic, Comedy, Crime, Sci-Fi, Documentary; the GENRES grid advertises Thriller, History, Animation, Art House, Musical (0 titles each — exactly 5 of 12), while Film-Noir and Epic get no card. The proposed setQuery(g.label) fix works because the search already matches f.genre. Minor confirmed (12-button dead-end grid plus content mismatch is more than a nit-level stub)."
+      },
+      {
+        "title": "Continue Watching progress bar assumes every film is 120 minutes",
+        "severity": "minor",
+        "where": "frontend/src/components/Rail.jsx:38",
+        "detail": "progress = Math.max(8, 100 - Math.round((item.minutesLeft / 120) * 100)). Lawrence of Arabia is 3h 47m (227 min); with 96 minutes left the user is ~58% through, but the bar shows 20%. The honesty rule applied to imagery should apply to progress too — derive from the film's runtime (parse it or store minutes in catalog) instead of a hardcoded 120.",
+        "evidence": "const progress = Math.max(8, 100 - Math.round((item.minutesLeft / 120) * 100));",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced at Rail.jsx:38 (`100 - Math.round((item.minutesLeft / 120) * 100)`, also present in the deployed bundle as `minutesLeft/120`). Math verified: Lawrence of Arabia, runtime '3h 47m' = 227 min, minutesLeft 96 → bar shows max(8, 100-80) = 20% while true progress is 131/227 ≈ 58%. The app itself displays '3h 47m' on both the Home hero meta and the FD page while the bar reads 20% — an internal contradiction, not just fake demo data. Only Lawrence has a catalog runtime to contradict the constant (the other three CW titles carry no runtime), which keeps this at minor rather than anything higher. Minor confirmed."
+      },
+      {
+        "title": "Poster→hero morph silently skips when navigating FilmDetail → FilmDetail via More Like This (duplicate view-transition-name)",
+        "severity": "minor",
+        "where": "frontend/src/components/Rail.jsx:8-18 + frontend/src/pages/FilmDetail.jsx:26",
+        "detail": "markHeroArt clears only elements tagged data-vt, but the FD hero img gets viewTransitionName:'hero-art' via React inline style with no data-vt attribute. Clicking a More-Like-This card therefore leaves TWO elements named hero-art in the outgoing snapshot (the page hero + the clicked poster) — exactly the duplicate-name condition the code's own comment warns 'skips the whole transition'. Result: the signature morph works from Home/Browse but never between film pages. Fix: also clear/tag the FD hero (give it data-vt, or query [style*=\"view-transition-name\"]), or set the hero name via the same helper.",
+        "evidence": "document.querySelectorAll('[data-vt=\"hero-art\"]') misses <img … style={{ viewTransitionName: 'hero-art' }}> in FilmDetail",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced by code analysis: FilmDetail.jsx:26 sets viewTransitionName:'hero-art' via React inline style with NO data-vt attribute; markHeroArt (Rail.jsx:9) clears only `document.querySelectorAll('[data-vt=\"hero-art\"]')` before tagging the clicked poster. On an FD→FD click the old-state capture therefore contains two elements named hero-art (the FD hero img, untouched by the cleanup, plus the freshly tagged poster) — the exact duplicate-name condition under which the View Transitions spec skips the entire transition (navigation still occurs, animation silently dropped), as the code's own comment at Rail.jsx:6-7 acknowledges. The deployed bundle uses the identical `[data-vt=\"hero-art\"]` selector. Home/Browse → FD paths have only one named element and work. Minor confirmed for a silently failing polish feature on one navigation path."
+      },
+      {
+        "title": "Catch-all route renders Home under any unknown URL — no 404, no redirect, no active nav state",
+        "severity": "minor",
+        "where": "frontend/src/App.jsx:27",
+        "detail": "<Route path=\"*\" element={<Home />} /> shows the full Home page at e.g. /filmz or /browse/x while the wrong URL stays in the bar; combined with the FilmDetail fallback (separate finding) the app never admits a bad link. NavLinks also show no active tab on such URLs. Use <Navigate to=\"/\" replace /> at minimum, ideally a small not-found state.",
+        "evidence": "<Route path=\"*\" element={<Home />} />",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced: App.jsx:27 `<Route path=\"*\" element={<Home />} />`, present in the deployed bundle as `path:\"*\",element:...`; live check `curl https://nux.ontwrpn.com/filmz` returns 200 with the SPA shell, so the client renders the full Home page under /filmz with the wrong URL retained and no NavLink matching (no active tab). Unknown→Home is a common SPA convention, which keeps this at minor rather than major, but the URL is never corrected and no not-found state exists. Minor confirmed."
+      },
+      {
+        "title": "Empty-state copy mismatch when a query is typed under the Games/Courses chip",
+        "severity": "nit",
+        "where": "frontend/src/pages/Browse.jsx:100-105",
+        "detail": "With chip=Games and any query, the heading reads 'Results for “x” 0' and the sub-copy says 'Try a different title, genre or year.' — but no title/genre/year will ever match in an empty shelf; the 'coming soon' message is the true state. Pick the copy by chip first, query second.",
+        "evidence": "{query ? 'Try a different title, genre or year.' : 'This shelf is coming soon…'}",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced in Browse.jsx:90-103: with chip='Games', list is hard-emptied at line 23 BEFORE the query filter, yet the heading branches on query (`Results for “x”` + count 0) and the empty-state sub-copy reads 'Try a different title, genre or year.' whenever query is truthy — advice that can never succeed on an intentionally empty shelf, hiding the true 'coming soon' state. The empty shelves themselves are known-intentional; the copy-selection ordering (query checked before chip) is the only defect. Nit confirmed."
+      },
+      {
+        "title": "Editorial Pick cover is a real still of an off-catalog 1946 film under a 'Best Films of 2026' headline (image source noted)",
+        "severity": "nit",
+        "where": "frontend/src/data/catalog.js:109",
+        "detail": "EDITORIAL_PICK.image = still-matter-life-death.jpg — per MANIFEST.json a production still of A Matter of Life and Death (Powell & Pressburger, 1946), a film not in FILMS. As decorative editorial art (alt=\"\", no film label) it doesn't break the honesty rule, and the memory log allows real stills on curator covers; the 1946 still under 'The 10 Best Films of 2026' is the only slight content dissonance. Recorded as the explicit source note requested; no action required unless the editorial team wants a 2020s still.",
+        "evidence": "image: still('still-matter-life-death.jpg') ; MANIFEST: title 'A Matter of Life and Death', year 1946",
+        "verdict": "confirmed",
+        "verifyReason": "Facts verified: catalog.js:109 uses still('still-matter-life-death.jpg'); MANIFEST.json records it as title 'A Matter of Life and Death', year 1946, genre Fantasy, kind still, 4222×3373, Wikimedia-sourced; the film is not in FILMS. Home.jsx:44 renders it with alt=\"\" and no film label, so the honest-pairs rule is not violated — only the tonal dissonance of a 1946 still under 'The 10 Best Films of 2026' remains. Correctly recorded as an informational nit with no required action."
+      },
+      {
+        "title": "The Red Shoes genre verified consistent as Drama (canonical-table ambiguity resolved, no conflict found)",
+        "severity": "nit",
+        "where": "frontend/src/data/catalog.js:36",
+        "detail": "Requested consistency check: catalog.js says Drama; design/posters/MANIFEST.json lists Drama on both Red Shoes entries (poster + still2); the 2026-06-12 Figma category-mismatch fix rebuilt the desktop Browse 'per catalog' (memory log), which places Red Shoes under Drama there too. FD Details renders genre straight from catalog, so web is internally consistent. No Romance label found anywhere in the repo — informational, no action.",
+        "evidence": "catalog.js: genre: 'Drama' ; MANIFEST.json poster-red-shoes.jpg + still2-red-shoes.jpg: \"genre\": \"Drama\"",
+        "verdict": "confirmed",
+        "verifyReason": "Consistency reproduced everywhere checkable in the repo: catalog.js:36 `genre: 'Drama'`; MANIFEST.json lists genre 'Drama' on both poster-red-shoes.jpg (260×396) and still2-red-shoes.jpg (1872×1519); grep for 'Romance' near any Red Shoes reference across frontend/src and the manifest returns nothing; FD Details and PosterCard metadata both render genre straight from the catalog record. (Incidental observation outside this finding's scope: MANIFEST labels The Third Man 'Thriller' while catalog says 'Film-Noir' — but the web app never reads MANIFEST genres, so web stays internally consistent.) Confirmed as the informational nit it claims to be; no action."
+      },
+      {
+        "title": "'New Releases' rail contains 1949/1945 titles",
+        "severity": "nit",
+        "where": "frontend/src/data/catalog.js:100",
+        "detail": "The 'new' rail pads out with the-third-man (1949) and brief-encounter (1945) after the 2019-2022 titles. If the intent is 'newly added to NUX' the label is defensible; as written, 'New Releases' showing 1940s films reads as a content error. Rename to 'New on NUX' or trim to the five recent titles.",
+        "evidence": "filmIds: ['the-souvenir', 'saint-maud', 'aftersun', 'touching-the-void', 'senna', 'the-third-man', 'brief-encounter']",
+        "verdict": "confirmed",
+        "verifyReason": "Reproduced at catalog.js:98-101: the 'new' rail's filmIds end with 'the-third-man' (year 1949) and 'brief-encounter' (year 1945) after the 2019-2022 titles (the-souvenir 2019, saint-maud 2019, aftersun 2022) plus touching-the-void 2003 and senna 2010 — so the rail already stretches to 2003/2010 before the 1940s entries. Defensible as 'newly added to the service' but mislabeled as written. Nit confirmed; rename suggestion is proportionate."
+      },
+      {
+        "title": "Known scope-cut family confirmed, two additions: inert 'My List' add buttons and editorial CTA → #editorial",
+        "severity": "nit",
+        "where": "frontend/src/components/Hero.jsx:27, frontend/src/pages/FilmDetail.jsx:47, frontend/src/pages/Home.jsx:39",
+        "detail": "Beyond the documented stubs (See all → #all, footer anchors, Play, avatar): the Hero and FilmDetail 'My List' buttons have no handler (no add-to-list even as local state, while a My List page exists), and the Editorial 'Read the list' CTA points to #editorial which matches no element id — click does nothing at all. Same scope-cut family, listed per instruction as nit only. HERO.meta ('Epic · 1962 · 3h 47m · ★ 8.3', catalog.js:75) is also a hardcoded duplicate of the lawrence record's fields — currently in sync, but will drift silently if the record changes.",
+        "evidence": "<button type=\"button\" className=\"btn btn-secondary\">…My List</button> (no onClick) ; <a href=\"#editorial\" …>{EDITORIAL_PICK.cta}</a>",
+        "verdict": "confirmed",
+        "verifyReason": "All three additions reproduced: Hero.jsx:27-32 and FilmDetail.jsx:47-52 render 'My List' as <button type=\"button\"> with no onClick (no handler, no local state) while a /my-list route exists; Home.jsx:39 links to href=\"#editorial\" and grep confirms no element with id=\"editorial\" anywhere in frontend/src (the section has only className=\"editorial\" and an aria-label), so the click changes the hash and scrolls nowhere. HERO.meta duplication verified: catalog.js:75 'Epic · 1962 · 3h 47m · ★ 8.3' exactly matches the lawrence-of-arabia record's genre/year/runtime/rating today — in sync but a silent-drift risk. Correctly filed as nit per the known scope-cut instruction."
+      }
+    ],
+    "web-ux:refuted": []
+  }
+}

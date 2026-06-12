@@ -137,4 +137,6 @@
   --dur-fast: 150ms;
   --dur-base: 200ms;
   --dur-slow: 300ms;
+  --dur-morph: 420ms;
+  --dur-crossfade: 240ms;
 }

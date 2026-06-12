@@ -1,9 +1,11 @@
 import Hero from '../components/Hero.jsx';
+import usePageTitle from '../lib/usePageTitle.js';
 import Rail, { PosterCard, ContinueCard } from '../components/Rail.jsx';
 import { RAILS, CONTINUE_WATCHING, EDITORIAL_PICK } from '../data/catalog.js';
 import './Home.css';
 
 export default function Home() {
+  usePageTitle(null);
   const [trending, curated, fresh] = RAILS;
 
   return (

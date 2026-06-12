@@ -26,7 +26,7 @@
   backdrop-filter: blur(20px);
   box-shadow:
     inset 0 0 0 1px var(--white-a08),
-    0 12px 40px rgb(0 0 0 / 0.45);
+    var(--shadow-card-hover);
 }
 
 .tabbar-item {
@@ -63,7 +63,7 @@
   backdrop-filter: blur(20px);
   box-shadow:
     inset 0 0 0 1px var(--white-a08),
-    0 12px 40px rgb(0 0 0 / 0.45);
+    var(--shadow-card-hover);
   color: var(--text-secondary);
 }
 

@@ -52,6 +52,54 @@
   gap: var(--space-4);
 }
 
+/* ── Poster layout — films without a landscape backdrop.
+   The tiny portrait poster is shown AS a poster, never upscaled
+   into a fake full-bleed hero. ── */
+.fd-hero--poster {
+  min-height: 0;
+  align-items: center;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  padding: calc(64px + var(--space-16)) var(--space-16) var(--space-8);
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--space-12);
+}
+
+.fd-poster-frame {
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px var(--white-a08),
+    var(--shadow-overlay);
+}
+
+.fd-poster-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fd-content--poster {
+  padding: 0;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .fd-hero--poster {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    padding: calc(56px + var(--space-8)) var(--space-4) var(--space-6);
+    gap: var(--space-6);
+  }
+
+  .fd-poster-frame {
+    width: 200px;
+  }
+}
+
 .fd-title {
   font: var(--type-display-xl);
   letter-spacing: var(--track-display);
@@ -77,6 +125,13 @@
   display: grid;
   gap: var(--space-16);
   padding-top: var(--space-16);
+}
+
+/* grid items default to min-width:auto and refuse to shrink below their
+   intrinsic rail width — this is what made /film/* pan sideways */
+.fd-body > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .fd-section {
@@ -152,5 +207,10 @@
   .fd-title {
     font: var(--type-display-l);
     letter-spacing: var(--track-display);
+  }
+
+  .fd-details-row {
+    grid-template-columns: 112px 1fr;
+    gap: var(--space-4);
   }
 }

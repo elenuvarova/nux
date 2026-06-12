@@ -1,16 +1,34 @@
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PosterCard } from '../components/Rail.jsx';
+import usePageTitle from '../lib/usePageTitle.js';
 import { FILMS, GENRES } from '../data/catalog.js';
 import './Browse.css';
 
 const CHIPS = ['All', 'Films', 'Documentaries', 'Games', 'Courses'];
 
 export default function Browse() {
-  const [params] = useSearchParams();
-  const [chip, setChip] = useState('All');
-  const [query, setQuery] = useState('');
+  usePageTitle('Browse');
+  // chip + query live in the URL so back/forward and deep links keep state
+  const [params, setParams] = useSearchParams();
+  const chip = CHIPS.includes(params.get('type')) ? params.get('type') : 'All';
+  const query = params.get('q') || '';
   const inputRef = useRef(null);
+
+  const update = (patch) => {
+    setParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        for (const [k, v] of Object.entries(patch)) {
+          if (v) next.set(k, v);
+          else next.delete(k);
+        }
+        next.delete('search');
+        return next;
+      },
+      { replace: true }
+    );
+  };
 
   useEffect(() => {
     if (params.has('search')) inputRef.current?.focus();
@@ -30,10 +48,19 @@ export default function Browse() {
     return list;
   }, [chip, query]);
 
+  const emptyCopy =
+    chip === 'Games' || chip === 'Courses'
+      ? `${chip} are coming to NUX soon — check back after the next release window.`
+      : query
+        ? 'Try a different title, genre or year.'
+        : 'This shelf is empty for now.';
+
   return (
     <main className="browse">
       <header className="browse-head">
-        <h1 className="page-title">Browse</h1>
+        <h1 className="page-title" tabIndex={-1}>
+          Browse
+        </h1>
         <div className="browse-search">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <circle cx="7" cy="7" r="5.25" stroke="currentColor" strokeWidth="1.5" />
@@ -44,26 +71,25 @@ export default function Browse() {
             type="search"
             placeholder="Titles, genres, years…"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => update({ q: e.target.value })}
             aria-label="Search the catalog"
           />
           {query && (
-            <button type="button" className="browse-clear" onClick={() => setQuery('')} aria-label="Clear search">
+            <button type="button" className="browse-clear" onClick={() => update({ q: '' })} aria-label="Clear search">
               <svg width="12" height="12" viewBox="0 0 12 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
                 <path d="M2.5 2.5l7 7M9.5 2.5l-7 7" />
               </svg>
             </button>
           )}
         </div>
-        <div className="browse-chips" role="tablist" aria-label="Content type">
+        <div className="browse-chips" role="group" aria-label="Content type">
           {CHIPS.map((c) => (
             <button
               key={c}
               type="button"
-              role="tab"
-              aria-selected={chip === c}
+              aria-pressed={chip === c}
               className={chip === c ? 'chip chip--active' : 'chip'}
-              onClick={() => setChip(c)}
+              onClick={() => update({ type: c === 'All' ? '' : c })}
             >
               {c}
             </button>
@@ -76,7 +102,7 @@ export default function Browse() {
           <h2 className="headline">Genres</h2>
           <div className="genre-grid">
             {GENRES.map((g) => (
-              <button type="button" className="genre-card" key={g.id}>
+              <button type="button" className="genre-card" key={g.id} onClick={() => update({ q: g.label })}>
                 <img src={g.image} alt="" loading="lazy" />
                 <span>{g.label}</span>
               </button>
@@ -88,7 +114,9 @@ export default function Browse() {
       <section className="browse-grid-wrap" aria-label="All titles">
         <h2 className="headline">
           {query ? `Results for “${query}”` : 'All Titles'}
-          <span className="browse-count">{films.length}</span>
+          <span className="browse-count" role="status">
+            {films.length} {films.length === 1 ? 'title' : 'titles'}
+          </span>
         </h2>
         {films.length > 0 ? (
           <div className="browse-grid">
@@ -99,9 +127,7 @@ export default function Browse() {
         ) : (
           <div className="browse-empty">
             <p className="display-m">Nothing here yet</p>
-            <p className="browse-empty-sub">
-              {query ? 'Try a different title, genre or year.' : 'This shelf is coming soon — check back after the next release window.'}
-            </p>
+            <p className="browse-empty-sub">{emptyCopy}</p>
           </div>
         )}
       </section>

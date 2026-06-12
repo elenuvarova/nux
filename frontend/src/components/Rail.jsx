@@ -3,10 +3,11 @@ import { byId } from '../data/catalog.js';
 import './Rail.css';
 
 /* Mark the clicked artwork as the shared element for the
-   poster → hero View Transition morph. Clear stale marks first —
-   duplicate view-transition-names skip the whole transition. */
+   poster → hero View Transition morph. Clear stale marks AND the current
+   detail hero first — duplicate view-transition-names silently skip the
+   whole transition (e.g. when navigating FilmDetail → FilmDetail). */
 function markHeroArt(e) {
-  document.querySelectorAll('[data-vt="hero-art"]').forEach((el) => {
+  document.querySelectorAll('[data-vt="hero-art"], .fd-art img, .fd-poster-frame img').forEach((el) => {
     el.style.viewTransitionName = '';
     delete el.dataset.vt;
   });
@@ -15,6 +16,15 @@ function markHeroArt(e) {
     img.style.viewTransitionName = 'hero-art';
     img.dataset.vt = 'hero-art';
   }
+}
+
+function minutesLabel(min) {
+  if (min >= 60) {
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    return m ? `${h}h ${m}m left` : `${h}h left`;
+  }
+  return `${min}m left`;
 }
 
 export function PosterCard({ filmId }) {
@@ -35,7 +45,8 @@ export function PosterCard({ filmId }) {
 
 export function ContinueCard({ item }) {
   const film = byId(item.filmId);
-  const progress = Math.max(8, 100 - Math.round((item.minutesLeft / 120) * 100));
+  const total = film.runtimeMin || 120;
+  const progress = Math.min(96, Math.max(4, Math.round((1 - item.minutesLeft / total) * 100)));
   return (
     <Link to={`/film/${film.id}`} className="continue-card" viewTransition onClick={markHeroArt}>
       <div className="continue-card-art">
@@ -48,7 +59,7 @@ export function ContinueCard({ item }) {
         <span className="continue-card-progress" style={{ '--progress': `${progress}%` }} />
       </div>
       <p className="poster-card-title">{film.title}</p>
-      <p className="metadata">{item.minutesLeft}m left</p>
+      <p className="metadata">{minutesLabel(item.minutesLeft)}</p>
     </Link>
   );
 }

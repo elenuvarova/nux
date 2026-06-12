@@ -12,7 +12,7 @@ export default function Hero() {
       </div>
       <div className="hero-content">
         <p className="eyebrow">{HERO.eyebrow}</p>
-        <h1 className="hero-title">{film.title}</h1>
+        <h1 className="hero-title" tabIndex={-1}>{film.title}</h1>
         <p className="hero-meta">
           <span className="hero-badge">{film.type}</span>
           {HERO.meta}

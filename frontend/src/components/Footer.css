@@ -34,7 +34,7 @@
 }
 
 .footer-copy {
-  color: var(--text-disabled);
+  color: var(--text-tertiary);
 }
 
 @media (max-width: 768px) {

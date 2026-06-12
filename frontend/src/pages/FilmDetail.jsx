@@ -1,14 +1,26 @@
 import { useParams } from 'react-router-dom';
 import Rail, { PosterCard } from '../components/Rail.jsx';
+import NotFound from './NotFound.jsx';
+import usePageTitle from '../lib/usePageTitle.js';
 import { byId, FILMS } from '../data/catalog.js';
 import './FilmDetail.css';
 
+function related(film) {
+  const sameGenre = FILMS.filter((f) => f.id !== film.id && f.genre === film.genre);
+  const sameType = FILMS.filter((f) => f.id !== film.id && f.genre !== film.genre && f.type === film.type);
+  return [...sameGenre, ...sameType].slice(0, 7);
+}
+
 export default function FilmDetail() {
   const { id } = useParams();
-  const film = byId(id) || byId('the-third-man');
+  const film = byId(id);
+  usePageTitle(film?.title);
 
-  const related = FILMS.filter((f) => f.id !== film.id && (f.genre === film.genre || f.type === film.type)).slice(0, 7);
+  if (!film) {
+    return <NotFound message="We couldn't find that title in the catalog." />;
+  }
 
+  const more = related(film);
   const details = [
     ['Director', film.director],
     ['Cast', film.cast?.slice(0, 3).map((p) => p.name).join(', ')],
@@ -19,40 +31,59 @@ export default function FilmDetail() {
     ['Runtime', film.runtime],
   ].filter(([, v]) => v);
 
+  const meta = [
+    film.year,
+    film.runtime,
+    film.rating ? `★ ${film.rating}` : null,
+    film.certificate,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
+  const heroContent = (
+    <>
+      <p className="eyebrow">
+        {film.type} · {film.genre}
+      </p>
+      <h1 className="fd-title" tabIndex={-1}>
+        {film.title}
+      </h1>
+      <p className="metadata fd-meta">{meta}</p>
+      {film.synopsis && <p className="fd-synopsis">{film.synopsis}</p>}
+      <div className="fd-actions">
+        <button type="button" className="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+            <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
+          </svg>
+          Play
+        </button>
+        <button type="button" className="btn btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+            <path d="M7 2.5v9M2.5 7h9" />
+          </svg>
+          My List
+        </button>
+      </div>
+    </>
+  );
+
   return (
     <main className="fd">
-      <section className="fd-hero">
-        <div className="fd-art">
-          <img src={film.backdrop || film.poster} alt="" fetchpriority="high" style={{ viewTransitionName: 'hero-art' }} />
-        </div>
-        <div className="fd-content">
-          <p className="eyebrow">
-            {film.type} · {film.genre}
-          </p>
-          <h1 className="fd-title">{film.title}</h1>
-          <p className="metadata fd-meta">
-            {film.year}
-            {film.runtime ? ` · ${film.runtime}` : ''}
-            {film.rating ? ` · ★ ${film.rating}` : ''}
-            {film.certificate ? ` · ${film.certificate}` : ''}
-          </p>
-          {film.synopsis && <p className="fd-synopsis">{film.synopsis}</p>}
-          <div className="fd-actions">
-            <button type="button" className="btn btn-primary">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-                <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
-              </svg>
-              Play
-            </button>
-            <button type="button" className="btn btn-secondary">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-                <path d="M7 2.5v9M2.5 7h9" />
-              </svg>
-              My List
-            </button>
+      {film.backdrop ? (
+        <section className="fd-hero">
+          <div className="fd-art">
+            <img src={film.backdrop} alt="" fetchpriority="high" style={{ viewTransitionName: 'hero-art' }} />
           </div>
-        </div>
-      </section>
+          <div className="fd-content">{heroContent}</div>
+        </section>
+      ) : (
+        <section className="fd-hero fd-hero--poster">
+          <div className="fd-poster-frame">
+            <img src={film.poster} alt="" fetchpriority="high" style={{ viewTransitionName: 'hero-art' }} />
+          </div>
+          <div className="fd-content fd-content--poster">{heroContent}</div>
+        </section>
+      )}
 
       <div className="fd-body">
         {film.cast && (
@@ -61,7 +92,7 @@ export default function FilmDetail() {
             <div className="fd-cast">
               {film.cast.map((person) => (
                 <div className="fd-cast-card" key={person.name}>
-                  <img src={person.photo} alt={person.name} loading="lazy" />
+                  <img src={person.photo} alt="" loading="lazy" />
                   <p className="poster-card-title">{person.name}</p>
                   <p className="metadata">{person.role}</p>
                 </div>
@@ -70,9 +101,9 @@ export default function FilmDetail() {
           </section>
         )}
 
-        {related.length > 0 && (
+        {more.length > 0 && (
           <Rail title="More Like This">
-            {related.map((f) => (
+            {more.map((f) => (
               <PosterCard key={f.id} filmId={f.id} />
             ))}
           </Rail>

@@ -26,7 +26,7 @@ export default function NavBar() {
             <span>Search</span>
           </Link>
           <button type="button" className="nav-avatar" aria-label="Profile">
-            <img src="/assets/avatar-user.png" alt="" />
+            <img src="/assets/avatar-user.jpg" alt="" />
           </button>
         </div>
       </div>

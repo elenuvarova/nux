@@ -23,6 +23,14 @@ body {
   min-height: 100vh;
 }
 
+/* room for the floating tab bar — otherwise it permanently covers
+   the footer links at the bottom of every page */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 img,
 picture,
 video {
@@ -56,11 +64,54 @@ ol {
   padding: 0;
 }
 
-/* Keyboard focus only — amber ring per the design system. */
+/* Keyboard focus only — amber ring per the design system.
+   The transparent outline becomes a visible system outline in
+   forced-colors / Windows High Contrast mode, where box-shadow vanishes. */
 :focus-visible {
-  outline: none;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
   box-shadow: var(--focus-ring);
   border-radius: var(--radius-xs);
+}
+
+/* page headings receive programmatic focus on route change */
+h1[tabindex='-1'] {
+  outline: none;
+  box-shadow: none;
+}
+
+.skip-link {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 200;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-full);
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+  font: var(--type-button);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* comfortable touch targets on touch devices */
+@media (pointer: coarse) {
+  .chip {
+    height: 44px;
+  }
+
+  .browse-clear {
+    width: 36px;
+    height: 36px;
+  }
+
+  .nav-avatar {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 ::selection {
@@ -118,8 +169,8 @@ ol {
 
 /* ── View Transitions: poster → hero morph ───────────────────── */
 ::view-transition-group(hero-art) {
-  animation-duration: 420ms;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-duration: var(--dur-morph);
+  animation-timing-function: var(--ease-out);
 }
 
 /* keep artwork covering its box while the aspect ratio morphs */
@@ -133,7 +184,7 @@ ol {
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 240ms;
+  animation-duration: var(--dur-crossfade);
 }
 
 /* ── Motion discipline ───────────────────────────────────────── */

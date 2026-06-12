@@ -4,6 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NUX — Cinema for Curious Minds</title>
+    <meta
+      name="description"
+      content="NUX is an editorial streaming platform for films, documentaries, games and courses — curated by editors who care. A design-system showcase built on real British cinema."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- LCP: the home hero backdrop is referenced from JS — preload it so the
+         request starts with the HTML, not after the bundle executes -->
+    <link rel="preload" as="image" href="/assets/stills/still-lawrence-of-arabia-2.jpg" fetchpriority="high" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="NUX" />
+    <meta property="og:title" content="NUX — Cinema for Curious Minds" />
+    <meta
+      property="og:description"
+      content="An editorial streaming platform for films, documentaries, games and courses — curated by editors who care."
+    />
+    <meta property="og:url" content="https://nux.ontwrpn.com/" />
+    <meta property="og:image" content="https://nux.ontwrpn.com/og.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>
