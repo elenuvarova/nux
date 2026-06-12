@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useRef } from "react";
 import { api } from "./api.js";
 
 const CuratorContext = createContext(null);
@@ -14,6 +14,10 @@ export function CuratorProvider({ children }) {
   const [messages, setMessages] = useState([]); // {role, content, films?}
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  // Re-entry latch independent of render/closure: guarantees a single in-flight
+  // request even if a stale `send` reference is called (the `loading` state is
+  // for rendering only).
+  const loadingRef = useRef(false);
 
   const openCurator = useCallback(() => setOpen(true), []);
   const closeCurator = useCallback(() => setOpen(false), []);
@@ -25,12 +29,13 @@ export function CuratorProvider({ children }) {
   const send = useCallback(
     async (text) => {
       const content = (text || "").trim();
-      if (!content || loading) return;
+      if (!content || loadingRef.current) return;
       setError(null);
       const userMsg = { role: "user", content };
       // history sent to the API: prior turns + this one, role+content only
       const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
       setMessages((prev) => [...prev, userMsg]);
+      loadingRef.current = true;
       setLoading(true);
       try {
         const { reply, films } = await api.post("/curator", { messages: history });
@@ -38,10 +43,11 @@ export function CuratorProvider({ children }) {
       } catch (e) {
         setError(ERROR_BY_CODE[e?.code] || ERROR_FALLBACK);
       } finally {
+        loadingRef.current = false;
         setLoading(false);
       }
     },
-    [messages, loading]
+    [messages]
   );
 
   return (

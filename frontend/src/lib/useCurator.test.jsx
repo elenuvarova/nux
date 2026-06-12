@@ -43,4 +43,15 @@ describe("useCurator", () => {
     });
     await waitFor(() => expect(result.current.error).toMatch(/moment|fast|minute/i));
   });
+
+  it("maps a curator-unavailable error to a friendly message", async () => {
+    const err = new Error("curator_unavailable");
+    err.code = "curator_unavailable";
+    api.post.mockRejectedValue(err);
+    const { result } = renderHook(() => useCurator(), { wrapper });
+    await act(async () => {
+      await result.current.send("hi");
+    });
+    await waitFor(() => expect(result.current.error).toMatch(/stepped away|moment/i));
+  });
 });
