@@ -52,9 +52,23 @@ export const WatchProgress = sequelize.define(
   }
 );
 
+// Single-use, short-lived password-reset tokens. We store only a SHA-256
+// hash of the token, so a DB leak never exposes a usable reset link.
+export const PasswordReset = sequelize.define(
+  "PasswordReset",
+  {
+    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    tokenHash: { type: DataTypes.STRING, allowNull: false, unique: true },
+    expiresAt: { type: DataTypes.DATE, allowNull: false },
+  },
+  { tableName: "password_resets" }
+);
+
 // Associations — onDelete cascade so deleting a user wipes their data.
 User.hasMany(Session, { onDelete: "CASCADE" });
 Session.belongsTo(User);
+User.hasMany(PasswordReset, { onDelete: "CASCADE" });
+PasswordReset.belongsTo(User);
 User.hasMany(ListItem, { onDelete: "CASCADE" });
 ListItem.belongsTo(User);
 User.hasMany(WatchProgress, { onDelete: "CASCADE" });

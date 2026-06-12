@@ -18,6 +18,8 @@ const Profile = lazy(() => import('./pages/Profile.jsx'));
 const Settings = lazy(() => import('./pages/Settings.jsx'));
 const Downloads = lazy(() => import('./pages/Downloads.jsx'));
 const Auth = lazy(() => import('./pages/Auth.jsx'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword.jsx'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword.jsx'));
 const Welcome = lazy(() => import('./pages/Welcome.jsx'));
 const Info = lazy(() => import('./pages/Info.jsx'));
 const Collection = lazy(() => import('./pages/Collection.jsx'));
@@ -43,7 +45,7 @@ export default function App() {
   // the player owns the whole screen — app chrome hides on /watch
   const { pathname } = useLocation();
   const isPlayer = pathname.startsWith('/watch/');
-  const isBareRoute = pathname === '/welcome' || pathname === '/signin' || pathname === '/signup';
+  const isBareRoute = ['/welcome', '/signin', '/signup', '/forgot', '/reset'].includes(pathname);
   const bare = isPlayer || isBareRoute;
   return (
     <div className="grain">
@@ -66,6 +68,8 @@ export default function App() {
             <Route path="/downloads" element={<Downloads />} />
             <Route path="/signin" element={<Auth mode="signin" />} />
             <Route path="/signup" element={<Auth mode="signup" />} />
+            <Route path="/forgot" element={<ForgotPassword />} />
+            <Route path="/reset" element={<ResetPassword />} />
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/collection/:slug" element={<Collection />} />
             <Route path="/genre/:id" element={<Genre />} />
