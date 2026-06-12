@@ -33,6 +33,28 @@ const IconReplay = () => (
     <path d="M16.5 2.5V6h-3.5" />
   </svg>
 );
+const IconCaptions = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <rect x="2" y="4.5" width="16" height="11" rx="2.2" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M8 9.2a1.8 1.8 0 0 0-3 1.3 1.8 1.8 0 0 0 3 1.3M14.5 9.2a1.8 1.8 0 0 0-3 1.3 1.8 1.8 0 0 0 3 1.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </svg>
+);
+const IconGear = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <circle cx="10" cy="10" r="2.6" />
+    <path d="M10 1.8v2.1M10 16.1v2.1M3.2 6l1.8 1.05M15 12.95 16.8 14M3.2 14l1.8-1.05M15 7.05 16.8 6" strokeLinecap="round" />
+  </svg>
+);
+const IconCheck = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 8.5 6.5 12 13 4.5" />
+  </svg>
+);
+const IconChevR = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M5 3l4.5 4L5 11" />
+  </svg>
+);
 const IconSkip = ({ forward }) => (
   <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
     <path
@@ -78,6 +100,12 @@ export default function Watch() {
   const [duration, setDuration] = useState(0);
   const [buffered, setBuffered] = useState(0);
   const [idle, setIdle] = useState(false);
+  const [rate, setRate] = useState(1);
+  const [rates, setRates] = useState([0.5, 0.75, 1, 1.25, 1.5, 2]);
+  const [captions, setCaptions] = useState(false);
+  const [quality, setQuality] = useState('auto');
+  const [qualities, setQualities] = useState([]);
+  const [menu, setMenu] = useState(null); // null | 'settings' | 'speed' | 'quality'
 
   const hostRef = useRef(null);
   const stageRef = useRef(null);
@@ -107,6 +135,8 @@ export default function Watch() {
           onReady: (e) => {
             e.target.setVolume(volume);
             setDuration(e.target.getDuration() || 0);
+            const avail = e.target.getAvailablePlaybackRates?.();
+            if (avail?.length) setRates(avail.filter((r) => r >= 0.5 && r <= 2));
             wake();
           },
           onStateChange: (e) => {
@@ -123,6 +153,8 @@ export default function Watch() {
               setEverPlayed(true);
               setEnded(false);
               setDuration((d) => d || e.target.getDuration() || 0);
+              const q = e.target.getAvailableQualityLevels?.() || [];
+              if (q.length) setQualities(q);
             }
             if (e.data === S.ENDED) {
               setEnded(true);
@@ -215,6 +247,39 @@ export default function Watch() {
     wake();
   }, [wake]);
 
+  const applyRate = useCallback(
+    (r) => {
+      playerRef.current?.setPlaybackRate?.(r);
+      setRate(r);
+      wake();
+    },
+    [wake]
+  );
+
+  const applyQuality = useCallback(
+    (q) => {
+      if (q !== 'auto') playerRef.current?.setPlaybackQuality?.(q);
+      setQuality(q);
+      wake();
+    },
+    [wake]
+  );
+
+  const toggleCaptions = useCallback(() => {
+    const p = playerRef.current;
+    if (!p) return;
+    if (captions) {
+      p.unloadModule?.('captions');
+      p.unloadModule?.('cc');
+    } else {
+      p.loadModule?.('captions');
+      p.loadModule?.('cc');
+      p.setOption?.('captions', 'track', { languageCode: 'en' });
+    }
+    setCaptions(!captions);
+    wake();
+  }, [captions, wake]);
+
   // keyboard map (universal player conventions)
   useEffect(() => {
     if (!started) return undefined;
@@ -254,12 +319,36 @@ export default function Watch() {
         case 'f':
           goFullscreen();
           break;
+        case 'c':
+          toggleCaptions();
+          break;
+        case 'escape':
+          if (menu) setMenu(null);
+          break;
+        case '>':
+        case '.':
+          applyRate(rates[Math.min(rates.length - 1, rates.indexOf(rate) + 1)] ?? rate);
+          break;
+        case '<':
+        case ',':
+          applyRate(rates[Math.max(0, rates.indexOf(rate) - 1)] ?? rate);
+          break;
         default:
       }
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [started, toggle, skip, applyVolume, toggleMute, goFullscreen, volume]);
+  }, [started, toggle, skip, applyVolume, toggleMute, goFullscreen, toggleCaptions, applyRate, menu, rate, rates, volume]);
+
+  // close the settings popover on outside click
+  useEffect(() => {
+    if (!menu) return undefined;
+    const onDown = (e) => {
+      if (!e.target.closest('.player-settings')) setMenu(null);
+    };
+    document.addEventListener('pointerdown', onDown);
+    return () => document.removeEventListener('pointerdown', onDown);
+  }, [menu]);
 
   if (!film) return <NotFound message="We couldn't find that title in the catalog." />;
 
@@ -269,7 +358,7 @@ export default function Watch() {
 
   return (
     <main
-      className={`player ${started && playing && idle ? 'player--idle' : ''}`}
+      className={`player ${started && playing && idle && !menu ? 'player--idle' : ''}`}
       ref={stageRef}
       onPointerMove={wake}
       onTouchStart={wake}
@@ -414,6 +503,103 @@ export default function Watch() {
               />
             </div>
             <span className="player-spacer" />
+
+            <button
+              type="button"
+              className={`player-iconbtn ${captions ? 'player-iconbtn--on' : ''}`}
+              onClick={toggleCaptions}
+              aria-pressed={captions}
+              aria-label="Subtitles"
+            >
+              <IconCaptions />
+            </button>
+
+            <div className="player-settings">
+              <button
+                type="button"
+                className={`player-iconbtn ${menu ? 'player-iconbtn--on' : ''}`}
+                onClick={() => setMenu(menu ? null : 'settings')}
+                aria-haspopup="menu"
+                aria-expanded={!!menu}
+                aria-label="Settings"
+              >
+                <IconGear />
+              </button>
+
+              {menu === 'settings' && (
+                <div className="player-menu" role="menu">
+                  <button type="button" className="player-menu-row" role="menuitem" onClick={() => setMenu('speed')}>
+                    <span>Playback speed</span>
+                    <span className="player-menu-value">
+                      {rate === 1 ? 'Normal' : `${rate}×`}
+                      <IconChevR />
+                    </span>
+                  </button>
+                  {qualities.length > 0 && (
+                    <button type="button" className="player-menu-row" role="menuitem" onClick={() => setMenu('quality')}>
+                      <span>Quality</span>
+                      <span className="player-menu-value">
+                        {quality === 'auto' ? 'Auto' : quality}
+                        <IconChevR />
+                      </span>
+                    </button>
+                  )}
+                  <button type="button" className="player-menu-row" role="menuitemcheckbox" aria-checked={captions} onClick={toggleCaptions}>
+                    <span>Subtitles</span>
+                    <span className="player-menu-value">{captions ? 'On' : 'Off'}</span>
+                  </button>
+                </div>
+              )}
+
+              {menu === 'speed' && (
+                <div className="player-menu" role="menu">
+                  <button type="button" className="player-menu-head" onClick={() => setMenu('settings')}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M9 3 4.5 7 9 11" />
+                    </svg>
+                    Playback speed
+                  </button>
+                  {rates.map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      className="player-menu-row"
+                      role="menuitemradio"
+                      aria-checked={rate === r}
+                      onClick={() => applyRate(r)}
+                    >
+                      <span className="player-menu-check">{rate === r && <IconCheck />}</span>
+                      {r === 1 ? 'Normal' : `${r}×`}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {menu === 'quality' && (
+                <div className="player-menu" role="menu">
+                  <button type="button" className="player-menu-head" onClick={() => setMenu('settings')}>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M9 3 4.5 7 9 11" />
+                    </svg>
+                    Quality
+                  </button>
+                  {['auto', ...qualities.filter((q) => q !== 'auto')].map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      className="player-menu-row"
+                      role="menuitemradio"
+                      aria-checked={quality === q}
+                      onClick={() => applyQuality(q)}
+                    >
+                      <span className="player-menu-check">{quality === q && <IconCheck />}</span>
+                      {q === 'auto' ? 'Auto' : q.replace('hd', '').replace('large', '480p').replace('medium', '360p').replace('small', '240p')}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <button type="button" className="player-iconbtn" onClick={goFullscreen} aria-label="Fullscreen">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M7 2.5H2.5V7M11 2.5h4.5V7M7 15.5H2.5V11M11 15.5h4.5V11" />

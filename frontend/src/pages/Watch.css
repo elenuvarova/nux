@@ -372,6 +372,86 @@
   transform: scale(0.94);
 }
 
+.player-iconbtn--on {
+  color: var(--amber-500);
+}
+
+/* ── settings popover ────────────────────────────────────────── */
+.player-settings {
+  position: relative;
+}
+
+.player-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--space-2));
+  min-width: 220px;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  background: rgb(13 12 11 / 0.92);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    inset 0 0 0 1px var(--white-a08),
+    var(--shadow-overlay);
+  display: grid;
+  gap: 2px;
+}
+
+.player-menu-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-1);
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
+  color: var(--text-secondary);
+  font: var(--type-eyebrow);
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+}
+
+.player-menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font: 400 14px/1 var(--font-ui);
+  text-align: left;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.player-menu-row:hover {
+  background: var(--white-a08);
+}
+
+.player-menu-value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-tertiary);
+  font: var(--type-metadata);
+}
+
+.player-menu-check {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-right: var(--space-2);
+  color: var(--amber-500);
+}
+
+.player-menu [role='menuitemradio'] {
+  justify-content: flex-start;
+}
+
 .player-playbtn {
   background: var(--surface-inverse);
   color: var(--icon-inverse);
@@ -393,6 +473,17 @@
   pointer-events: none;
 }
 
+/* ── touch: volume slider can't hover-reveal — show it inline,
+   compact, so it's still adjustable on mobile/tablet ───────────── */
+@media (pointer: coarse) {
+  .player-volume-slider {
+    width: 64px;
+    opacity: 1;
+    margin-left: var(--space-1);
+    margin-right: var(--space-2);
+  }
+}
+
 @media (max-width: 768px) {
   .player-top {
     padding: var(--space-4);
@@ -407,5 +498,29 @@
   .player-bigplay {
     width: 64px;
     height: 64px;
+  }
+
+  /* keep the same control set, scaled down so it fits a phone */
+  .player-iconbtn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .player-center-transport {
+    gap: var(--space-6);
+  }
+
+  .player-skipbtn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .player-center-transport .player-playbtn {
+    width: 64px;
+    height: 64px;
+  }
+
+  .player-menu {
+    min-width: 200px;
   }
 }
