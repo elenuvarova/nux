@@ -14,6 +14,8 @@ import Settings from './pages/Settings.jsx';
 import Downloads from './pages/Downloads.jsx';
 import Auth from './pages/Auth.jsx';
 import Welcome from './pages/Welcome.jsx';
+import Info from './pages/Info.jsx';
+import Collection from './pages/Collection.jsx';
 import NotFound from './pages/NotFound.jsx';
 
 /* On forward navigation: scroll to top and move focus to the new page's
@@ -58,6 +60,8 @@ export default function App() {
           <Route path="/signin" element={<Auth mode="signin" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/welcome" element={<Welcome />} />
+          <Route path="/collection/:slug" element={<Collection />} />
+          <Route path="/p/:slug" element={<Info />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

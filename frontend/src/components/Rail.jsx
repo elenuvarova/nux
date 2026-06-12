@@ -45,12 +45,16 @@ export function PosterCard({ filmId }) {
 
 export function ContinueCard({ item }) {
   const film = byId(item.filmId);
+  if (!film) return null;
   const total = film.runtimeMin || 120;
-  const progress = Math.min(96, Math.max(4, Math.round((1 - item.minutesLeft / total) * 100)));
+  const frac = typeof item.frac === 'number' ? item.frac : 1 - (item.minutesLeft || 30) / total;
+  const progress = Math.min(96, Math.max(4, Math.round(frac * 100)));
+  const minutesLeft = Math.max(1, Math.round(total * (1 - frac)));
+  const art = item.still || film.backdrop || film.poster;
   return (
-    <Link to={`/film/${film.id}`} className="continue-card" viewTransition onClick={markHeroArt}>
+    <Link to={`/watch/${film.id}`} className="continue-card" viewTransition onClick={markHeroArt}>
       <div className="continue-card-art">
-        <img src={item.still} alt="" loading="lazy" />
+        <img src={art} alt="" loading="lazy" />
         <span className="continue-card-play" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
             <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
@@ -59,22 +63,22 @@ export function ContinueCard({ item }) {
         <span className="continue-card-progress" style={{ '--progress': `${progress}%` }} />
       </div>
       <p className="poster-card-title">{film.title}</p>
-      <p className="metadata">{minutesLabel(item.minutesLeft)}</p>
+      <p className="metadata">{minutesLabel(minutesLeft)}</p>
     </Link>
   );
 }
 
-export default function Rail({ title, wide = false, children }) {
+export default function Rail({ title, wide = false, seeAllTo = '/browse', children }) {
   return (
     <section className="rail">
       <header className="rail-header">
         <h2 className="headline">{title}</h2>
-        <a href="#all" className="rail-seeall">
+        <Link to={seeAllTo} className="rail-seeall">
           See all
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
             <path d="M4.5 2.5 8 6l-3.5 3.5" />
           </svg>
-        </a>
+        </Link>
       </header>
       <div className={wide ? 'rail-scroll rail-scroll--wide' : 'rail-scroll'}>{children}</div>
     </section>

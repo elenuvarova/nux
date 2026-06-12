@@ -1,0 +1,124 @@
+.collection-hero {
+  position: relative;
+  min-height: 48vh;
+  display: flex;
+  align-items: flex-end;
+}
+
+.collection-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collection-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--ink-900), rgb(13 12 11 / 0.5) 50%, rgb(13 12 11 / 0.35));
+}
+
+.collection-headings {
+  position: relative;
+  z-index: 1;
+  max-width: 880px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--space-6) var(--space-10);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.collection-title {
+  font: var(--type-display-xl);
+  letter-spacing: var(--track-display);
+  text-wrap: balance;
+}
+
+.collection-body {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: var(--space-10) var(--space-6) var(--space-20);
+}
+
+.collection-intro {
+  font: var(--type-essay);
+  color: var(--text-secondary);
+  max-width: 60ch;
+  margin-bottom: var(--space-12);
+}
+
+.collection-list {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.collection-entry {
+  display: grid;
+  grid-template-columns: 48px 96px 1fr;
+  gap: var(--space-5);
+  align-items: start;
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.collection-rank {
+  font: var(--type-display-l);
+  letter-spacing: var(--track-display);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.collection-poster {
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-poster);
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px var(--white-a08);
+}
+
+.collection-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collection-text {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.collection-name {
+  font: var(--type-display-m);
+  letter-spacing: var(--track-display);
+  color: var(--text-primary);
+}
+
+.collection-name:hover {
+  color: var(--amber-400);
+}
+
+.collection-note {
+  font: var(--type-essay);
+  color: var(--text-secondary);
+  margin-top: var(--space-1);
+}
+
+@media (max-width: 640px) {
+  .collection-title {
+    font: var(--type-display-l);
+    letter-spacing: var(--track-display);
+  }
+
+  .collection-entry {
+    grid-template-columns: 28px 72px 1fr;
+    gap: var(--space-3);
+  }
+
+  .collection-rank {
+    font: var(--type-display-m);
+    letter-spacing: var(--track-display);
+  }
+}

@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Hero from '../components/Hero.jsx';
 import Reveal from '../components/Reveal.jsx';
 import { SkeletonRail } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
+import { useWatchHistory } from '../lib/useWatchHistory.js';
 import Rail, { PosterCard, ContinueCard } from '../components/Rail.jsx';
-import { RAILS, CONTINUE_WATCHING, EDITORIAL_PICK } from '../data/catalog.js';
+import { RAILS, EDITORIAL_PICK } from '../data/catalog.js';
 import './Home.css';
 
 export default function Home() {
   usePageTitle(null);
   const [trending, curated, fresh] = RAILS;
+  const { history } = useWatchHistory();
   // brief skeleton on first mount so the page assembles, then settles
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -41,13 +44,15 @@ export default function Home() {
             ))}
           </Rail>
         </Reveal>
-        <Reveal>
-          <Rail title="Continue Watching" wide>
-            {CONTINUE_WATCHING.map((item) => (
-              <ContinueCard key={item.filmId} item={item} />
-            ))}
-          </Rail>
-        </Reveal>
+        {history.length > 0 && (
+          <Reveal>
+            <Rail title="Continue Watching" wide>
+              {history.map((h) => (
+                <ContinueCard key={h.id} item={{ filmId: h.id, frac: h.frac }} />
+              ))}
+            </Rail>
+          </Reveal>
+        )}
         <Reveal>
           <Rail title={curated.title}>
             {curated.filmIds.map((id) => (
@@ -68,9 +73,9 @@ export default function Home() {
             <p className="eyebrow">{EDITORIAL_PICK.eyebrow}</p>
             <h2 className="display-l">{EDITORIAL_PICK.title}</h2>
             <p className="editorial-dek">{EDITORIAL_PICK.dek}</p>
-            <a href="#editorial" className="btn btn-secondary editorial-cta">
+            <Link to={`/collection/${EDITORIAL_PICK.slug}`} className="btn btn-secondary editorial-cta">
               {EDITORIAL_PICK.cta}
-            </a>
+            </Link>
           </div>
           <div className="editorial-cover">
             <img src={EDITORIAL_PICK.image} alt="" loading="lazy" />

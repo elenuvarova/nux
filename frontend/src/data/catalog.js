@@ -341,6 +341,29 @@ export const EDITORIAL_PICK = {
   dek: 'Our critics select the most essential cinema of the year — from festival premieres to overlooked masterpieces.',
   cta: 'Read the list',
   image: genreImg('genre-arthouse.jpg'),
+  slug: 'best-2026',
+};
+
+export const COLLECTIONS = {
+  'best-2026': {
+    eyebrow: 'The List · 2026',
+    title: 'The 10 Best Films of 2026',
+    intro:
+      'A year of restraint and rupture. Our critics return to the films that earned a second, third, fourth watch — restorations that arrived like new releases, and new releases already built to last.',
+    cover: genreImg('genre-arthouse.jpg'),
+    entries: [
+      ['aftersun', 'A camcorder holiday becomes the saddest film about memory in years — the one we kept coming back to.'],
+      ['the-souvenir', 'Joanna Hogg’s exacting memory-piece: love as a slow, deliberate undoing.'],
+      ['saint-maud', 'Faith curdles into obsession in 84 razor-wire minutes.'],
+      ['under-the-skin', 'An alien gaze turned on us — still the most hypnotic thing on the platform.'],
+      ['45-years', 'A marriage subsides in a single week; Rampling’s final shot is the year’s best.'],
+      ['the-red-shoes', 'The 4K restoration that played like the boldest new release of the year.'],
+      ['black-narcissus', 'Technicolor delirium, restored — altitude, wind and memory undoing a convent.'],
+      ['the-third-man', 'Shadow-soaked Vienna, sharper than ever in the new transfer.'],
+      ['lawrence-of-arabia', 'Still the widest screen cinema can offer.'],
+      ['naked', 'Thewlis talks through one long London night; Leigh at his darkest.'],
+    ],
+  },
 };
 
 // ── Genres (Projection Still Life identity) ───────────────────────

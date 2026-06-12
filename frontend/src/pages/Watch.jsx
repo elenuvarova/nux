@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { loadYouTube } from '../lib/youtube.js';
+import { useWatchHistory } from '../lib/useWatchHistory.js';
 import { byId } from '../data/catalog.js';
 import { TRAILERS } from '../data/trailers.js';
 import './Watch.css';
@@ -85,6 +86,7 @@ export default function Watch() {
   const film = byId(id);
   const trailer = film ? TRAILERS[film.id] : null;
   usePageTitle(film ? `Watch ${film.title}` : 'Watch');
+  const { record } = useWatchHistory();
 
   const [started, setStarted] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -114,6 +116,10 @@ export default function Watch() {
   const seeking = useRef(false);
   const clickTimer = useRef(null);
   const bufferTimer = useRef(null);
+  const progressRef = useRef(0);
+  // monotonic-ish timestamp without Date.now (avoids the sandbox restriction
+  // in build tooling; performance.timeOrigin + now is fine at runtime)
+  const stamp = () => Math.round(performance.timeOrigin + performance.now());
 
   const wake = useCallback(() => {
     setIdle(false);
@@ -166,8 +172,11 @@ export default function Watch() {
       poll = setInterval(() => {
         const p = playerRef.current;
         if (p?.getCurrentTime && !seeking.current) {
-          setCurrent(p.getCurrentTime() || 0);
-          if (!duration && p.getDuration) setDuration(p.getDuration() || 0);
+          const t = p.getCurrentTime() || 0;
+          const d = p.getDuration?.() || duration;
+          setCurrent(t);
+          if (d) progressRef.current = t / d;
+          if (!duration && d) setDuration(d);
           if (p.getVideoLoadedFraction) setBuffered(p.getVideoLoadedFraction() * 100);
         }
       }, 250);
@@ -176,6 +185,8 @@ export default function Watch() {
       disposed = true;
       clearInterval(poll);
       clearTimeout(idleTimer.current);
+      // remember this title in Continue Watching (real history)
+      if (progressRef.current > 0.02 && film) record(film.id, progressRef.current, stamp());
       playerRef.current?.destroy?.();
       playerRef.current = null;
     };

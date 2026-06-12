@@ -1,0 +1,28 @@
+.info {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: calc(64px + var(--space-12)) var(--space-4) var(--space-20);
+}
+
+.info-title {
+  font: var(--type-display-l);
+  letter-spacing: var(--track-display);
+  margin-bottom: var(--space-8);
+}
+
+.info-body {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.info-body p {
+  font: var(--type-essay);
+  color: var(--text-secondary);
+}
+
+.info-h2 {
+  font: var(--type-headline);
+  letter-spacing: var(--track-display);
+  color: var(--text-primary);
+  margin-top: var(--space-6);
+}
