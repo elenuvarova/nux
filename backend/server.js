@@ -9,6 +9,7 @@ import { Session, PasswordReset } from "./models.js";
 import authRoutes from "./routes/auth.js";
 import listRoutes from "./routes/list.js";
 import historyRoutes from "./routes/history.js";
+import curatorRoutes from "./routes/curator.js";
 import { ah } from "./lib/asyncHandler.js";
 import { csrfOriginCheck } from "./lib/security.js";
 
@@ -55,6 +56,7 @@ app.get(
 app.use("/api/auth", authRoutes);
 app.use("/api/list", listRoutes);
 app.use("/api/history", historyRoutes);
+app.use("/api/curator", curatorRoutes);
 
 // Global error handler — must be registered AFTER all routes (so it catches
 // errors funnelled through next() by the ah() wrapper) and BEFORE the prod
