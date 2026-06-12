@@ -1,7 +1,7 @@
 .profile {
-  max-width: 640px;
+  max-width: var(--measure-sm);
   margin: 0 auto;
-  padding: calc(64px + var(--space-10)) var(--space-4) 0;
+  padding: calc(var(--nav-h) + var(--space-10)) var(--space-4) 0;
   display: grid;
   gap: var(--space-6);
 }
@@ -17,7 +17,7 @@
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   background: var(--surface-raised);
-  box-shadow: inset 0 0 0 1px var(--white-a08);
+  box-shadow: var(--shadow-glass-edge);
 }
 
 .profile-avatar {
@@ -45,37 +45,8 @@
   justify-content: center;
 }
 
-.profile-list {
-  display: grid;
-  border-radius: var(--radius-lg);
-  background: var(--surface-raised);
-  box-shadow: inset 0 0 0 1px var(--white-a08);
-  overflow: hidden;
-}
-
-.profile-list li + li {
-  border-top: 1px solid var(--border-subtle);
-}
-
-.profile-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  padding: var(--space-4);
-  font: 400 15px/1 var(--font-ui);
-  color: var(--text-primary);
-  text-align: left;
-  transition: background-color var(--dur-base) var(--ease-out);
-}
-
-.profile-row:hover {
-  background: var(--surface-hover);
-}
-
-.profile-row:active {
-  background: var(--surface-pressed);
-}
+/* .profile-list / .profile-row share the .list-group / .list-row primitive
+   (global.css). Profile-specific row affordances stay below. */
 
 .row-icon {
   display: grid;
@@ -98,7 +69,7 @@
 .profile-signout {
   border-radius: var(--radius-lg);
   background: var(--surface-raised);
-  box-shadow: inset 0 0 0 1px var(--white-a08);
+  box-shadow: var(--shadow-glass-edge);
   color: var(--status-danger);
   margin-bottom: var(--space-10);
 }

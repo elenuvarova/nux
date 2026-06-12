@@ -14,7 +14,9 @@
   /* ── Primitives: paper (warm off-white text ladder) ─────────── */
   --paper-100: #f2efe9;
   --paper-300: #b0a99e;
-  --paper-500: #8a8275;
+  /* nudged from #8a8275 → clears 4.5:1 AA even on the ink-700 overlay and
+     ink-600 hover surfaces, so 12.5px metadata in tertiary never fails */
+  --paper-500: #9a9183;
   --paper-700: #5c564c;
   --paper-invert: #f2ede3;
 
@@ -22,6 +24,10 @@
   --amber-300: #edba62;
   --amber-400: #e0a848;
   --amber-500: #c8922a;
+  /* amber used as light, not as a fill: the hero projector glow and the
+     poster cursor sheen. Named so the accent stays inside the system. */
+  --amber-glow: rgb(200 146 42 / 0.16); /* = --amber-500 @ 16% */
+  --amber-sheen: rgb(237 186 98 / 0.28); /* = --amber-300 @ 28% */
 
   /* ── Primitives: status + hairlines ─────────────────────────── */
   --status-danger: #b3554d;
@@ -50,10 +56,54 @@
   --surface-scrim-hover: rgb(13 12 11 / 0.58);
   --surface-scrim-pressed: rgb(13 12 11 / 0.72);
 
+  /* ── Semantic: glass chrome (iOS 26-selective material) ─────── */
+  /* Two alphas only: the floating chrome (nav/tabbar/recent) and the
+     opaque-feeling overlays (toast/menu/auth card). The page-color base
+     keeps the blur warm. Consume via the .glass utility in global.css. */
+  --glass-bg: rgb(13 12 11 / 0.72);
+  --glass-bg-strong: rgb(13 12 11 / 0.92);
+  --blur-chrome: 20px;
+  --shadow-glass-edge: inset 0 0 0 1px var(--white-a08);
+
+  /* ── Semantic: hero scrim (poster/backdrop → page-color falloff) ─ */
+  /* cinema dim — the flat ::before layer that knocks the artwork back
+     before the falloff gradient reads over it (Hero + FilmDetail share it) */
+  --scrim-cinema-dim: rgb(13 12 11 / 0.3);
+  /* The full recipe shared by every full-bleed hero: cinema dim is a
+     separate ::before layer; this is the bottom + left + top falloff. */
+  --scrim-hero:
+    linear-gradient(
+      to top,
+      var(--ink-900) 0%,
+      rgb(13 12 11 / 0.78) 14%,
+      rgb(13 12 11 / 0.45) 32%,
+      rgb(13 12 11 / 0.18) 55%,
+      transparent 100%
+    ),
+    linear-gradient(to right, rgb(13 12 11 / 0.82) 0%, transparent 60%),
+    linear-gradient(to bottom, rgb(13 12 11 / 0.6) 0%, transparent 20%);
+  /* narrow/mobile hero: drop the left horizontal scrim, deepen the bottom */
+  --scrim-hero-narrow:
+    linear-gradient(
+      to top,
+      var(--ink-900) 0%,
+      rgb(13 12 11 / 0.78) 18%,
+      rgb(13 12 11 / 0.45) 40%,
+      rgb(13 12 11 / 0.18) 62%,
+      transparent 100%
+    ),
+    linear-gradient(to bottom, rgb(13 12 11 / 0.6) 0%, transparent 20%);
+  /* soft single-pass scrim for the shorter category heroes (collection,
+     genre) — image stays brighter, headings still legible at the base */
+  --scrim-hero-soft:
+    linear-gradient(to top, var(--ink-900), rgb(13 12 11 / 0.48) 52%, rgb(13 12 11 / 0.32));
+
   /* ── Semantic: text ─────────────────────────────────────────── */
   --text-primary: var(--paper-100);
   --text-secondary: var(--paper-300);
   --text-tertiary: var(--paper-500);
+  /* disabled controls ONLY (2.69:1 — exempt from WCAG contrast per 1.4.3).
+     Never use this for merely-secondary readable text. */
   --text-disabled: var(--paper-700);
   --text-inverse: var(--ink-900);
 
@@ -94,6 +144,15 @@
   --space-24: 96px;
   --space-30: 120px;
 
+  /* fixed nav height — page top-padding anchors to this, not a magic 64.
+     Drops to 56px under 768px (see media query at end of file). */
+  --nav-h: 64px;
+
+  /* repeated content measures (max-width of reading/list columns) */
+  --measure-sm: 640px; /* settings / lessons / details column */
+  --measure-md: 720px; /* downloads / film details */
+  --measure-lg: 880px; /* collection editorial column */
+
   /* ── Radius ─────────────────────────────────────────────────── */
   --radius-xs: 4px;
   --radius-sm: 8px;
@@ -102,6 +161,8 @@
   --radius-xl: 24px;
   --radius-2xl: 32px;
   --radius-full: 9999px;
+  /* poster artwork specifically (2:3 / 16:9 stills) gets a tighter 6px;
+     every other thumbnail/card surface uses --radius-sm (8px). */
   --radius-poster: 6px;
 
   /* ── Typography ─────────────────────────────────────────────── */
@@ -129,6 +190,15 @@
   --type-eyebrow: 700 11px/1 var(--font-ui);
   --track-eyebrow: 0.14em;
 
+  /* small UI chrome — nav links, chips, list-row values, captions, inputs */
+  --type-label: 500 14px/1 var(--font-ui); /* nav links, chips, feature pills */
+  --type-caption: 400 13px/1 var(--font-ui); /* nav search, see-all, sign-in */
+  --type-input: 400 15px/1 var(--font-ui); /* list-row labels, search inputs */
+  --type-row: 400 14px/1 var(--font-ui); /* compact menu/detail rows */
+  --type-badge: 700 9px/1 var(--font-ui); /* corner poster badge */
+  --track-badge: 0.1em;
+  --type-tab: 500 10.5px/1 var(--font-ui); /* tab-bar item label */
+
   /* Editorial body */
   --type-essay: 400 17px/1.65 var(--font-essay);
 
@@ -136,6 +206,9 @@
   --shadow-card-hover: 0 12px 40px rgb(0 0 0 / 0.55);
   --shadow-overlay: 0 24px 80px rgb(0 0 0 / 0.6);
   --focus-ring: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--border-focus);
+
+  /* one tactile press-scale for every interactive primitive (btn/chip/icon/tab) */
+  --press-scale: 0.97;
 
   /* ── Motion ─────────────────────────────────────────────────── */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -146,4 +219,11 @@
   --dur-crossfade: 240ms;
   --dur-toast: 260ms;
   --dur-reveal: 600ms;
+}
+
+/* nav shrinks to 56px on mobile; page top-padding follows automatically */
+@media (max-width: 768px) {
+  :root {
+    --nav-h: 56px;
+  }
 }

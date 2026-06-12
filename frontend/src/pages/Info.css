@@ -1,7 +1,7 @@
 .info {
   max-width: 680px;
   margin: 0 auto;
-  padding: calc(64px + var(--space-12)) var(--space-4) var(--space-20);
+  padding: calc(var(--nav-h) + var(--space-12)) var(--space-4) var(--space-20);
 }
 
 .info-title {

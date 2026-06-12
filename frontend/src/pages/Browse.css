@@ -1,7 +1,7 @@
 .browse {
   max-width: 1440px;
   margin: 0 auto;
-  padding: calc(64px + var(--space-12)) var(--space-16) 0;
+  padding: calc(var(--nav-h) + var(--space-12)) var(--space-16) 0;
 }
 
 .page-title {
@@ -39,7 +39,7 @@
   border: 1px solid var(--border-default);
   background: var(--surface-raised);
   color: var(--text-primary);
-  font: 400 15px/1 var(--font-ui);
+  font: var(--type-input);
   transition: border-color var(--dur-base) var(--ease-out);
 }
 
@@ -47,9 +47,16 @@
   color: var(--text-tertiary);
 }
 
+/* border tints amber on any focus; keyboard focus also gets the
+   system ring (matches :focus-visible everywhere else in the app) */
 .browse-search input:focus {
-  outline: none;
   border-color: var(--border-focus);
+}
+
+.browse-search input:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
 }
 
 .browse-search input::-webkit-search-cancel-button {
@@ -65,11 +72,11 @@
   z-index: 20;
   padding: var(--space-2);
   border-radius: var(--radius-md);
-  background: rgb(13 12 11 / 0.96);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(var(--blur-chrome));
+  backdrop-filter: blur(var(--blur-chrome));
   box-shadow:
-    inset 0 0 0 1px var(--white-a08),
+    var(--shadow-glass-edge),
     var(--shadow-overlay);
 }
 
@@ -129,7 +136,7 @@
   border-radius: var(--radius-full);
   border: 1px solid var(--border-default);
   color: var(--text-secondary);
-  font: 500 14px/1 var(--font-ui);
+  font: var(--type-label);
   transition:
     background-color var(--dur-base) var(--ease-out),
     color var(--dur-base) var(--ease-out),
@@ -143,7 +150,7 @@
 }
 
 .chip:active {
-  transform: scale(0.96);
+  transform: scale(var(--press-scale));
 }
 
 .chip--active {
@@ -249,7 +256,7 @@
 
 @media (max-width: 768px) {
   .browse {
-    padding: calc(64px + var(--space-6)) var(--space-4) 0;
+    padding: calc(var(--nav-h) + var(--space-6)) var(--space-4) 0;
   }
 
   .genre-grid {

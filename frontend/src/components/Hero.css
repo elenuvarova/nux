@@ -17,7 +17,7 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: radial-gradient(120% 80% at 22% 88%, rgb(200 146 42 / 0.16), transparent 55%);
+  background: radial-gradient(120% 80% at 22% 88%, var(--amber-glow), transparent 55%);
   animation: hero-breathe 9s ease-in-out infinite alternate;
 }
 
@@ -74,25 +74,15 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: rgb(13 12 11 / 0.3);
+  background: var(--scrim-cinema-dim);
 }
 
-/* bottom + left scrims */
+/* bottom + left scrims (shared recipe → token) */
 .hero-art::after {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      to top,
-      var(--ink-900) 0%,
-      rgb(13 12 11 / 0.78) 14%,
-      rgb(13 12 11 / 0.45) 32%,
-      rgb(13 12 11 / 0.18) 55%,
-      transparent 100%
-    ),
-    linear-gradient(to right, rgb(13 12 11 / 0.82) 0%, transparent 60%),
-    linear-gradient(to bottom, rgb(13 12 11 / 0.6) 0%, transparent 20%);
+  background: var(--scrim-hero);
 }
 
 .hero-content {
@@ -139,68 +129,33 @@
 
 .hero-dots {
   display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-5);
+  /* dots carry 8px padding for the hit target; pull the row in by that
+     padding so the visual rhythm and left edge match the content above */
+  gap: 0;
+  margin: var(--space-4) calc(-1 * var(--space-2)) 0;
 }
 
+/* visual dot stays 8px (22px when active); padding grows the hit target to
+   ≥24px without moving the dot — background paints only the content box */
 .hero-dot {
+  box-sizing: content-box;
   width: 8px;
   height: 8px;
+  padding: 8px;
   border-radius: var(--radius-full);
   background: var(--white-a18);
+  background-clip: content-box;
   transition: width var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
 }
 
 .hero-dot--on {
   width: 22px;
   background: var(--amber-500);
+  background-clip: content-box;
 }
 
-/* ── Buttons (shared) ────────────────────────────────────────── */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  height: 44px;
-  padding: 0 var(--space-6);
-  border-radius: var(--radius-full);
-  font: var(--type-button);
-  white-space: nowrap;
-  transition:
-    background-color var(--dur-base) var(--ease-out),
-    border-color var(--dur-base) var(--ease-out),
-    transform var(--dur-fast) var(--ease-out);
-}
-
-.btn:active {
-  transform: scale(0.97);
-}
-
-.btn-primary {
-  background: var(--action-primary);
-  color: var(--action-primary-text);
-}
-
-.btn-primary:hover {
-  background: var(--action-primary-hover);
-}
-
-.btn-secondary {
-  border: 1px solid var(--action-secondary-border);
-  color: var(--text-primary);
-  background: rgb(13 12 11 / 0.35);
-}
-
-.btn-secondary:hover {
-  border-color: var(--border-strong);
-  background: var(--surface-hover);
-}
-
-.btn-secondary--on {
-  background: var(--white-a08);
-  border-color: var(--border-strong);
-  color: var(--text-primary);
-}
+/* .btn / .btn-primary / .btn-secondary are now a global primitive in
+   global.css (used by ~14 screens, not just the hero). */
 
 @media (max-width: 768px) {
   .hero {
@@ -215,27 +170,12 @@
     flex-wrap: wrap;
   }
 
-  .btn {
-    height: 40px;
-    padding: 0 var(--space-5);
-    font: 600 14px/1 var(--font-ui);
-  }
-
   .hero-title {
     font: var(--type-display-l);
     letter-spacing: var(--track-display);
   }
 
   .hero-art::after {
-    background:
-      linear-gradient(
-        to top,
-        var(--ink-900) 0%,
-        rgb(13 12 11 / 0.78) 18%,
-        rgb(13 12 11 / 0.45) 40%,
-        rgb(13 12 11 / 0.18) 62%,
-        transparent 100%
-      ),
-      linear-gradient(to bottom, rgb(13 12 11 / 0.6) 0%, transparent 20%);
+    background: var(--scrim-hero-narrow);
   }
 }

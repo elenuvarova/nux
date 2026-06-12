@@ -17,7 +17,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, var(--ink-900), rgb(13 12 11 / 0.45) 55%, rgb(13 12 11 / 0.3));
+  background: var(--scrim-hero-soft);
 }
 
 .genre-headings {

@@ -1,7 +1,7 @@
 .downloads {
-  max-width: 720px;
+  max-width: var(--measure-md);
   margin: 0 auto;
-  padding: calc(64px + var(--space-10)) var(--space-4) var(--space-10);
+  padding: calc(var(--nav-h) + var(--space-10)) var(--space-4) var(--space-10);
   display: grid;
   gap: var(--space-6);
 }
@@ -57,7 +57,7 @@
   aspect-ratio: 16 / 10;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px var(--white-a08);
+  box-shadow: var(--shadow-glass-edge);
 }
 
 .downloads-thumb img {

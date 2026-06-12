@@ -17,7 +17,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  font: 500 13px/1 var(--font-ui);
+  font: var(--type-caption);
   color: var(--text-tertiary);
   transition: color var(--dur-base) var(--ease-out);
 }
@@ -93,7 +93,7 @@
   opacity: 0;
   background: radial-gradient(
     circle at var(--mx, 50%) var(--my, 50%),
-    rgb(237 186 98 / 0.28),
+    var(--amber-sheen),
     transparent 45%
   );
   mix-blend-mode: soft-light;
@@ -128,11 +128,12 @@
   position: absolute;
   top: var(--space-2);
   left: var(--space-2);
-  font: 700 9px/1 var(--font-ui);
-  letter-spacing: 0.1em;
+  font: var(--type-badge);
+  letter-spacing: var(--track-badge);
   text-transform: uppercase;
   color: var(--paper-100);
-  background: rgb(13 12 11 / 0.72);
+  /* small on-artwork chip — keeps its own tighter 8px blur, not chrome blur */
+  background: var(--glass-bg);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border-radius: var(--radius-xs);

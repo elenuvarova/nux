@@ -21,11 +21,11 @@
   gap: var(--space-1);
   padding: var(--space-1);
   border-radius: var(--radius-full);
-  background: rgb(13 12 11 / 0.72);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--blur-chrome));
+  backdrop-filter: blur(var(--blur-chrome));
   box-shadow:
-    inset 0 0 0 1px var(--white-a08),
+    var(--shadow-glass-edge),
     var(--shadow-card-hover);
 }
 
@@ -37,7 +37,7 @@
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-full);
   color: var(--text-tertiary);
-  font: 500 10.5px/1 var(--font-ui);
+  font: var(--type-tab);
   transition: color var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
 }
 
@@ -53,7 +53,7 @@
 
 .tabbar-item:active,
 .tabbar-search:active {
-  transform: scale(0.94);
+  transform: scale(var(--press-scale));
 }
 
 .tabbar-search {
@@ -63,11 +63,11 @@
   width: 52px;
   height: 52px;
   border-radius: var(--radius-full);
-  background: rgb(13 12 11 / 0.72);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--blur-chrome));
+  backdrop-filter: blur(var(--blur-chrome));
   box-shadow:
-    inset 0 0 0 1px var(--white-a08),
+    var(--shadow-glass-edge),
     var(--shadow-card-hover);
   color: var(--text-secondary);
 }

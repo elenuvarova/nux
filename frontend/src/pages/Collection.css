@@ -17,13 +17,13 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, var(--ink-900), rgb(13 12 11 / 0.5) 50%, rgb(13 12 11 / 0.35));
+  background: var(--scrim-hero-soft);
 }
 
 .collection-headings {
   position: relative;
   z-index: 1;
-  max-width: 880px;
+  max-width: var(--measure-lg);
   width: 100%;
   margin: 0 auto;
   padding: 0 var(--space-6) var(--space-10);
@@ -38,7 +38,7 @@
 }
 
 .collection-body {
-  max-width: 880px;
+  max-width: var(--measure-lg);
   margin: 0 auto;
   padding: var(--space-10) var(--space-6) var(--space-20);
 }
@@ -76,7 +76,7 @@
   aspect-ratio: 2 / 3;
   border-radius: var(--radius-poster);
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px var(--white-a08);
+  box-shadow: var(--shadow-glass-edge);
 }
 
 .collection-poster img {

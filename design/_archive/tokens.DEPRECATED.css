@@ -1,4 +1,13 @@
 /* ============================================================
+   DEPRECATED — DO NOT IMPORT. Archived 2026-06-12.
+   The single source of truth for tokens is now
+   frontend/src/styles/tokens.css. This older generated dump
+   used a divergent dictionary (purple brand, --text-5xl,
+   .nux-* components) and was never imported anywhere. Kept
+   only for historical reference; safe to delete.
+   ============================================================ */
+
+/* ============================================================
    NUX Design Tokens — CSS Custom Properties
    Generated from design/tokens/*.json
    Usage: import this file once at the root of your app

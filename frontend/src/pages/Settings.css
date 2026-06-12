@@ -1,7 +1,7 @@
 .settings {
-  max-width: 640px;
+  max-width: var(--measure-sm);
   margin: 0 auto;
-  padding: calc(64px + var(--space-10)) var(--space-4) var(--space-10);
+  padding: calc(var(--nav-h) + var(--space-10)) var(--space-4) var(--space-10);
   display: grid;
   gap: var(--space-6);
 }
@@ -34,37 +34,10 @@
   margin-bottom: var(--space-2);
 }
 
-.settings-group {
-  display: grid;
-  border-radius: var(--radius-lg);
-  background: var(--surface-raised);
-  box-shadow: inset 0 0 0 1px var(--white-a08);
-  overflow: hidden;
-}
-
-.settings-group > * + * {
-  border-top: 1px solid var(--border-subtle);
-}
-
+/* .settings-group / .settings-row share the .list-group / .list-row
+   primitive (global.css). Only the settings-specific override stays here. */
 .settings-row {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
-  width: 100%;
-  padding: var(--space-4);
-  font: 400 15px/1 var(--font-ui);
-  color: var(--text-primary);
-  text-align: left;
-  transition: background-color var(--dur-base) var(--ease-out);
-}
-
-.settings-row:hover {
-  background: var(--surface-hover);
-}
-
-.settings-row:active {
-  background: var(--surface-pressed);
 }
 
 .settings-value {

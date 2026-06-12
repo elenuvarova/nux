@@ -8,12 +8,12 @@
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
   border: 1px solid var(--border-default);
-  font: 500 14px/1 var(--font-ui);
+  font: var(--type-label);
   color: var(--text-secondary);
 }
 
 .td-lessons {
-  max-width: 640px;
+  max-width: var(--measure-sm);
   display: grid;
 }
 
