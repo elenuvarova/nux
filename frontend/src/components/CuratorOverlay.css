@@ -38,6 +38,10 @@
   padding: 8px 14px; cursor: pointer; font-size: 14px;
 }
 .curator-chip:hover { background: rgba(255, 255, 255, 0.06); }
+/* Follow-up refinements after a reply — lighter/secondary vs the empty-state chips */
+.curator-followups { display: flex; flex-wrap: wrap; gap: 8px; margin-top: -4px; }
+.curator-followups .curator-chip { font-size: 13px; padding: 6px 12px; opacity: 0.85; }
+.curator-followups .curator-chip:hover { opacity: 1; }
 .curator-user {
   align-self: flex-end; max-width: 85%;
   background: var(--action-primary, #c8922a); color: #1a1a1a;

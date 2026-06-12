@@ -10,6 +10,10 @@ const CHIPS = [
   "Like The Third Man",
 ];
 
+// Tappable refinements shown after each reply — they continue the conversation
+// (the full history is sent, so the Curator reads them in context).
+const FOLLOWUPS = ["Something shorter", "Something lighter", "More like these", "Surprise me"];
+
 export default function CuratorOverlay() {
   const { open, messages, loading, error, closeCurator, send } = useCurator();
   const [draft, setDraft] = useState("");
@@ -62,6 +66,8 @@ export default function CuratorOverlay() {
   };
 
   const isEmpty = messages.length === 0;
+  const lastMsg = messages[messages.length - 1];
+  const showFollowups = !loading && lastMsg?.role === "assistant";
 
   return (
     <div className="curator-scrim" onClick={closeCurator}>
@@ -117,6 +123,16 @@ export default function CuratorOverlay() {
 
           {loading && <p className="curator-thinking">The Curator is considering…</p>}
           {error && <p className="curator-error">{error}</p>}
+
+          {showFollowups && (
+            <div className="curator-followups" role="group" aria-label="Refine">
+              {FOLLOWUPS.map((c) => (
+                <button key={c} className="curator-chip" onClick={() => submit(c)}>
+                  {c}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <form
