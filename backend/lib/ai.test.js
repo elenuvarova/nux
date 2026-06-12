@@ -54,4 +54,14 @@ describe("askCurator failover", () => {
     expect(out).toEqual({ reply: "q", filmIds: ["if"] });
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
+
+  it("ignores an unknown GEMINI_MODEL (no model-name URL injection)", async () => {
+    process.env.GEMINI_MODEL = "../../v1alpha/evil:inject";
+    global.fetch = vi.fn().mockResolvedValueOnce(jsonResponse(GEMINI_OK));
+    await askCurator({ system: "s", messages: [{ role: "user", content: "hi" }] });
+    const url = String(global.fetch.mock.calls[0][0]);
+    expect(url).toContain("gemini-2.0-flash");
+    expect(url).not.toContain("evil");
+    delete process.env.GEMINI_MODEL;
+  });
 });

@@ -3,12 +3,23 @@
 // 20) — no SDK. Both paths normalize to { reply, filmIds }.
 const TIMEOUT_MS = 12_000;
 
+// The model id is interpolated into the request URL (Gemini), so only allow
+// known-good values — an unexpected/misconfigured env var must not be able to
+// redirect the outbound call. Unknown values fall back to the default.
+const GEMINI_MODELS = new Set(["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]);
+const GROQ_MODELS = new Set([
+  "llama-3.3-70b-versatile",
+  "llama-3.1-70b-versatile",
+  "llama-3.1-8b-instant",
+]);
+const pick = (val, allowed, fallback) => (allowed.has(val) ? val : fallback);
+
 const cfg = () => ({
   primary: process.env.AI_PRIMARY === "groq" ? "groq" : "gemini",
   geminiKey: process.env.GEMINI_API_KEY || "",
   groqKey: process.env.GROQ_API_KEY || "",
-  geminiModel: process.env.GEMINI_MODEL || "gemini-2.0-flash",
-  groqModel: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
+  geminiModel: pick(process.env.GEMINI_MODEL, GEMINI_MODELS, "gemini-2.0-flash"),
+  groqModel: pick(process.env.GROQ_MODEL, GROQ_MODELS, "llama-3.3-70b-versatile"),
 });
 
 async function withTimeout(fn) {
