@@ -473,6 +473,15 @@
   pointer-events: none;
 }
 
+/* never hide the chrome while a control inside it has keyboard focus —
+   otherwise the focus ring vanishes (WCAG 2.4.7) */
+.player--idle:focus-within .player-top,
+.player--idle:focus-within .player-transport,
+.player--idle:focus-within .player-center-transport {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* ── touch: volume slider can't hover-reveal — show it inline,
    compact, so it's still adjustable on mobile/tablet ───────────── */
 @media (pointer: coarse) {

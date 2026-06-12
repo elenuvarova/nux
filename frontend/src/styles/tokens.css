@@ -26,6 +26,9 @@
   /* ── Primitives: status + hairlines ─────────────────────────── */
   --status-danger: #b3554d;
   --status-success: #5f8b66;
+  /* lighter red for small TEXT on dark surfaces — #b3554d is only 4.0:1,
+     this clears 4.5:1 AA for the 12.5px error copy */
+  --status-danger-text: #e08178;
   --white-a07: rgb(255 255 255 / 0.07);
   --white-a08: rgb(255 255 255 / 0.08);
   --white-a14: rgb(255 255 255 / 0.14);

@@ -15,8 +15,11 @@ const GENRE_MATCH = {
   romance: ['Romance'],
   history: ['Epic'],
   crime: ['Crime'],
-  'art-house': ['Drama', 'Film-Noir'],
+  'art-house': ['Sci-Fi', 'Drama'],
   comedy: ['Comedy'],
+  // no British titles in the demo catalog yet — render an honest empty state
+  animation: [],
+  musical: [],
 };
 
 const BLURB = {
@@ -39,6 +42,7 @@ export default function Genre() {
   if (!genre || !GENRE_MATCH[id]) return <NotFound message="That genre doesn't exist yet." />;
 
   const labels = GENRE_MATCH[id];
+  const BLURB_FALLBACK = BLURB[id] || `A ${genre.label.toLowerCase()} collection, coming to NUX soon.`;
   const films = FILMS.filter((f) => labels.includes(f.genre));
 
   return (
@@ -50,7 +54,7 @@ export default function Genre() {
           <h1 className="genre-title" tabIndex={-1}>
             {genre.label}
           </h1>
-          <p className="genre-blurb">{BLURB[id]}</p>
+          <p className="genre-blurb">{BLURB_FALLBACK}</p>
         </div>
       </header>
 

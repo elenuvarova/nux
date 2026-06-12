@@ -95,7 +95,7 @@
 
 .auth-error {
   font: var(--type-metadata);
-  color: var(--status-danger);
+  color: var(--status-danger-text);
 }
 
 .auth-forgot {

@@ -20,7 +20,12 @@ export default function Auth({ mode = 'signin' }) {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(values.email)) next.email = 'Enter a valid email.';
     if (values.password.length < 6) next.password = 'At least 6 characters.';
     setErrors(next);
-    if (Object.keys(next).length === 0) navigate('/');
+    const firstError = ['name', 'email', 'password'].find((k) => next[k]);
+    if (firstError) {
+      requestAnimationFrame(() => document.getElementById(firstError)?.focus());
+    } else {
+      navigate('/');
+    }
   };
 
   return (

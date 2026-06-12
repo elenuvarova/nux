@@ -46,13 +46,18 @@ export default function Downloads() {
                     </span>
                   )}
                 </span>
-                <span className={`downloads-status downloads-status--${d.state}`} aria-hidden="true">
+                <span className={`downloads-status downloads-status--${d.state}`} title={d.state}>
                   {d.state === 'downloading' ? (
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M10 3v8M6.5 7.5 10 11l3.5-3.5M4 15.5h12" />
                     </svg>
+                  ) : d.state === 'expiring' ? (
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle cx="10" cy="10" r="7.5" />
+                      <path d="M10 6.2v4.2l2.6 1.6" />
+                    </svg>
                   ) : (
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <circle cx="10" cy="10" r="7.5" />
                       <path d="M6.5 10 9 12.5 13.5 7.5" />
                     </svg>

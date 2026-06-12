@@ -4,7 +4,7 @@ import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { loadYouTube } from '../lib/youtube.js';
 import { useWatchHistory } from '../lib/useWatchHistory.js';
-import { byId } from '../data/catalog.js';
+import { anyTitleById } from '../data/catalog.js';
 import { TRAILERS } from '../data/trailers.js';
 import './Watch.css';
 
@@ -83,7 +83,7 @@ const IconSkip = ({ forward }) => (
 export default function Watch() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const film = byId(id);
+  const film = anyTitleById(id);
   const trailer = film ? TRAILERS[film.id] : null;
   usePageTitle(film ? `Watch ${film.title}` : 'Watch');
   const { record } = useWatchHistory();
@@ -373,6 +373,8 @@ export default function Watch() {
       ref={stageRef}
       onPointerMove={wake}
       onTouchStart={wake}
+      onKeyDownCapture={wake}
+      onFocusCapture={wake}
     >
       {!started ? (
         trailer ? (
@@ -432,7 +434,9 @@ export default function Watch() {
           </svg>
         </button>
         <div className="player-titles">
-          <p className="player-title">{film.title}</p>
+          <h1 className="player-title" tabIndex={-1}>
+            {film.title}
+          </h1>
           <p className="metadata">
             Trailer · {film.year}
             {film.runtime ? ` · Full film ${film.runtime}` : ''}

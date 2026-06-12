@@ -94,7 +94,14 @@ export default function Browse() {
         <h1 className="page-title" tabIndex={-1}>
           Browse
         </h1>
-        <div className="browse-search">
+        <div
+          className="browse-search"
+          // close the recent panel only when focus leaves the whole wrapper,
+          // so Tab can move from the input into a suggestion button
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false);
+          }}
+        >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <circle cx="7" cy="7" r="5.25" stroke="currentColor" strokeWidth="1.5" />
             <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -106,7 +113,6 @@ export default function Browse() {
             value={query}
             onChange={(e) => update({ q: e.target.value })}
             onFocus={() => setFocused(true)}
-            onBlur={() => setTimeout(() => setFocused(false), 150)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') remember(query);
               if (e.key === 'Escape') update({ q: '' });
@@ -114,23 +120,23 @@ export default function Browse() {
             aria-label="Search the catalog"
           />
           {focused && !query && recent.length > 0 && (
-            <div className="browse-recent" role="listbox" aria-label="Recent searches">
-              <p className="browse-recent-head">Recent</p>
-              {recent.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  className="browse-recent-row"
-                  role="option"
-                  onMouseDown={() => update({ q: r })}
-                >
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <circle cx="7" cy="7" r="5.2" />
-                    <path d="M7 4.2V7l1.8 1.1" />
-                  </svg>
-                  {r}
-                </button>
-              ))}
+            <div className="browse-recent">
+              <p className="browse-recent-head" id="recent-label">
+                Recent
+              </p>
+              <ul aria-labelledby="recent-label">
+                {recent.map((r) => (
+                  <li key={r}>
+                    <button type="button" className="browse-recent-row" onClick={() => update({ q: r })}>
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <circle cx="7" cy="7" r="5.2" />
+                        <path d="M7 4.2V7l1.8 1.1" />
+                      </svg>
+                      {r}
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
           {query && (

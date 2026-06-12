@@ -106,3 +106,7 @@
 .downloads-status--downloading {
   color: var(--amber-500);
 }
+
+.downloads-status--expiring {
+  color: var(--status-danger-text);
+}

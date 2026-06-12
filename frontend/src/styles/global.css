@@ -119,6 +119,10 @@ h1[tabindex='-1'] {
   color: var(--ink-900);
 }
 
+.route-fallback {
+  min-height: 70vh;
+}
+
 /* ── Film grain overlay (2.5%, kills banding on scrims) ──────── */
 .grain::after {
   content: '';
