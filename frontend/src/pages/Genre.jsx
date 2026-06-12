@@ -35,7 +35,7 @@ const BLURB = {
 export default function Genre() {
   const { id } = useParams();
   const genre = GENRES.find((g) => g.id === id);
-  usePageTitle(genre ? genre.label : 'Genre');
+  usePageTitle(genre ? genre.label : 'Genre', genre ? BLURB[id] : undefined);
   if (!genre || !GENRE_MATCH[id]) return <NotFound message="That genre doesn't exist yet." />;
 
   const labels = GENRE_MATCH[id];

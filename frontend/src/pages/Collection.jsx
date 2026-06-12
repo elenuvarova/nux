@@ -7,7 +7,7 @@ import './Collection.css';
 export default function Collection() {
   const { slug } = useParams();
   const col = COLLECTIONS[slug];
-  usePageTitle(col?.title);
+  usePageTitle(col?.title, col?.intro);
   if (!col) return <NotFound message="That collection doesn't exist." />;
 
   return (

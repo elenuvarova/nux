@@ -16,7 +16,7 @@ export default function FilmDetail() {
   const { id } = useParams();
   const film = byId(id);
   const { has, toggle } = useMyList();
-  usePageTitle(film?.title);
+  usePageTitle(film?.title, film?.synopsis);
 
   if (!film) {
     return <NotFound message="We couldn't find that title in the catalog." />;

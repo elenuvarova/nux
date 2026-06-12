@@ -12,7 +12,7 @@ export default function TitleDetail() {
   const { id } = useParams();
   const title = anyTitleById(id);
   const { has, toggle } = useMyList();
-  usePageTitle(title?.title);
+  usePageTitle(title?.title, title?.synopsis);
 
   if (!title) return <NotFound message="We couldn't find that title in the catalog." />;
   const saved = has(title.id);
