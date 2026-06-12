@@ -14,6 +14,54 @@ const CHIPS = [
 // (the full history is sent, so the Curator reads them in context).
 const FOLLOWUPS = ["Something shorter", "Something lighter", "More like these", "Surprise me"];
 
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+// A single Curator reply. The most recent one (`animate`) reveals its prose
+// word-by-word for a "typing" feel; its film cards appear once the text lands.
+// Older replies — and anyone with reduced-motion — render instantly.
+function CuratorReply({ message, animate }) {
+  // split on whitespace but KEEP the separators so re-joining preserves spacing
+  const tokens = message.content ? message.content.split(/(\s+)/) : [];
+  const instant = !animate || prefersReducedMotion();
+  const [shown, setShown] = useState(instant ? tokens.length : 0);
+
+  useEffect(() => {
+    if (instant) {
+      setShown(tokens.length);
+      return undefined;
+    }
+    setShown(0);
+    let i = 0;
+    const id = setInterval(() => {
+      i += 2; // reveal a word + its trailing space each tick
+      setShown(i);
+      if (i >= tokens.length) clearInterval(id);
+    }, 45);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [message.content, animate]);
+
+  const done = shown >= tokens.length;
+
+  return (
+    <div className="curator-reply">
+      <p className="curator-note">
+        {tokens.slice(0, shown).join("")}
+        {!done && <span className="curator-caret" aria-hidden="true" />}
+      </p>
+      {done && message.films?.length > 0 && (
+        <div className="curator-results">
+          {message.films.map((id) => (
+            <PosterCard key={id} filmId={id} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function CuratorOverlay() {
   const { open, messages, loading, error, closeCurator, send } = useCurator();
   const [draft, setDraft] = useState("");
@@ -108,16 +156,7 @@ export default function CuratorOverlay() {
                 {m.content}
               </p>
             ) : (
-              <div key={i} className="curator-reply">
-                <p className="curator-note">{m.content}</p>
-                {m.films?.length > 0 && (
-                  <div className="curator-results">
-                    {m.films.map((id) => (
-                      <PosterCard key={id} filmId={id} />
-                    ))}
-                  </div>
-                )}
-              </div>
+              <CuratorReply key={i} message={m} animate={i === messages.length - 1} />
             )
           )}
 

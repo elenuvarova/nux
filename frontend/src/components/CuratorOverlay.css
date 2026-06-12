@@ -48,8 +48,16 @@
   padding: 8px 12px; border-radius: 14px 14px 2px 14px; margin: 0;
 }
 .curator-note { margin: 0 0 12px; line-height: 1.5; }
-.curator-results { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+.curator-results { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; animation: curator-fade 0.32s ease; }
 .curator-results .poster-card { flex: 0 0 120px; }
+@keyframes curator-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+/* typing caret shown while the latest reply reveals */
+.curator-caret {
+  display: inline-block; width: 2px; height: 1em; margin-left: 2px;
+  background: var(--action-primary, #c8922a); vertical-align: text-bottom;
+  animation: curator-blink 0.9s steps(1) infinite;
+}
+@keyframes curator-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
 .curator-thinking { opacity: 0.6; font-style: italic; }
 .curator-error { color: var(--status-danger-text, #c73329); }
 .curator-input {
@@ -73,4 +81,6 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .curator-panel { animation: none; }
+  .curator-results { animation: none; }
+  .curator-caret { display: none; }
 }
