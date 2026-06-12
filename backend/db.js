@@ -10,15 +10,13 @@ let dbKind;
 
 if (isPostgres) {
   dbKind = "postgres";
+  // Coolify-internal Postgres needs NO SSL; external managed DBs (Neon) do.
+  // Opt in with DATABASE_SSL=true or ?sslmode=require in the URL.
+  const wantSsl = process.env.DATABASE_SSL === "true" || /sslmode=require/.test(url);
   sequelize = new Sequelize(url, {
     dialect: "postgres",
     logging: false,
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
+    dialectOptions: wantSsl ? { ssl: { require: true, rejectUnauthorized: false } } : {},
   });
 } else {
   dbKind = "sqlite";

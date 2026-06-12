@@ -1,30 +1,56 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import usePageTitle from '../lib/usePageTitle.js';
+import { useAuth } from '../lib/useAuth.jsx';
 import { EXTRAS } from '../data/catalog.js';
 import './Auth.css';
+
+const SERVER_ERRORS = {
+  email_taken: { field: 'email', msg: 'That email is already registered.' },
+  invalid_credentials: { field: 'password', msg: 'Invalid email or password.' },
+  weak_password: { field: 'password', msg: 'At least 8 characters.' },
+  invalid_email: { field: 'email', msg: 'Enter a valid email.' },
+  name_required: { field: 'name', msg: 'Tell us your name.' },
+  too_many_requests: { field: 'password', msg: 'Too many attempts — try again in a minute.' },
+};
 
 export default function Auth({ mode = 'signin' }) {
   const signup = mode === 'signup';
   usePageTitle(signup ? 'Create account' : 'Sign in');
   const navigate = useNavigate();
+  const auth = useAuth();
   const [values, setValues] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
+  const [busy, setBusy] = useState(false);
 
   const set = (k) => (e) => setValues((v) => ({ ...v, [k]: e.target.value }));
 
-  const submit = (e) => {
+  const focusFirst = (next) => {
+    const first = ['name', 'email', 'password'].find((k) => next[k]);
+    if (first) requestAnimationFrame(() => document.getElementById(first)?.focus());
+  };
+
+  const submit = async (e) => {
     e.preventDefault();
     const next = {};
     if (signup && !values.name.trim()) next.name = 'Tell us your name.';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(values.email)) next.email = 'Enter a valid email.';
-    if (values.password.length < 6) next.password = 'At least 6 characters.';
+    if (values.password.length < 8) next.password = 'At least 8 characters.';
     setErrors(next);
-    const firstError = ['name', 'email', 'password'].find((k) => next[k]);
-    if (firstError) {
-      requestAnimationFrame(() => document.getElementById(firstError)?.focus());
-    } else {
+    if (Object.keys(next).length) return focusFirst(next);
+
+    setBusy(true);
+    try {
+      if (signup) await auth.signup(values.email, values.name, values.password);
+      else await auth.login(values.email, values.password);
       navigate('/');
+    } catch (err) {
+      const mapped = SERVER_ERRORS[err.code] || { field: 'password', msg: 'Something went wrong — try again.' };
+      const next2 = { [mapped.field]: mapped.msg };
+      setErrors(next2);
+      focusFirst(next2);
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -61,8 +87,8 @@ export default function Auth({ mode = 'signin' }) {
               Forgot password?
             </button>
           )}
-          <button type="submit" className="btn btn-primary auth-submit">
-            {signup ? 'Create account' : 'Sign in'}
+          <button type="submit" className="btn btn-primary auth-submit" disabled={busy}>
+            {busy ? 'One moment…' : signup ? 'Create account' : 'Sign in'}
           </button>
         </form>
 

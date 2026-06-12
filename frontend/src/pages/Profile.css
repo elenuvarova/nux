@@ -35,6 +35,16 @@
   display: none;
 }
 
+.profile-guest-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.profile-guest-actions .btn {
+  flex: 1;
+  justify-content: center;
+}
+
 .profile-list {
   display: grid;
   border-radius: var(--radius-lg);

@@ -1,13 +1,33 @@
 import express from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import { sequelize, dbKind } from "./db.js";
+import "./models.js";
+import authRoutes from "./routes/auth.js";
+import listRoutes from "./routes/list.js";
+import historyRoutes from "./routes/history.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3001;
+const isProd = process.env.NODE_ENV === "production";
 
+app.set("trust proxy", 1); // behind nginx in prod — read the real client IP
 app.use(express.json());
+app.use(cookieParser());
+
+// In prod the SPA and API share an origin, so CORS is only needed for the
+// Vite dev server (which we also proxy, but keep this as a safety net).
+if (!isProd) {
+  app.use(
+    cors({
+      origin: ["http://localhost:5173", "http://localhost:5174"],
+      credentials: true,
+    })
+  );
+}
 
 app.get("/api/health", async (req, res) => {
   try {
@@ -18,18 +38,26 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-app.get("/api/hello", (req, res) => {
-  res.json({ message: "Hello from the backend 👋" });
-});
+app.use("/api/auth", authRoutes);
+app.use("/api/list", listRoutes);
+app.use("/api/history", historyRoutes);
 
-if (process.env.NODE_ENV === "production") {
+if (isProd) {
   app.use(express.static(path.join(__dirname, "public")));
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`db: ${dbKind}`);
-  console.log(`Server running on port ${PORT}`);
+async function start() {
+  await sequelize.sync(); // create tables from the models if missing
+  app.listen(PORT, () => {
+    console.log(`db: ${dbKind}`);
+    console.log(`NUX backend on port ${PORT}`);
+  });
+}
+
+start().catch((err) => {
+  console.error("Failed to start:", err);
+  process.exit(1);
 });

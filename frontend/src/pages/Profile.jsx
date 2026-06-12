@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import usePageTitle from '../lib/usePageTitle.js';
+import { useAuth } from '../lib/useAuth.jsx';
 import './Profile.css';
 
 const Chevron = () => (
@@ -58,18 +59,51 @@ const items = [
 
 export default function Profile() {
   usePageTitle('Profile');
+  const { user, ready, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const signOut = async () => {
+    await logout();
+    navigate('/signin');
+  };
+
+  // signed-out state: prompt to sign in instead of faking an account
+  if (ready && !user) {
+    return (
+      <main className="profile">
+        <h1 className="page-title" tabIndex={-1}>
+          Profile
+        </h1>
+        <div className="profile-card profile-card--guest">
+          <img className="profile-avatar" src="/assets/avatar-user.jpg" alt="" />
+          <div>
+            <p className="profile-name">You’re browsing as a guest</p>
+            <p className="metadata">Sign in to sync your list across devices.</p>
+          </div>
+        </div>
+        <div className="profile-guest-actions">
+          <Link to="/signin" className="btn btn-primary">
+            Sign in
+          </Link>
+          <Link to="/signup" className="btn btn-secondary">
+            Create account
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="profile">
       <h1 className="page-title" tabIndex={-1}>
         Profile
       </h1>
       <div className="profile-card">
-        <img className="profile-avatar" src="/assets/avatar-user.jpg" alt="" />
+        <img className="profile-avatar" src={user?.avatarUrl || '/assets/avatar-user.jpg'} alt="" />
         <div>
-          <p className="profile-name">Elena Uvarova</p>
-          <p className="metadata">ontwrpn@gmail.com · Premium</p>
+          <p className="profile-name">{user?.name || 'Member'}</p>
+          <p className="metadata">{user?.email ? `${user.email} · Premium` : 'Premium'}</p>
         </div>
-        <Chevron />
       </div>
 
       <ul className="profile-list">
@@ -92,14 +126,14 @@ export default function Profile() {
         ))}
       </ul>
 
-      <Link to="/signin" className="profile-row profile-signout">
+      <button type="button" onClick={signOut} className="profile-row profile-signout">
         <span className="row-icon">
           <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M7 2.5H4a1.5 1.5 0 0 0-1.5 1.5v10A1.5 1.5 0 0 0 4 15.5h3M12 12.5 15.5 9 12 5.5M15.5 9H7" />
           </svg>
         </span>
         Sign out
-      </Link>
+      </button>
     </main>
   );
 }
