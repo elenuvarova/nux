@@ -3,9 +3,12 @@
 
 # 1) build the SPA
 FROM node:20-alpine AS build
+# Coolify injects the app's NODE_ENV=production into the build too, which
+# would make npm ci skip devDependencies (vite) — force them in.
+ENV NODE_ENV=development
 WORKDIR /app
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm ci --include=dev
 COPY frontend/ ./
 RUN npm run build
 
