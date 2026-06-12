@@ -15,6 +15,7 @@ export default function CuratorOverlay() {
   const [draft, setDraft] = useState("");
   const inputRef = useRef(null);
   const bodyRef = useRef(null);
+  const panelRef = useRef(null);
 
   useEffect(() => {
     if (open) inputRef.current?.focus();
@@ -23,7 +24,25 @@ export default function CuratorOverlay() {
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => {
-      if (e.key === "Escape") closeCurator();
+      if (e.key === "Escape") {
+        closeCurator();
+        return;
+      }
+      if (e.key === "Tab" && panelRef.current) {
+        const focusable = panelRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -51,6 +70,7 @@ export default function CuratorOverlay() {
         role="dialog"
         aria-modal="true"
         aria-label="Ask the Curator"
+        ref={panelRef}
         onClick={(e) => e.stopPropagation()}
       >
         <header className="curator-head">

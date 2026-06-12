@@ -1,7 +1,7 @@
 .curator-scrim {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 110;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: flex-end;

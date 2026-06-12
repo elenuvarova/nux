@@ -90,6 +90,17 @@
   color: inherit;
   cursor: pointer;
   font: inherit;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.nav-ask:hover {
+  color: var(--text-secondary);
+}
+
+.nav-ask:focus-visible {
+  outline: 2px solid var(--amber-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
 .nav-avatar {

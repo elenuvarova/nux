@@ -31,6 +31,7 @@ function minutesLabel(min) {
 export function PosterCard({ filmId }) {
   const film = byId(filmId);
   const tilt = useTilt();
+  if (!film) return null;
   return (
     <Link to={`/film/${film.id}`} className="poster-card" viewTransition onClick={markHeroArt}>
       <div className="poster-card-art" ref={tilt.ref} onPointerMove={tilt.onPointerMove} onPointerLeave={tilt.onPointerLeave}>

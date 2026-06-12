@@ -21,7 +21,7 @@ const PORT = process.env.BACKEND_PORT || 3001;
 const isProd = process.env.NODE_ENV === "production";
 
 app.set("trust proxy", 1); // behind nginx in prod — read the real client IP
-app.use(express.json());
+app.use(express.json({ limit: "32kb" }));
 app.use(cookieParser());
 
 // In prod the SPA and API share an origin, so CORS is only needed for the
