@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import Rail, { PosterCard } from '../components/Rail.jsx';
 import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
+import { useMyList } from '../lib/useMyList.js';
 import { byId, FILMS } from '../data/catalog.js';
 import './FilmDetail.css';
 
@@ -14,11 +15,14 @@ function related(film) {
 export default function FilmDetail() {
   const { id } = useParams();
   const film = byId(id);
+  const { has, toggle } = useMyList();
   usePageTitle(film?.title);
 
   if (!film) {
     return <NotFound message="We couldn't find that title in the catalog." />;
   }
+
+  const saved = has(film.id);
 
   const more = related(film);
   const details = [
@@ -57,11 +61,17 @@ export default function FilmDetail() {
           </svg>
           Play
         </Link>
-        <button type="button" className="btn btn-secondary">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-            <path d="M7 2.5v9M2.5 7h9" />
-          </svg>
-          My List
+        <button type="button" className="btn btn-secondary" onClick={() => toggle(film.id)} aria-pressed={saved}>
+          {saved ? (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2.5 7.5 6 11l5.5-7" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+              <path d="M7 2.5v9M2.5 7h9" />
+            </svg>
+          )}
+          {saved ? 'In My List' : 'My List'}
         </button>
       </div>
     </>

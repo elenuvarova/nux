@@ -4,6 +4,13 @@
   padding-top: var(--space-12);
 }
 
+.home-hero-skeleton {
+  height: 86vh;
+  background:
+    linear-gradient(to top, var(--surface-page), transparent 60%),
+    var(--surface-raised);
+}
+
 /* ── Editorial Pick — the curated module ─────────────────────── */
 .editorial {
   max-width: 1440px;

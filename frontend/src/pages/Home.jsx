@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react';
 import Hero from '../components/Hero.jsx';
+import Reveal from '../components/Reveal.jsx';
+import { SkeletonRail } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import Rail, { PosterCard, ContinueCard } from '../components/Rail.jsx';
 import { RAILS, CONTINUE_WATCHING, EDITORIAL_PICK } from '../data/catalog.js';
@@ -7,33 +10,60 @@ import './Home.css';
 export default function Home() {
   usePageTitle(null);
   const [trending, curated, fresh] = RAILS;
+  // brief skeleton on first mount so the page assembles, then settles
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 320);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (!ready) {
+    return (
+      <main>
+        <div className="home-hero-skeleton" />
+        <div className="home-rails">
+          <SkeletonRail />
+          <SkeletonRail wide />
+          <SkeletonRail />
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main>
       <Hero />
       <div className="home-rails">
-        <Rail title={trending.title}>
-          {trending.filmIds.map((id) => (
-            <PosterCard key={id} filmId={id} />
-          ))}
-        </Rail>
-        <Rail title="Continue Watching" wide>
-          {CONTINUE_WATCHING.map((item) => (
-            <ContinueCard key={item.filmId} item={item} />
-          ))}
-        </Rail>
-        <Rail title={curated.title}>
-          {curated.filmIds.map((id) => (
-            <PosterCard key={id} filmId={id} />
-          ))}
-        </Rail>
-        <Rail title={fresh.title}>
-          {fresh.filmIds.map((id) => (
-            <PosterCard key={id} filmId={id} />
-          ))}
-        </Rail>
+        <Reveal>
+          <Rail title={trending.title}>
+            {trending.filmIds.map((id) => (
+              <PosterCard key={id} filmId={id} />
+            ))}
+          </Rail>
+        </Reveal>
+        <Reveal>
+          <Rail title="Continue Watching" wide>
+            {CONTINUE_WATCHING.map((item) => (
+              <ContinueCard key={item.filmId} item={item} />
+            ))}
+          </Rail>
+        </Reveal>
+        <Reveal>
+          <Rail title={curated.title}>
+            {curated.filmIds.map((id) => (
+              <PosterCard key={id} filmId={id} />
+            ))}
+          </Rail>
+        </Reveal>
+        <Reveal>
+          <Rail title={fresh.title}>
+            {fresh.filmIds.map((id) => (
+              <PosterCard key={id} filmId={id} />
+            ))}
+          </Rail>
+        </Reveal>
 
-        <section className="editorial" aria-label={EDITORIAL_PICK.title}>
+        <Reveal as="section" className="editorial" aria-label={EDITORIAL_PICK.title}>
           <div className="editorial-col">
             <p className="eyebrow">{EDITORIAL_PICK.eyebrow}</p>
             <h2 className="display-l">{EDITORIAL_PICK.title}</h2>
@@ -45,7 +75,7 @@ export default function Home() {
           <div className="editorial-cover">
             <img src={EDITORIAL_PICK.image} alt="" loading="lazy" />
           </div>
-        </section>
+        </Reveal>
       </div>
     </main>
   );

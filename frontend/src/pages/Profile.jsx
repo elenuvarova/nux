@@ -11,6 +11,7 @@ const Chevron = () => (
 const items = [
   {
     label: 'Downloads',
+    to: '/downloads',
     icon: (
       <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M9 2.5v8M5.5 7 9 10.5 12.5 7M3 13.5h12" />
@@ -91,14 +92,14 @@ export default function Profile() {
         ))}
       </ul>
 
-      <button type="button" className="profile-row profile-signout">
+      <Link to="/signin" className="profile-row profile-signout">
         <span className="row-icon">
           <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M7 2.5H4a1.5 1.5 0 0 0-1.5 1.5v10A1.5 1.5 0 0 0 4 15.5h3M12 12.5 15.5 9 12 5.5M15.5 9H7" />
           </svg>
         </span>
         Sign out
-      </button>
+      </Link>
     </main>
   );
 }

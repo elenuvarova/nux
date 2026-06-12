@@ -365,16 +365,39 @@ export const EXTRAS = {
     id: 'neon-drift',
     title: 'Neon Drift',
     type: 'GAME',
+    genre: 'Action-Adventure',
     meta: 'Action-Adventure · 2026 · Cloud Play',
+    rating: 7.1,
     poster: genreImg('genre-poster-neondrift.jpg'),
     synopsis:
       'Pilot a salvaged starfighter through the neon ruins of a dead empire. A reflex-driven roguelite with handcrafted runs, online co-op and a synthwave score.',
+    features: ['Single-player', 'Online co-op', 'Cloud Play', 'Controller'],
   },
   course: {
     id: 'art-of-editing',
     title: 'The Art of Editing',
     type: 'COURSE',
+    genre: 'Filmmaking',
+    meta: 'by A. Okonkwo · 12 lessons · 4h 30m · ★ 4.8',
     poster: genreImg('genre-poster-course.jpg'),
+    synopsis:
+      'Twelve lessons on the invisible craft — rhythm, the cut on motion, the eyeline match, and how an edit makes you feel. Taught through the films in the NUX library.',
+    lessons: [
+      { n: 1, title: 'Cutting on Motion', len: '18 min' },
+      { n: 2, title: 'The Invisible Cut', len: '22 min' },
+      { n: 3, title: 'Rhythm & the Pause', len: '24 min' },
+      { n: 4, title: 'Eyelines & Geography', len: '19 min' },
+      { n: 5, title: 'Montage & Meaning', len: '26 min' },
+      { n: 6, title: 'Sound Before Picture', len: '21 min' },
+    ],
   },
   welcomeBg: genreImg('genre-welcome-bg.jpg'),
 };
+
+// Game + Course are also addressable as detail pages.
+const EXTRA_TITLES = {
+  'neon-drift': { ...EXTRAS.game, backdrop: EXTRAS.game.poster },
+  'art-of-editing': { ...EXTRAS.course, backdrop: EXTRAS.course.poster },
+};
+
+export const anyTitleById = (id) => byId(id) || EXTRA_TITLES[id] || null;

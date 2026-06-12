@@ -1,11 +1,15 @@
+import { Link } from 'react-router-dom';
 import { PosterCard } from '../components/Rail.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
+import { useMyList } from '../lib/useMyList.js';
+import { byId } from '../data/catalog.js';
 import './Browse.css';
-
-const SAVED = ['the-third-man', 'lawrence-of-arabia', 'the-red-shoes', 'aftersun', 'senna', 'the-wicker-man'];
 
 export default function MyList() {
   usePageTitle('My List');
+  const { list } = useMyList();
+  const films = list.map(byId).filter(Boolean);
+
   return (
     <main className="browse">
       <header className="browse-head">
@@ -14,11 +18,24 @@ export default function MyList() {
         </h1>
       </header>
       <section className="browse-grid-wrap" aria-label="Saved titles">
-        <div className="browse-grid">
-          {SAVED.map((id) => (
-            <PosterCard key={id} filmId={id} />
-          ))}
-        </div>
+        {films.length > 0 ? (
+          <div className="browse-grid">
+            {films.map((f) => (
+              <PosterCard key={f.id} filmId={f.id} />
+            ))}
+          </div>
+        ) : (
+          <div className="browse-empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" aria-hidden="true" style={{ color: 'var(--icon-tertiary)' }}>
+              <path d="M7 3h10a1 1 0 0 1 1 1v17l-6-3.8L6 21V4a1 1 0 0 1 1-1z" />
+            </svg>
+            <p className="display-m">Your list is empty</p>
+            <p className="browse-empty-sub">Tap + on any film, doc, game or course and it’ll show up here.</p>
+            <Link to="/browse" className="btn btn-primary">
+              Browse the catalog
+            </Link>
+          </div>
+        )}
       </section>
     </main>
   );

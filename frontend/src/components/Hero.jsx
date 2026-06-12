@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { byId, HERO } from '../data/catalog.js';
+import { useMyList } from '../lib/useMyList.js';
 import './Hero.css';
 
 export default function Hero() {
   const film = byId(HERO.filmId);
+  const { has, toggle } = useMyList();
+  const saved = has(film.id);
 
   return (
     <section className="hero" aria-label={`Featured: ${film.title}`}>
@@ -24,11 +27,17 @@ export default function Hero() {
             </svg>
             Play
           </Link>
-          <button type="button" className="btn btn-secondary">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-              <path d="M7 2.5v9M2.5 7h9" />
-            </svg>
-            My List
+          <button type="button" className="btn btn-secondary" onClick={() => toggle(film.id)} aria-pressed={saved}>
+            {saved ? (
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M2.5 7.5 6 11l5.5-7" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                <path d="M7 2.5v9M2.5 7h9" />
+              </svg>
+            )}
+            {saved ? 'In My List' : 'My List'}
           </button>
           <Link to={`/film/${film.id}`} className="btn btn-secondary">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">

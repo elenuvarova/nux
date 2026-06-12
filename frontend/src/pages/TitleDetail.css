@@ -1,0 +1,38 @@
+.td-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.td-feature {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-default);
+  font: 500 14px/1 var(--font-ui);
+  color: var(--text-secondary);
+}
+
+.td-lessons {
+  max-width: 640px;
+  display: grid;
+}
+
+.td-lesson {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.td-lesson-n {
+  font: 600 16px/1 var(--font-display);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  width: 28px;
+}
+
+.td-lesson-title {
+  flex: 1;
+  font: var(--type-title);
+}

@@ -1,8 +1,9 @@
-import { useMemo, useRef, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useMemo, useRef, useEffect, useState } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { PosterCard } from '../components/Rail.jsx';
+import { SkeletonGrid } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
-import { FILMS, GENRES } from '../data/catalog.js';
+import { FILMS, GENRES, EXTRAS } from '../data/catalog.js';
 import './Browse.css';
 
 const CHIPS = ['All', 'Films', 'Documentaries', 'Games', 'Courses'];
@@ -34,6 +35,13 @@ export default function Browse() {
     if (params.has('search')) inputRef.current?.focus();
   }, [params]);
 
+  // brief skeleton on first mount
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 280);
+    return () => clearTimeout(t);
+  }, []);
+
   const films = useMemo(() => {
     let list = FILMS;
     if (chip === 'Films') list = list.filter((f) => f.type === 'FILM');
@@ -48,12 +56,12 @@ export default function Browse() {
     return list;
   }, [chip, query]);
 
-  const emptyCopy =
-    chip === 'Games' || chip === 'Courses'
-      ? `${chip} are coming to NUX soon — check back after the next release window.`
-      : query
-        ? 'Try a different title, genre or year.'
-        : 'This shelf is empty for now.';
+  // the one game / one course live behind their chips (real detail pages)
+  const extras = !query && chip === 'Games' ? [EXTRAS.game] : !query && chip === 'Courses' ? [EXTRAS.course] : [];
+
+  const emptyCopy = query
+    ? 'Try a different title, genre or year.'
+    : 'This shelf is empty for now.';
 
   return (
     <main className="browse">
@@ -115,11 +123,23 @@ export default function Browse() {
         <h2 className="headline">
           {query ? `Results for “${query}”` : 'All Titles'}
           <span className="browse-count" role="status">
-            {films.length} {films.length === 1 ? 'title' : 'titles'}
+            {films.length + extras.length} {films.length + extras.length === 1 ? 'title' : 'titles'}
           </span>
         </h2>
-        {films.length > 0 ? (
+        {!ready ? (
+          <SkeletonGrid count={14} />
+        ) : films.length + extras.length > 0 ? (
           <div className="browse-grid">
+            {extras.map((x) => (
+              <Link to={`/title/${x.id}`} className="poster-card" key={x.id} viewTransition>
+                <div className="poster-card-art">
+                  <img src={x.poster} alt="" loading="lazy" />
+                  <span className="poster-card-badge">{x.type}</span>
+                </div>
+                <p className="poster-card-title">{x.title}</p>
+                <p className="metadata">{x.genre}</p>
+              </Link>
+            ))}
             {films.map((f) => (
               <PosterCard key={f.id} filmId={f.id} />
             ))}
