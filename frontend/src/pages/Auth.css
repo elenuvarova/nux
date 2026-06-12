@@ -102,6 +102,7 @@
   justify-self: end;
   font: var(--type-metadata);
   color: var(--text-tertiary);
+  transition: color var(--dur-base) var(--ease-out);
 }
 
 .auth-forgot:hover {
@@ -125,4 +126,9 @@
   color: var(--text-primary);
   text-decoration: underline;
   text-underline-offset: 3px;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+.auth-switch a:hover {
+  opacity: 0.75;
 }

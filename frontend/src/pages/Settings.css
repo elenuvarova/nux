@@ -63,6 +63,10 @@
   background: var(--surface-hover);
 }
 
+.settings-row:active {
+  background: var(--surface-pressed);
+}
+
 .settings-value {
   display: inline-flex;
   align-items: center;

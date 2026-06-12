@@ -66,6 +66,11 @@
   color: var(--text-secondary);
   text-decoration: underline;
   text-underline-offset: 3px;
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.welcome-signin:hover span {
+  color: var(--text-primary);
 }
 
 /* ── step 2: genre taste ─────────────────────────────────────── */
@@ -143,7 +148,8 @@
   text-align: center;
 }
 
-.welcome-genre:hover {
+.welcome-genre:hover,
+.welcome-genre--on:hover {
   transform: scale(1.02);
 }
 

@@ -9,6 +9,33 @@
   align-items: flex-end;
 }
 
+/* ambient projector glow — a warm light that slowly breathes behind the
+   artwork, bleeding up from the content side */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(120% 80% at 22% 88%, rgb(200 146 42 / 0.16), transparent 55%);
+  animation: hero-breathe 9s ease-in-out infinite alternate;
+}
+
+@keyframes hero-breathe {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero::before {
+    animation: none;
+  }
+}
+
 .hero-art {
   position: absolute;
   inset: 0;
@@ -167,6 +194,12 @@
 .btn-secondary:hover {
   border-color: var(--border-strong);
   background: var(--surface-hover);
+}
+
+.btn-secondary--on {
+  background: var(--white-a08);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
 }
 
 @media (max-width: 768px) {

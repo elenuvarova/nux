@@ -32,7 +32,7 @@
 }
 
 .profile-card .row-chevron {
-  margin-left: auto;
+  display: none;
 }
 
 .profile-list {
@@ -61,6 +61,10 @@
 
 .profile-row:hover {
   background: var(--surface-hover);
+}
+
+.profile-row:active {
+  background: var(--surface-pressed);
 }
 
 .row-icon {

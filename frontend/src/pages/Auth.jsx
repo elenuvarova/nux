@@ -30,7 +30,7 @@ export default function Auth({ mode = 'signin' }) {
 
   return (
     <main className="auth">
-      <img className="auth-bg" src={EXTRAS.welcomeBg} alt="" />
+      <img className="auth-bg" src={EXTRAS.welcomeBg} alt="" fetchpriority="high" />
       <div className="auth-card">
         <Link to="/welcome" className="auth-wordmark">
           NUX

@@ -63,6 +63,9 @@
   border-radius: var(--radius-poster);
   overflow: hidden;
   box-shadow: inset 0 0 0 1px var(--white-a07);
+  /* 3D tilt driven by useTilt; vars default to flat */
+  transform: perspective(720px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(1);
+  transform-style: preserve-3d;
   transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
 }
 
@@ -82,13 +85,43 @@
   transition: box-shadow var(--dur-base) var(--ease-out);
 }
 
+/* warm sheen that follows the cursor */
+.poster-card-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgb(237 186 98 / 0.28),
+    transparent 45%
+  );
+  mix-blend-mode: soft-light;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+
 .poster-card:hover .poster-card-art {
-  transform: scale(1.02);
   box-shadow: var(--shadow-card-hover);
+  transform: perspective(720px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(1.03);
 }
 
 .poster-card:hover .poster-card-art::after {
   box-shadow: inset 0 0 0 1px var(--white-a18);
+}
+
+.poster-card:hover .poster-card-sheen {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+  .poster-card-art {
+    transform: none;
+  }
+
+  .poster-card:hover .poster-card-art {
+    transform: scale(1.02);
+  }
 }
 
 .poster-card-badge {
@@ -158,9 +191,9 @@
 }
 
 .continue-card-play svg {
-  width: 36px;
-  height: 36px;
-  padding: 10px;
+  width: 40px;
+  height: 40px;
+  padding: var(--space-3);
   border-radius: var(--radius-full);
   background: rgb(13 12 11 / 0.55);
   -webkit-backdrop-filter: blur(8px);

@@ -51,6 +51,11 @@
   background: var(--surface-inverse);
 }
 
+.tabbar-item:active,
+.tabbar-search:active {
+  transform: scale(0.94);
+}
+
 .tabbar-search {
   pointer-events: auto;
   display: grid;

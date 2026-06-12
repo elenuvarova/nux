@@ -40,7 +40,7 @@ export default function TitleDetail() {
               </svg>
               {isCourse ? 'Start course' : 'Play'}
             </Link>
-            <button type="button" className="btn btn-secondary" onClick={() => toggle(title.id, title.title)} aria-pressed={saved}>
+            <button type="button" className={saved ? "btn btn-secondary btn-secondary--on" : "btn btn-secondary"} onClick={() => toggle(title.id, title.title)} aria-pressed={saved}>
               {saved ? 'In My List' : 'My List'}
             </button>
           </div>

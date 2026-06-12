@@ -203,8 +203,17 @@ export default function Browse() {
           </div>
         ) : (
           <div className="browse-empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true" style={{ color: 'var(--icon-tertiary)' }}>
+              <circle cx="10.5" cy="10.5" r="7" />
+              <path d="M15.5 15.5 21 21" />
+            </svg>
             <p className="display-m">Nothing here yet</p>
             <p className="browse-empty-sub">{emptyCopy}</p>
+            {query && (
+              <button type="button" className="btn btn-secondary" onClick={() => update({ q: '' })}>
+                Clear search
+              </button>
+            )}
           </div>
         )}
       </section>

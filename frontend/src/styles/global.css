@@ -67,11 +67,12 @@ ol {
 /* Keyboard focus only — amber ring per the design system.
    The transparent outline becomes a visible system outline in
    forced-colors / Windows High Contrast mode, where box-shadow vanishes. */
+/* the box-shadow ring already follows each element's own border-radius —
+   forcing radius-xs here clipped the ring on pill buttons/chips/avatars */
 :focus-visible {
   outline: 2px solid transparent;
   outline-offset: 2px;
   box-shadow: var(--focus-ring);
-  border-radius: var(--radius-xs);
 }
 
 /* page headings receive programmatic focus on route change */

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { byId } from '../data/catalog.js';
+import { useTilt } from '../lib/useTilt.js';
 import './Rail.css';
 
 /* Mark the clicked artwork as the shared element for the
@@ -29,11 +30,13 @@ function minutesLabel(min) {
 
 export function PosterCard({ filmId }) {
   const film = byId(filmId);
+  const tilt = useTilt();
   return (
     <Link to={`/film/${film.id}`} className="poster-card" viewTransition onClick={markHeroArt}>
-      <div className="poster-card-art">
+      <div className="poster-card-art" ref={tilt.ref} onPointerMove={tilt.onPointerMove} onPointerLeave={tilt.onPointerLeave}>
         <img src={film.poster} alt="" loading="lazy" />
         <span className="poster-card-badge">{film.type}</span>
+        <span className="poster-card-sheen" aria-hidden="true" />
       </div>
       <p className="poster-card-title">{film.title}</p>
       <p className="metadata">

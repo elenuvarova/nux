@@ -228,13 +228,13 @@
 
 .player-scrub input[type='range']:hover::-webkit-slider-thumb {
   transform: scale(1.25);
-  margin-top: -3.5px;
+  margin-top: -2.5px;
 }
 
 .player-scrub input[type='range']::-moz-range-track {
   height: 3px;
   border-radius: var(--radius-full);
-  background: var(--white-a18);
+  background: var(--white-a08);
 }
 
 .player-scrub input[type='range']::-moz-range-progress {
