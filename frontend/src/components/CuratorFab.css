@@ -1,0 +1,24 @@
+.curator-fab {
+  position: fixed;
+  right: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--action-primary, #c8922a);
+  color: #1a1a1a;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+.curator-fab:hover { filter: brightness(1.05); }
+.curator-fab-label { font-size: 14px; }
+/* keep clear of the mobile tab bar */
+@media (max-width: 640px) {
+  .curator-fab { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+  .curator-fab-label { display: none; }
+}

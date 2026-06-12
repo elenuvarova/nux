@@ -1,7 +1,9 @@
 import { NavLink, Link } from 'react-router-dom';
+import { useCurator } from '../lib/useCurator.jsx';
 import './NavBar.css';
 
 export default function NavBar() {
+  const { openCurator } = useCurator();
   return (
     <header className="nav">
       <div className="nav-inner">
@@ -25,6 +27,10 @@ export default function NavBar() {
             </svg>
             <span>Search</span>
           </Link>
+          <button type="button" className="nav-ask" onClick={openCurator} aria-label="Ask the Curator">
+            <span aria-hidden="true">✦</span>
+            <span>Ask</span>
+          </button>
           <Link to="/profile" className="nav-avatar" aria-label="Profile">
             <img src="/assets/avatar-user.jpg" alt="" />
           </Link>

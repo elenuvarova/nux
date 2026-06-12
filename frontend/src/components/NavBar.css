@@ -81,6 +81,17 @@
   color: var(--text-secondary);
 }
 
+.nav-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
 .nav-avatar {
   width: 32px;
   height: 32px;

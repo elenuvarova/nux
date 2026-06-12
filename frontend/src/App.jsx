@@ -6,6 +6,8 @@ import TabBar from './components/TabBar.jsx';
 import Footer from './components/Footer.jsx';
 import ToastHost from './components/ToastHost.jsx';
 import OfflineBanner from './components/OfflineBanner.jsx';
+import CuratorOverlay from './components/CuratorOverlay.jsx';
+import CuratorFab from './components/CuratorFab.jsx';
 import Home from './pages/Home.jsx';
 import Browse from './pages/Browse.jsx';
 import FilmDetail from './pages/FilmDetail.jsx';
@@ -93,6 +95,8 @@ export default function App() {
       {!bare && <TabBar />}
       <OfflineBanner />
       <ToastHost />
+      {!bare && <CuratorFab />}
+      <CuratorOverlay />
     </div>
   );
 }
