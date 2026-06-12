@@ -9,6 +9,9 @@ const resend = KEY ? new Resend(KEY) : null;
 
 export const emailConfigured = !!resend;
 
+// Two distinct failure modes the caller can act on:
+//   { skipped: true } — no API key configured (expected in dev)
+//   { error: true }   — Resend was called and actually failed (alert-worthy)
 async function send({ to, subject, html }) {
   if (!resend) {
     console.warn(`[email] RESEND_API_KEY not set — skipped "${subject}" to ${to}`);
@@ -21,6 +24,17 @@ async function send({ to, subject, html }) {
     console.error("[email] send failed:", err?.message || err);
     return { error: true };
   }
+}
+
+// Escape user-controlled text before interpolating it into HTML email bodies,
+// so a crafted display name can't inject markup into the message.
+function esc(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 // ── on-brand HTML (inline styles — email clients strip <style>) ──────────
@@ -59,7 +73,7 @@ export function sendPasswordChangedEmail(to, name) {
     html: shell(
       "Password changed",
       `<p style="font-size:15px;line-height:1.6;color:#b0a99e;margin:0 0 8px">
-         Hi ${name || "there"}, your NUX password was just changed and you’ve been signed out everywhere.
+         Hi ${esc(name || "there")}, your NUX password was just changed and you’ve been signed out everywhere.
        </p>
        <p style="font-size:13px;line-height:1.6;color:#8a8275;margin:16px 0 0">
          If this wasn’t you, reset your password immediately and contact support.

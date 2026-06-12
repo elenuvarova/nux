@@ -65,10 +65,13 @@ export function publicUser(user) {
 }
 
 // ── tiny fixed-window rate limiter (per IP + bucket) ──────────────────
+// Keyed by req.ip: server.js sets `trust proxy` so Express derives the real
+// client IP from X-Forwarded-For (set by nginx) — no manual header parsing,
+// which would otherwise be spoofable.
 const hits = new Map();
 export function rateLimit(bucket, max, windowMs) {
   return (req, res, next) => {
-    const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.ip || "local";
+    const ip = req.ip || "local";
     const key = `${bucket}:${ip}`;
     const now = Date.now();
     const rec = hits.get(key);
@@ -83,3 +86,10 @@ export function rateLimit(bucket, max, windowMs) {
     next();
   };
 }
+
+// Evict expired buckets so the Map can't grow unbounded under churn/abuse.
+// unref() so this timer never keeps the process alive on shutdown.
+setInterval(() => {
+  const now = Date.now();
+  for (const [k, v] of hits) if (now > v.reset) hits.delete(k);
+}, 10 * 60 * 1000).unref();
