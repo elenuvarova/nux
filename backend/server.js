@@ -11,7 +11,9 @@ import historyRoutes from "./routes/history.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PORT = process.env.PORT || 3001;
+// NOT process.env.PORT — Coolify sets PORT=80 (the public ingress, owned by
+// nginx). The API listens on a fixed internal port that nginx proxies to.
+const PORT = process.env.BACKEND_PORT || 3001;
 const isProd = process.env.NODE_ENV === "production";
 
 app.set("trust proxy", 1); // behind nginx in prod — read the real client IP

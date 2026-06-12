@@ -29,7 +29,7 @@ COPY start.sh /srv/start.sh
 RUN chmod +x /srv/start.sh
 
 ENV NODE_ENV=production
-ENV PORT=3001
+ENV BACKEND_PORT=3001
 EXPOSE 80
 
 # probe nginx (catches a dead ingress, not just a live API)
