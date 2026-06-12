@@ -73,7 +73,13 @@
   color: var(--text-secondary);
 }
 
+.auth-input-wrap {
+  position: relative;
+  display: flex;
+}
+
 .auth-input {
+  width: 100%;
   height: 48px;
   padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
@@ -84,6 +90,11 @@
   transition: border-color var(--dur-base) var(--ease-out);
 }
 
+/* leave room for the reveal button */
+.auth-input-wrap:has(.auth-reveal) .auth-input {
+  padding-right: 46px;
+}
+
 .auth-input:focus {
   outline: none;
   border-color: var(--border-focus);
@@ -91,6 +102,36 @@
 
 .auth-input--err {
   border-color: var(--border-danger);
+}
+
+/* show/hide password */
+.auth-reveal {
+  position: absolute;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  color: var(--icon-tertiary);
+  transition: color var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-out);
+}
+
+.auth-reveal:hover {
+  color: var(--text-secondary);
+  background: var(--white-a08);
+}
+
+.auth-hint {
+  font: var(--type-metadata);
+  color: var(--text-tertiary);
+}
+
+.auth-caps {
+  font: var(--type-metadata);
+  color: var(--amber-400);
 }
 
 .auth-error {
