@@ -61,9 +61,11 @@ the real catalog, so it physically cannot invent a film.
 ## 3. UX / surface
 
 ### 3.1 On Home
-- Generated collections render as **`<Rail title eyebrow seeAllTo>`** rows,
-  placed **beneath** the existing static rails (trending / curated / fresh) and
-  the editorial pick. Each rail's "See all" / title links to
+- Generated collections render as **`<Rail title seeAllTo>`** rows (the
+  collection's title is the rail heading; the `eyebrow` is rendered on the
+  detail page, not the rail), placed **beneath** the existing static rails
+  (trending / curated / fresh) and the editorial pick. Each rail's "See all" /
+  title links to
   `/collection/:slug`.
 - The cards are the existing **`PosterCard({ filmId })`** — no new card.
 - **Never blank:** Home always renders its static rails. Generated rails simply
@@ -166,7 +168,6 @@ No new keys. Reuses `GEMINI_API_KEY` / `GROQ_API_KEY` (already in
       "title": "Quiet Grief on Screen",
       "eyebrow": "The Curator's shelf",
       "intro": "Films that sit with loss instead of explaining it.",
-      "cover": "https://…/aftersun-backdrop.jpg",
       "entries": [
         ["aftersun", "A father, a daughter, and everything left unsaid."],
         ["saint-maud", "Devotion curdling into something lonelier."],
@@ -179,6 +180,9 @@ No new keys. Reuses `GEMINI_API_KEY` / `GROQ_API_KEY` (already in
 - `collections`: 0–3 items (0 only on a cold cache before first generation).
 - each `entries`: 3–6 `[filmId, note]` pairs; every id guaranteed to exist in
   `FILMS` (server-validated; unknown ids dropped before responding).
+- **No `cover` field** is returned — the backend catalog projection carries no
+  image URLs. The detail page derives the cover from the first film's backdrop
+  client-side (see §3.2).
 
 ### `GET /api/collections/:slug`
 **Response 200** — a single object in the `collections[]` shape above.
