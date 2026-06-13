@@ -42,10 +42,12 @@ async function callGeminiRaw({ system, messages, schema }) {
   }));
   const res = await withTimeout((signal) =>
     fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`,
+      // key goes in a header, not the query string, so it can't leak into URL
+      // logs / proxies / error messages (Groq already uses an auth header)
+      `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-goog-api-key": geminiKey },
         signal,
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: system }] },

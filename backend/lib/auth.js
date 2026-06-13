@@ -14,10 +14,17 @@ export async function hashPassword(plain) {
   return bcrypt.hash(plain, 12);
 }
 
+// A real, valid bcrypt hash (cost 12) computed once at load. When the email
+// doesn't exist we compare against THIS so bcrypt does the same work as a real
+// check. The old all-zeros constant was malformed, so bcrypt.compare returned
+// early — the faster response leaked which emails are registered. The plaintext
+// is random and is never usable as a credential (the no-user branch still 401s).
+const DUMMY_HASH = bcrypt.hashSync(crypto.randomBytes(32).toString("hex"), 12);
+
 export async function verifyPassword(plain, hashed) {
-  // compare against a dummy hash when the user doesn't exist, so the
-  // response time doesn't leak whether the email is registered (timing).
-  return bcrypt.compare(plain, hashed || "$2a$12$0000000000000000000000000000000000000000000000000000");
+  // compare against the dummy hash when the user doesn't exist, so response
+  // time doesn't leak whether the email is registered (timing-safe enumeration).
+  return bcrypt.compare(plain, hashed || DUMMY_HASH);
 }
 
 export async function createSession(res, user, userAgent) {

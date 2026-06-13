@@ -5,6 +5,17 @@ import { Sequelize } from "sequelize";
 const url = process.env.DATABASE_URL || "";
 const isPostgres = url.startsWith("postgres://") || url.startsWith("postgresql://");
 
+// Fail loudly rather than silently running an ephemeral SQLite in production:
+// a missing/mistyped DATABASE_URL would otherwise fall through to a file that's
+// wiped on every redeploy, losing all accounts/sessions/lists. Escape hatch:
+// ALLOW_SQLITE=true (e.g. an intentional throwaway prod demo).
+if (process.env.NODE_ENV === "production" && !isPostgres && process.env.ALLOW_SQLITE !== "true") {
+  throw new Error(
+    "DATABASE_URL must be a postgres:// connection string in production " +
+      "(set ALLOW_SQLITE=true to deliberately run ephemeral SQLite)."
+  );
+}
+
 let sequelize;
 let dbKind;
 

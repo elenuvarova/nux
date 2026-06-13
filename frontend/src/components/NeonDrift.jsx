@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import './NeonDrift.css';
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -53,6 +54,7 @@ export default function NeonDrift({ onClose }) {
   const overlayRef = useRef(null);
   const gameRef = useRef(null);
   const rafRef = useRef(0);
+  const scoreSrRef = useRef(null); // sr-only mirror of the canvas score
 
   const [phase, setPhase] = useState('ready'); // 'ready' | 'playing' | 'crashed'
   const [score, setScore] = useState(0);
@@ -120,6 +122,7 @@ export default function NeonDrift({ onClose }) {
     window.addEventListener('resize', resize);
 
     let last = performance.now();
+    let lastAnnounced = -1;
     const loop = (now) => {
       const g = gameRef.current;
       let dt = (now - last) / 1000;
@@ -127,6 +130,12 @@ export default function NeonDrift({ onClose }) {
       if (dt > 1 / 30) dt = 1 / 30; // clamp tab-switch jumps
       if (g && g.phase === 'playing') {
         update(g, dt, reduceMotion);
+        // mirror the running score into an sr-only live region (the canvas
+        // score is otherwise invisible to assistive tech)
+        if (scoreSrRef.current && g.score !== lastAnnounced) {
+          lastAnnounced = g.score;
+          scoreSrRef.current.textContent = `Score ${g.score}`;
+        }
         if (g.crashedThisFrame) {
           g.crashedThisFrame = false;
           g.phase = 'crashed';
@@ -145,9 +154,17 @@ export default function NeonDrift({ onClose }) {
     };
     rafRef.current = requestAnimationFrame(loop);
 
+    // returning from a hidden tab: reset the clock so dt doesn't spike (the
+    // browser already pauses rAF while the tab is hidden)
+    const onVis = () => {
+      if (!document.hidden) last = performance.now();
+    };
+    document.addEventListener('visibilitychange', onVis);
+
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', onVis);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduceMotion]);
@@ -179,8 +196,35 @@ export default function NeonDrift({ onClose }) {
       g.keyDir = (held.down ? 1 : 0) - (held.up ? 1 : 0);
     };
     const onKeyDown = (e) => {
+      // never hijack typing in a field (e.g. if another overlay is ever open)
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       if (e.key === 'Escape') {
         onClose?.();
+        return;
+      }
+      // trap Tab inside the overlay so focus can't reach the (inert) page chrome
+      if (e.key === 'Tab') {
+        const ov = overlayRef.current;
+        if (!ov) return;
+        const items = Array.from(
+          ov.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])')
+        ).filter((el) => el.offsetParent !== null);
+        if (items.length === 0) {
+          e.preventDefault();
+          ov.focus();
+          return;
+        }
+        const first = items[0];
+        const last2 = items[items.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey && (active === first || active === ov)) {
+          e.preventDefault();
+          last2.focus();
+        } else if (!e.shiftKey && active === last2) {
+          e.preventDefault();
+          first.focus();
+        }
         return;
       }
       if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
@@ -210,13 +254,20 @@ export default function NeonDrift({ onClose }) {
     };
   }, [onClose, start]);
 
-  // focus the overlay so keystrokes land here and Esc works immediately
+  // Modal focus management: focus the overlay, make the rest of the app inert
+  // (the overlay is portalled to <body>, so #root can be inert without inerting
+  // the game), lock scroll, and restore focus to the trigger (Play) on close.
   useEffect(() => {
+    const opener = document.activeElement;
+    const root = document.getElementById('root');
     overlayRef.current?.focus();
-    const prev = document.body.style.overflow;
+    if (root) root.inert = true;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = prev;
+      if (root) root.inert = false;
+      document.body.style.overflow = prevOverflow;
+      opener?.focus?.();
     };
   }, []);
 
@@ -224,25 +275,34 @@ export default function NeonDrift({ onClose }) {
     if (phase !== 'playing') start();
   };
 
-  return (
+  return createPortal(
     <div
       className="ndg-overlay"
       ref={overlayRef}
       tabIndex={-1}
       role="dialog"
       aria-modal="true"
-      aria-label="Neon Drift — playable game"
+      aria-labelledby="ndg-dialog-title"
     >
+      {/* sr-only: dialog name + persistent controls + a live score mirror */}
+      <p className="sr-only" id="ndg-dialog-title">Neon Drift — playable game</p>
+      <p className="sr-only">
+        Steer your ship with the mouse or the up and down arrow keys to fly through the gaps.
+        Press Escape to close.
+      </p>
+      <p className="sr-only" aria-live="polite" ref={scoreSrRef} />
+
       <div className="ndg-stage" onPointerDown={stageTap}>
         <canvas
           ref={canvasRef}
           className="ndg-canvas"
+          aria-label="Neon Drift game — steer with the mouse or arrow keys"
           onPointerMove={onPointer}
           onTouchMove={onPointer}
         />
 
         {phase !== 'playing' && (
-          <div className="ndg-screen" aria-live="polite">
+          <div className="ndg-screen">
             {phase === 'ready' ? (
               <>
                 <p className="ndg-eyebrow">NUX Arcade</p>
@@ -254,8 +314,13 @@ export default function NeonDrift({ onClose }) {
             ) : (
               <>
                 <p className="ndg-eyebrow">Run ended</p>
-                <h2 className="ndg-title ndg-title--score">{score}</h2>
-                <p className="ndg-sub">
+                {/* the meaningful result, announced once (not the whole panel) */}
+                <p className="sr-only" role="status">
+                  Run ended. Score {score}
+                  {score >= best && score > 0 ? ', a new best.' : `, best ${best}.`}
+                </p>
+                <h2 className="ndg-title ndg-title--score" aria-hidden="true">{score}</h2>
+                <p className="ndg-sub" aria-hidden="true">
                   {score >= best && score > 0 ? 'New best run' : `Best ${best}`}
                 </p>
               </>
@@ -275,14 +340,16 @@ export default function NeonDrift({ onClose }) {
           <path d="M4 4l10 10M14 4L4 14" />
         </svg>
       </button>
-    </div>
+    </div>,
+    document.body
   );
 }
 
 /* ── simulation ──────────────────────────────────────────────────────── */
 function update(g, dt, reduceMotion) {
   g.t += dt;
-  g.gridPhase = (g.gridPhase + g.speed * dt * 0.0016) % 1;
+  // freeze the scrolling perspective grid under reduced-motion
+  g.gridPhase = reduceMotion ? 0 : (g.gridPhase + g.speed * dt * 0.0016) % 1;
 
   // keyboard steering nudges the target; pointer sets it directly (above)
   if (g.keyDir) g.ship.targetY = clamp(g.ship.targetY + g.keyDir * 520 * dt, 20, g.H - 20);
@@ -331,8 +398,8 @@ function update(g, dt, reduceMotion) {
     }
   }
 
-  // thruster trail
-  if (Math.random() < 0.9) {
+  // thruster trail (suppressed under reduced-motion)
+  if (!reduceMotion && Math.random() < 0.9) {
     g.particles.push({
       x: ship.x - 14,
       y: ship.y + 2,
@@ -350,9 +417,12 @@ function update(g, dt, reduceMotion) {
 
 function crash(g, reduceMotion) {
   g.crashedThisFrame = true;
-  if (!reduceMotion) g.shake = 1;
-  spawnBurst(g, g.ship.x, g.ship.y, C.pink, 28);
-  spawnBurst(g, g.ship.x, g.ship.y, C.cyan, 18);
+  // no screen-shake or particle burst under reduced-motion
+  if (!reduceMotion) {
+    g.shake = 1;
+    spawnBurst(g, g.ship.x, g.ship.y, C.pink, 28);
+    spawnBurst(g, g.ship.x, g.ship.y, C.cyan, 18);
+  }
 }
 
 function stepParticles(g, dt) {
@@ -387,7 +457,7 @@ function render(ctx, g, W, H, now, reduceMotion) {
   if (!g) {
     // pre-init: just paint the sky so the canvas isn't black before first run
     paintSky(ctx, W, H);
-    paintGrid(ctx, W, H, (now / 1000) * 0.1, reduceMotion);
+    paintGrid(ctx, W, H, reduceMotion ? 0 : (now / 1000) * 0.1, reduceMotion);
     return;
   }
   ctx.save();
@@ -398,7 +468,7 @@ function render(ctx, g, W, H, now, reduceMotion) {
 
   paintSky(ctx, g.W, g.H);
   paintSun(ctx, g.W, g.H);
-  paintStars(ctx, g);
+  paintStars(ctx, g, reduceMotion);
   paintGrid(ctx, g.W, g.H, g.gridPhase, reduceMotion);
 
   // obstacles — neon ruin pillars
@@ -479,10 +549,11 @@ function paintSun(ctx, W, H) {
   ctx.globalCompositeOperation = 'source-over';
 }
 
-function paintStars(ctx, g) {
+function paintStars(ctx, g, reduceMotion) {
   ctx.fillStyle = C.white;
+  const drift = reduceMotion ? 0 : g.t * 6; // freeze parallax under reduced-motion
   for (const s of g.stars) {
-    const x = (s.x * g.W - g.t * 6 * s.z) % g.W;
+    const x = (s.x * g.W - drift * s.z) % g.W;
     const px = x < 0 ? x + g.W : x;
     ctx.globalAlpha = 0.25 + s.z * 0.5;
     ctx.fillRect(px, s.y * g.H, s.z * 1.6, s.z * 1.6);

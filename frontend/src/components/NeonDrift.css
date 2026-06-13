@@ -47,9 +47,12 @@
   gap: var(--space-3);
   text-align: center;
   padding: var(--space-6);
-  background: radial-gradient(ellipse at center, rgb(10 4 28 / 0.55), rgb(10 4 28 / 0.78));
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
+  /* high opacity floor so the title/sub/hint clear 4.5:1 regardless of the
+     bright sun/grid rendered behind them (was 0.55→0.78, which let the sun
+     bleed through under the text) */
+  background: radial-gradient(ellipse at center, rgb(10 4 28 / 0.88), rgb(10 4 28 / 0.96));
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
 }
 
 .ndg-eyebrow {

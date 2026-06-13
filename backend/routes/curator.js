@@ -13,6 +13,23 @@ const MAX_LEN = 500;
 const HISTORY_LIMIT = 100;
 const titleById = new Map(FILMS.map((f) => [f.id, f.title]));
 
+// Process-wide ceiling on paid LLM calls — a backstop against guest cost-abuse /
+// IP rotation that the per-IP rate limit can't catch. In-memory (resets on
+// redeploy, acceptable at this scale); tune with CURATOR_HOURLY_CAP.
+const HOURLY_CAP = Number(process.env.CURATOR_HOURLY_CAP) || 400;
+let budgetWindowStart = Date.now();
+let budgetCount = 0;
+function underBudget() {
+  const now = Date.now();
+  if (now - budgetWindowStart >= 60 * 60 * 1000) {
+    budgetWindowStart = now;
+    budgetCount = 0;
+  }
+  if (budgetCount >= HOURLY_CAP) return false;
+  budgetCount += 1;
+  return true;
+}
+
 // Trim a user's stored conversation back to the newest HISTORY_LIMIT rows so
 // storage can't grow unbounded. Best-effort and user-scoped; never throws.
 async function trimHistory(userId) {
@@ -49,6 +66,11 @@ router.post(
 
     if (!messages.length || messages[messages.length - 1].role !== "user") {
       return res.status(400).json({ error: "bad_request" });
+    }
+
+    // global cost ceiling — beyond the per-IP rate limit, cap total paid calls
+    if (!underBudget()) {
+      return res.status(503).json({ error: "curator_unavailable" });
     }
 
     // Optional personalization — titles only, never PII.
