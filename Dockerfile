@@ -14,12 +14,18 @@ RUN npm run build
 
 # 2) runtime: node (for the API) + nginx (for the SPA)
 FROM node:20-alpine
-RUN apk add --no-cache nginx wget && mkdir -p /run/nginx
+# su-exec drops the API to a non-root user; create that user too
+RUN apk add --no-cache nginx wget su-exec \
+  && mkdir -p /run/nginx \
+  && addgroup -S app && adduser -S -G app app
 
 WORKDIR /srv/backend
 COPY backend/package*.json ./
 RUN npm ci --omit=dev
 COPY backend/ ./
+# the API runs as the non-root `app` user, which must own its dir (it writes
+# ./data.sqlite when ALLOW_SQLITE is set, e.g. the CI smoke; prod uses Postgres)
+RUN chown -R app:app /srv/backend
 
 # built SPA → nginx web root; nginx site config
 COPY --from=build /app/dist /usr/share/nginx/html
