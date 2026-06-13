@@ -1,6 +1,8 @@
-// Provider adapter for the Curator. Calls the primary provider and fails over
-// to the other on error/timeout/unparseable output. Uses native fetch (Node
-// 20) — no SDK. Both paths normalize to { reply, filmIds }.
+// Provider adapter for AI features. `callModel` calls the primary provider and
+// fails over to the other on error/timeout/unparseable/wrong-shape output. Uses
+// native fetch (Node 20) — no SDK. Each caller supplies its own JSON `schema`
+// (Gemini responseSchema) and a `validate(json)` that runs inside the attempt,
+// so a wrong-shape response also triggers failover.
 const TIMEOUT_MS = 12_000;
 
 // The model id is interpolated into the request URL (Gemini), so only allow
@@ -32,21 +34,7 @@ async function withTimeout(fn) {
   }
 }
 
-function parseShape(text) {
-  const data = JSON.parse(text);
-  if (typeof data.reply !== "string" || !Array.isArray(data.filmIds)) {
-    throw new Error("bad_shape");
-  }
-  return { reply: data.reply, filmIds: data.filmIds };
-}
-
-const FILM_SCHEMA = {
-  type: "object",
-  properties: { reply: { type: "string" }, filmIds: { type: "array", items: { type: "string" } } },
-  required: ["reply", "filmIds"],
-};
-
-async function callGemini({ system, messages }) {
+async function callGeminiRaw({ system, messages, schema }) {
   const { geminiKey, geminiModel } = cfg();
   const contents = messages.map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
@@ -62,7 +50,7 @@ async function callGemini({ system, messages }) {
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: system }] },
           contents,
-          generationConfig: { responseMimeType: "application/json", responseSchema: FILM_SCHEMA },
+          generationConfig: { responseMimeType: "application/json", responseSchema: schema },
         }),
       }
     )
@@ -71,10 +59,10 @@ async function callGemini({ system, messages }) {
   const data = await res.json();
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error("gemini_empty");
-  return parseShape(text);
+  return JSON.parse(text);
 }
 
-async function callGroq({ system, messages }) {
+async function callGroqRaw({ system, messages }) {
   const { groqKey, groqModel } = cfg();
   const res = await withTimeout((signal) =>
     fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -93,21 +81,26 @@ async function callGroq({ system, messages }) {
   const data = await res.json();
   const text = data?.choices?.[0]?.message?.content;
   if (!text) throw new Error("groq_empty");
-  return parseShape(text);
+  return JSON.parse(text);
 }
 
-export async function askCurator({ system, messages }) {
+// Generic provider call with failover. `validate(json)` runs inside each
+// attempt (a throw triggers failover); its return value is returned to the
+// caller. Throws an Error with code `curator_unavailable` if all configured
+// providers fail.
+export async function callModel({ system, messages, schema, validate }) {
   const c = cfg();
   const providers =
     c.primary === "groq"
-      ? [["groq", c.groqKey, callGroq], ["gemini", c.geminiKey, callGemini]]
-      : [["gemini", c.geminiKey, callGemini], ["groq", c.groqKey, callGroq]];
+      ? [["groq", c.groqKey, callGroqRaw], ["gemini", c.geminiKey, callGeminiRaw]]
+      : [["gemini", c.geminiKey, callGeminiRaw], ["groq", c.groqKey, callGroqRaw]];
 
   const errors = [];
   for (const [name, key, fn] of providers) {
     if (!key) continue; // skip unconfigured provider
     try {
-      return await fn({ system, messages });
+      const json = await fn({ system, messages, schema });
+      return validate(json);
     } catch (e) {
       errors.push(`${name}: ${e.message}`);
     }
@@ -115,4 +108,23 @@ export async function askCurator({ system, messages }) {
   const err = new Error(`all_providers_failed: ${errors.join(" | ") || "no provider configured"}`);
   err.code = "curator_unavailable";
   throw err;
+}
+
+const FILM_SCHEMA = {
+  type: "object",
+  properties: { reply: { type: "string" }, filmIds: { type: "array", items: { type: "string" } } },
+  required: ["reply", "filmIds"],
+};
+
+// The chat Curator: { reply, filmIds }.
+export function askCurator({ system, messages }) {
+  return callModel({
+    system,
+    messages,
+    schema: FILM_SCHEMA,
+    validate: (d) => {
+      if (typeof d.reply !== "string" || !Array.isArray(d.filmIds)) throw new Error("bad_shape");
+      return { reply: d.reply, filmIds: d.filmIds };
+    },
+  });
 }
