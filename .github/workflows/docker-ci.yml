@@ -1,0 +1,41 @@
+name: Docker CI
+
+# Build the REAL production image and smoke-test it end-to-end (nginx serving the
+# SPA + proxying /api → node → DB-aware /api/health). Catches integration bugs the
+# per-service tests miss.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the production image
+        run: docker build -t nux:ci .
+
+      - name: Run the container (ephemeral SQLite — no external DB in CI)
+        run: docker run -d --name nux-ci -p 8080:80 -e ALLOW_SQLITE=true nux:ci
+
+      - name: Smoke /api/health through nginx
+        run: |
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/health || true)
+            if [ "$code" = "200" ]; then echo "healthy after ${i} tries"; exit 0; fi
+            sleep 2
+          done
+          echo "::error::/api/health never returned 200"
+          docker logs nux-ci || true
+          exit 1
+
+      - name: Smoke the SPA root
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/)
+          test "$code" = "200" || { echo "::error::SPA root returned $code"; exit 1; }
+
+      - name: Tear down
+        if: always()
+        run: docker rm -f nux-ci || true
