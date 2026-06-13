@@ -1,8 +1,7 @@
 import { callModel } from "./ai.js";
-import { CATALOG_LINES, FILM_IDS } from "./curatorPrompt.js";
+import { CATALOG_LINES, MAX_FILMS, pickValidFilms } from "./curatorPrompt.js";
 const MAX_COLLECTIONS = 3;
 const MIN_FILMS = 3;
-const MAX_FILMS = 6;
 const NOTE_MAX = 160;
 
 // Slugs owned by the static frontend COLLECTIONS pages (frontend/src/data/catalog.js).
@@ -54,18 +53,10 @@ export function slugify(s) {
 // trim notes; cap at MAX_FILMS. (catalog.js also has genre/collection rows — the
 // FILM_IDS set is built from FILMS only, so those are dropped.)
 export function validateCollectionEntries(entries) {
-  if (!Array.isArray(entries)) return [];
-  const seen = new Set();
-  const out = [];
-  for (const e of entries) {
-    const id = e?.id;
-    if (FILM_IDS.has(id) && !seen.has(id)) {
-      seen.add(id);
-      out.push([id, String(e?.note || "").slice(0, NOTE_MAX).trim()]);
-      if (out.length >= MAX_FILMS) break;
-    }
-  }
-  return out;
+  return pickValidFilms(entries, (e) => e?.id).map((e) => [
+    e?.id,
+    String(e?.note || "").slice(0, NOTE_MAX).trim(),
+  ]);
 }
 
 export function buildCollectionsPrompt() {

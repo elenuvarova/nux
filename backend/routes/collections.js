@@ -19,6 +19,9 @@ router.get(
   ah(async (req, res) => {
     const rows = await readCache();
     if (isStale(rows)) kickRegeneration();
+    // universal weekly content — let the browser/CDN cache it briefly and serve
+    // stale while we revalidate, instead of a DB read on every Home mount
+    res.set("Cache-Control", "public, max-age=300, stale-while-revalidate=3600");
     res.json({ generatedAt: rows[0]?.generatedAt || null, collections: rows.map(toPublic) });
   })
 );

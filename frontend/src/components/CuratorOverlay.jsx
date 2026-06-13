@@ -21,6 +21,9 @@ const prefersReducedMotion = () =>
 // A single Curator reply. The most recent one (`animate`) reveals its prose
 // word-by-word for a "typing" feel; its film cards appear once the text lands.
 // Older replies — and anyone with reduced-motion — render instantly.
+// SECURITY: curator content is model/user-derived and is stored verbatim on the
+// server, so it MUST render as escaped React text only — never feed it to
+// dangerouslySetInnerHTML. (React escaping + the CSP are the real defences.)
 function CuratorReply({ message, animate }) {
   // split on whitespace but KEEP the separators so re-joining preserves spacing
   const tokens = message.content ? message.content.split(/(\s+)/) : [];

@@ -1,22 +1,29 @@
 import { FILMS } from "../data/films.js";
 
 export const FILM_IDS = new Set(FILMS.map((f) => f.id));
-const MAX_FILMS = 6;
+export const MAX_FILMS = 6;
 
-// Keep only ids that are real films (catalog.js also has genre/collection
-// rows). Dedupe, preserve order, cap at MAX_FILMS.
-export function validateFilmIds(ids) {
-  if (!Array.isArray(ids)) return [];
+// Shared core: keep only items whose id (via idOf) is a real, not-yet-seen film
+// (catalog.js also has genre/collection rows), in order, capped at MAX_FILMS.
+// Used by both the chat (id strings) and the collections pipeline ({id,note}).
+export function pickValidFilms(items, idOf = (x) => x) {
+  if (!Array.isArray(items)) return [];
   const seen = new Set();
   const out = [];
-  for (const id of ids) {
+  for (const item of items) {
+    const id = idOf(item);
     if (FILM_IDS.has(id) && !seen.has(id)) {
       seen.add(id);
-      out.push(id);
+      out.push(item);
       if (out.length >= MAX_FILMS) break;
     }
   }
   return out;
+}
+
+// Chat: id strings in, valid unique ids out.
+export function validateFilmIds(ids) {
+  return pickValidFilms(ids);
 }
 
 export const CATALOG_LINES = FILMS.map(

@@ -63,7 +63,9 @@ export function useWatchHistory() {
   // frac = how far through the trailer (0..1); most recent first, one entry
   // per title, capped at 8
   const record = useCallback((id, frac, at) => {
-    const f = Math.min(0.95, Math.max(0.04, frac || 0.1));
+    // default 0.05 matches the server (history.js) so a just-started item reads
+    // the same on the client and after a refresh
+    const f = Math.min(0.95, Math.max(0.04, frac || 0.05));
     const next = [{ id, frac: f, at }, ...items.filter((x) => x.id !== id)].slice(0, 8);
     items = next;
     notify();
