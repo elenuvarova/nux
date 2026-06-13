@@ -1,3 +1,15 @@
+/* secondary "Watch trailer" link beside the Play action on a GAME page */
+.td-trailer-link {
+  align-self: center;
+  font: var(--type-caption);
+  color: var(--text-tertiary);
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.td-trailer-link:hover {
+  color: var(--text-secondary);
+}
+
 .td-features {
   display: flex;
   flex-wrap: wrap;

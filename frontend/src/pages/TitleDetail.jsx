@@ -1,24 +1,36 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useMyList } from '../lib/useMyList.js';
 import { anyTitleById } from '../data/catalog.js';
+import NeonDrift from '../components/NeonDrift.jsx';
 import './FilmDetail.css';
 import './TitleDetail.css';
 
+const playIcon = (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+    <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
+  </svg>
+);
+
 /* Game + Course detail — poster-led hero (their art is a portrait key
-   art), type-specific body: game features / course lessons. */
+   art), type-specific body: game features / course lessons. A GAME's "Play"
+   launches the real playable mini-game instead of a trailer. */
 export default function TitleDetail() {
   const { id } = useParams();
   const title = anyTitleById(id);
   const { has, toggle } = useMyList();
+  const [playing, setPlaying] = useState(false);
   usePageTitle(title?.title, title?.synopsis);
 
   if (!title) return <NotFound message="We couldn't find that title in the catalog." />;
   const saved = has(title.id);
   const isCourse = title.type === 'COURSE';
+  const isGame = title.type === 'GAME';
 
   return (
+    <>
     <main className="fd">
       <section className="fd-hero fd-hero--poster">
         <div className="fd-poster-frame">
@@ -34,15 +46,25 @@ export default function TitleDetail() {
           <p className="metadata fd-meta">{title.meta}</p>
           {title.synopsis && <p className="fd-synopsis">{title.synopsis}</p>}
           <div className="fd-actions">
-            <Link to={`/watch/${title.id}`} className="btn btn-primary">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-                <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
-              </svg>
-              {isCourse ? 'Start course' : 'Play'}
-            </Link>
+            {isGame ? (
+              <button type="button" className="btn btn-primary" onClick={() => setPlaying(true)}>
+                {playIcon}
+                Play
+              </button>
+            ) : (
+              <Link to={`/watch/${title.id}`} className="btn btn-primary">
+                {playIcon}
+                {isCourse ? 'Start course' : 'Play'}
+              </Link>
+            )}
             <button type="button" className={saved ? "btn btn-secondary btn-secondary--on" : "btn btn-secondary"} onClick={() => toggle(title.id, title.title)} aria-pressed={saved}>
               {saved ? 'In My List' : 'My List'}
             </button>
+            {isGame && (
+              <Link to={`/watch/${title.id}`} className="td-trailer-link">
+                Watch trailer
+              </Link>
+            )}
           </div>
         </div>
       </section>
@@ -77,5 +99,7 @@ export default function TitleDetail() {
         )}
       </div>
     </main>
+    {isGame && playing && <NeonDrift onClose={() => setPlaying(false)} />}
+    </>
   );
 }
