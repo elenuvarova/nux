@@ -4,6 +4,7 @@ import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { COLLECTIONS, byId } from '../data/catalog.js';
 import { api } from '../lib/api.js';
+import '../components/Skeleton.css';
 import './Collection.css';
 
 export default function Collection() {
@@ -56,17 +57,36 @@ export default function Collection() {
 
   if (loading) {
     return (
-      <main className="collection">
-        <p className="collection-intro" aria-busy="true">
-          Loading…
-        </p>
+      <main className="collection" aria-busy="true">
+        <header className="collection-hero">
+          <div className="collection-headings">
+            <span className="sk-line col-sk-eyebrow" />
+            <span className="sk-line col-sk-title" />
+          </div>
+        </header>
+        <div className="collection-body">
+          <span className="sk-line col-sk-intro" />
+          <ol className="collection-list">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <li className="collection-entry" key={i}>
+                <span className="sk-line col-sk-rank" />
+                <span className="sk-box sk-box--poster" />
+                <div className="collection-text">
+                  <span className="sk-line col-sk-name" />
+                  <span className="sk-line col-sk-meta" />
+                  <span className="sk-line col-sk-note" />
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </main>
     );
   }
   // Only a real 404 means the collection is missing; any other failure is a
   // transient/server error the reader can retry.
   if (error && error.status === 404) {
-    return <NotFound message="That collection doesn't exist." />;
+    return <NotFound message="That collection doesn’t exist." />;
   }
   if (error) {
     return (
@@ -85,7 +105,7 @@ export default function Collection() {
       </main>
     );
   }
-  if (!col) return <NotFound message="That collection doesn't exist." />;
+  if (!col) return <NotFound message="That collection doesn’t exist." />;
 
   // Minimal schema.org ItemList of the films in this collection, for SEO.
   const films = col.entries.map(([id]) => byId(id)).filter(Boolean);

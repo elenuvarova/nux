@@ -223,6 +223,12 @@ export default function Browse() {
                 <div className="poster-card-art">
                   <img src={x.poster} alt={`${x.title}, ${x.type}`} loading="lazy" />
                   <span className="poster-card-badge">{x.type}</span>
+                  <span className="poster-card-sheen" aria-hidden="true" />
+                  <span className="poster-card-play" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor">
+                      <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
+                    </svg>
+                  </span>
                 </div>
                 <p className="poster-card-title">{x.title}</p>
                 <p className="metadata">{x.genre}</p>

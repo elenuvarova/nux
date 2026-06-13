@@ -39,7 +39,7 @@
   font: var(--type-caption); cursor: pointer;
 }
 .curator-new:hover { background: var(--white-a07); }
-.curator-new:disabled { opacity: 0.4; cursor: default; }
+.curator-new:disabled { opacity: var(--opacity-disabled); cursor: default; }
 .curator-body { flex: 1; overflow-y: auto; padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
 .curator-greeting { opacity: 0.8; }
 .curator-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
@@ -84,21 +84,24 @@
 }
 .curator-input input {
   /* lightened opaque fill (surface-neutral) over the surface-overlay panel gives
-     the field a visible inset step; paired with the strongest hairline token so
-     the boundary reads far better than the old faint --border-default wash.
-     NOTE: a strict 3:1 boundary needs a ~0.40 white border token the ladder
-     doesn't yet expose (top white token is --white-a18) — flagged for tokens. */
-  flex: 1; background: var(--surface-neutral); border: 1px solid var(--border-strong);
+     the field a visible inset step; --border-input (0.40 white) clears the 3:1
+     non-text contrast (WCAG 1.4.11) the old --border-strong hairline missed. */
+  flex: 1; background: var(--surface-neutral); border: 1px solid var(--border-input);
   border-radius: var(--radius-full); padding: 10px var(--space-4); color: inherit; font: var(--type-input);
 }
+.curator-input input::placeholder { color: var(--text-tertiary); opacity: 1; }
+.curator-input input:disabled { opacity: var(--opacity-disabled); cursor: default; }
 .curator-input button {
   width: 40px; border: 0; border-radius: 50%;
   background: var(--action-primary); color: var(--action-primary-text); cursor: pointer; font-size: 16px; /* one-off: send glyph */
 }
-.curator-input button:disabled { opacity: 0.4; cursor: default; }
-/* coarse pointers (touch) get a larger send target */
+.curator-input button:disabled { opacity: var(--opacity-disabled); cursor: default; }
+/* coarse pointers (touch) get full 44px targets */
 @media (pointer: coarse) {
   .curator-input button { width: 44px; height: 44px; }
+  .curator-close { width: 44px; height: 44px; }
+  .curator-new,
+  .curator-retry { min-height: 44px; }
 }
 /* Mobile: bottom-sheet instead of slide-over */
 @media (max-width: 640px) {

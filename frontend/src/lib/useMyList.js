@@ -57,10 +57,16 @@ export async function configureMyList(user) {
 
 function applyToggle(id, title) {
   const adding = !ids.includes(id);
+  const prev = ids;
   const next = adding ? [id, ...ids] : ids.filter((x) => x !== id);
   setIds(next);
   if (authed) {
-    (adding ? api.post('/list', { filmId: id }) : api.del(`/list/${id}`)).catch(() => {});
+    (adding ? api.post('/list', { filmId: id }) : api.del(`/list/${id}`)).catch(() => {
+      // the write failed — undo the optimistic change and surface it rather
+      // than letting the save silently not persist
+      setIds(prev);
+      toast(adding ? 'Couldn’t save to My List — try again' : 'Couldn’t update My List — try again');
+    });
   } else {
     localStorage.setItem(KEY, JSON.stringify(next));
   }

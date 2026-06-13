@@ -25,6 +25,7 @@ export default function Auth({ mode = 'signin' }) {
   const dest = location.state?.from?.pathname || '/';
   const [values, setValues] = useState({ name: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
+  const [formError, setFormError] = useState(null);
   const [busy, setBusy] = useState(false);
 
   const set = (k) => (e) => setValues((v) => ({ ...v, [k]: e.target.value }));
@@ -43,16 +44,28 @@ export default function Auth({ mode = 'signin' }) {
     setErrors(next);
     if (Object.keys(next).length) return focusFirst(next);
 
+    setFormError(null);
     setBusy(true);
     try {
       if (signup) await auth.signup(values.email, values.name, values.password);
       else await auth.login(values.email, values.password);
       navigate(dest, { replace: true });
     } catch (err) {
-      const mapped = SERVER_ERRORS[err.code] || { field: 'password', msg: 'Something went wrong — try again.' };
-      const next2 = { [mapped.field]: mapped.msg };
-      setErrors(next2);
-      focusFirst(next2);
+      const mapped = SERVER_ERRORS[err.code];
+      if (mapped) {
+        // a known, field-specific problem maps onto its field
+        const next2 = { [mapped.field]: mapped.msg };
+        setErrors(next2);
+        focusFirst(next2);
+      } else {
+        // network / server / unknown — surface at form level rather than
+        // pinning it to the password field (which read as a credentials error)
+        setFormError(
+          err?.status >= 500
+            ? 'Our server had a problem — please try again.'
+            : 'Couldn’t reach the server — check your connection and try again.'
+        );
+      }
     } finally {
       setBusy(false);
     }
@@ -94,6 +107,11 @@ export default function Auth({ mode = 'signin' }) {
             <Link to="/forgot" className="auth-forgot">
               Forgot password?
             </Link>
+          )}
+          {formError && (
+            <p className="auth-form-error" role="alert">
+              {formError}
+            </p>
           )}
           <button type="submit" className="btn btn-primary auth-submit" disabled={busy} aria-busy={busy}>
             {busy ? 'One moment…' : signup ? 'Create account' : 'Sign in'}

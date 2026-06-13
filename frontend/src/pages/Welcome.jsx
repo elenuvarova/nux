@@ -30,12 +30,12 @@ export default function Welcome() {
           </h1>
           <p className="welcome-sub">Films, documentaries, games and courses — curated by editors who care.</p>
           <button type="button" className="btn btn-primary welcome-cta" onClick={() => setStep(1)}>
-            Get Started
+            Get started
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M2.5 7h9M8 3.5 11.5 7 8 10.5" />
             </svg>
           </button>
-          <button type="button" className="welcome-signin" onClick={() => navigate('/')}>
+          <button type="button" className="welcome-signin" onClick={() => navigate('/signin')}>
             Already have an account? <span>Sign in</span>
           </button>
         </div>
@@ -45,11 +45,11 @@ export default function Welcome() {
 
   return (
     <main className="welcome welcome--genres">
-      <div className="welcome-steps" aria-hidden="true">
-        <span className="welcome-dot" />
-        <span className="welcome-dot welcome-dot--active" />
-        <span className="welcome-dot" />
-        <span className="welcome-dot" />
+      <div className="welcome-steps" role="group" aria-label="Onboarding progress — step 2 of 4">
+        <span className="welcome-dot" aria-hidden="true" />
+        <span className="welcome-dot welcome-dot--active" aria-hidden="true" />
+        <span className="welcome-dot" aria-hidden="true" />
+        <span className="welcome-dot" aria-hidden="true" />
       </div>
       <h1 className="welcome-genres-title" tabIndex={-1}>
         What kinds of stories move you?

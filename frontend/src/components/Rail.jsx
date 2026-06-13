@@ -89,7 +89,9 @@ export default function Rail({ title, wide = false, seeAllTo = '/browse', childr
           </svg>
         </Link>
       </header>
-      <div className={wide ? 'rail-scroll rail-scroll--wide' : 'rail-scroll'}>{children}</div>
+      <div className={wide ? 'rail-scroll rail-scroll--wide' : 'rail-scroll'} role="group" aria-label={title}>
+        {children}
+      </div>
     </section>
   );
 }

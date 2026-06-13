@@ -13,6 +13,14 @@
   object-fit: cover;
 }
 
+/* cinema dim under the soft falloff — keeps headings legible over bright art */
+.genre-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--scrim-cinema-dim);
+}
+
 .genre-hero::after {
   content: '';
   position: absolute;

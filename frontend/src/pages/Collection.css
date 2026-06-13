@@ -13,6 +13,14 @@
   object-fit: cover;
 }
 
+/* cinema dim under the soft falloff — keeps headings legible over bright art */
+.collection-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--scrim-cinema-dim);
+}
+
 .collection-hero::after {
   content: '';
   position: absolute;
@@ -90,7 +98,7 @@
 }
 
 .collection-poster:hover {
-  transform: scale(1.03);
+  transform: scale(var(--hover-lift));
   box-shadow: var(--shadow-card-hover);
 }
 
@@ -114,6 +122,44 @@
   font: var(--type-essay);
   color: var(--text-secondary);
   margin-top: var(--space-1);
+}
+
+/* loading skeleton — mirrors the hero headings + intro + entry rows */
+.col-sk-eyebrow {
+  width: 110px;
+  height: 12px;
+}
+
+.col-sk-title {
+  width: min(60%, 420px);
+  height: 56px;
+}
+
+.col-sk-intro {
+  display: block;
+  width: 70%;
+  height: 18px;
+  margin-bottom: var(--space-12);
+}
+
+.col-sk-rank {
+  width: 28px;
+  height: 40px;
+}
+
+.col-sk-name {
+  width: 50%;
+  height: 24px;
+}
+
+.col-sk-meta {
+  width: 30%;
+  height: 12px;
+}
+
+.col-sk-note {
+  width: 90%;
+  height: 40px;
 }
 
 @media (max-width: 640px) {

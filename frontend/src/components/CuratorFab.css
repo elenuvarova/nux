@@ -14,8 +14,12 @@
   font-weight: 600;
   cursor: pointer;
   box-shadow: var(--shadow-card-hover);
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
-.curator-fab:hover { filter: brightness(1.05); }
+.curator-fab:hover { background: var(--action-primary-hover); }
+.curator-fab:active { transform: scale(var(--press-scale)); }
 .curator-fab[hidden] { display: none; } /* kept mounted for focus restore; hidden while the panel is up */
 .curator-fab-label { font: var(--type-label); }
 /* keep clear of the mobile tab bar (present up to 768px) */

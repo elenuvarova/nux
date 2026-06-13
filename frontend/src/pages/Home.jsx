@@ -40,10 +40,20 @@ export default function Home() {
         <h1 className="sr-only" tabIndex={-1}>
           Home
         </h1>
-        <div className="home-hero-skeleton" />
+        <div className="home-hero-skeleton">
+          <div className="home-hero-skeleton-text">
+            <span className="sk-line sk-hero-title" />
+            <span className="sk-line sk-hero-meta" />
+            <span className="sk-line sk-hero-cta" />
+          </div>
+        </div>
+        {/* mirror the real layout: 3 poster rails (trending/curated/fresh) +
+            the wide Continue Watching rail only when there's history to resume,
+            so the skeleton doesn't mis-promise a wide rail and reflow on load */}
         <div className="home-rails">
           <SkeletonRail />
-          <SkeletonRail wide />
+          {history.length > 0 && <SkeletonRail wide />}
+          <SkeletonRail />
           <SkeletonRail />
         </div>
       </main>
@@ -109,7 +119,7 @@ export default function Home() {
           </>
         ) : collectionsError ? (
           <p className="home-rails-note" role="status">
-            We couldn't load more collections right now.
+            We couldn’t load more collections right now.
           </p>
         ) : (
           collections.map((c) => (

@@ -150,7 +150,14 @@ export default function CuratorOverlay() {
           <h2>The Curator</h2>
           <div className="curator-head-actions">
             {messages.length > 0 && (
-              <button className="curator-new" onClick={clearHistory} disabled={loading}>
+              <button
+                className="curator-new"
+                onClick={() => {
+                  clearHistory();
+                  inputRef.current?.focus();
+                }}
+                disabled={loading}
+              >
                 New
               </button>
             )}

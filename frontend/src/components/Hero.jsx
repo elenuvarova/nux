@@ -46,6 +46,9 @@ export default function Hero() {
         <img src={film.backdrop2 || film.backdrop || film.poster} alt="" fetchpriority="high" width="1280" height="720" />
       </div>
       <div className="hero-content">
+        {/* announces each slide change to assistive tech (the carousel auto-
+            advances + manual dots were previously silent) */}
+        <p className="sr-only" role="status">{`Slide ${i + 1} of ${count}: ${film.title}`}</p>
         <p className="eyebrow">{slide.eyebrow}</p>
         <h1 className="hero-title" tabIndex={-1}>
           {film.title}
@@ -100,7 +103,7 @@ export default function Hero() {
             <button
               key={s.filmId}
               type="button"
-              aria-label={`Go to slide ${n + 1} of ${count}`}
+              aria-label={`Go to ${byId(s.filmId)?.title || `slide ${n + 1} of ${count}`}`}
               aria-current={n === i ? 'true' : undefined}
               className={n === i ? 'hero-dot hero-dot--on' : 'hero-dot'}
               onClick={() => setI(n)}

@@ -94,11 +94,33 @@ export default function Tour({ onClose }) {
     setCardStyle({ top, left });
   }, [step, rect]);
 
-  // Move focus into the card; Escape ends the tour.
+  // Move focus into the card; Escape ends the tour; Tab is trapped inside the
+  // card so focus can't leak to the (aria-modal) background it claims is inert.
   useEffect(() => {
     cardRef.current?.focus();
     const onKey = (e) => {
-      if (e.key === 'Escape') finish();
+      if (e.key === 'Escape') {
+        finish();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const card = cardRef.current;
+        if (!card) return;
+        const items = Array.from(
+          card.querySelectorAll('button, [href], input, [tabindex]:not([tabindex="-1"])')
+        );
+        if (items.length === 0) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey && (active === first || active === card)) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);

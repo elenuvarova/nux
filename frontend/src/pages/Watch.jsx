@@ -446,7 +446,9 @@ export default function Watch() {
           <div className={`player-cover ${covered ? 'player-cover--on' : ''}`} aria-hidden="true">
             <img src={art} alt="" />
           </div>
-          {buffering && !covered && <span className="player-spinner" aria-hidden="true" />}
+          {((!everPlayed && !loadError) || (buffering && !covered)) && (
+            <span className="player-spinner" aria-hidden="true" />
+          )}
         </div>
       )}
 

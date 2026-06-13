@@ -5,10 +5,56 @@
 }
 
 .home-hero-skeleton {
+  position: relative;
+  overflow: hidden;
   height: 86vh;
   background:
     linear-gradient(to top, var(--surface-page), transparent 60%),
     var(--surface-raised);
+}
+
+/* low-key silhouette of the real hero content (title / meta / CTA) so first
+   paint reads as "a hero is loading", not a blank slab that pops into place */
+.home-hero-skeleton-text {
+  position: absolute;
+  inset: auto 0 0 0;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--space-16) var(--space-20);
+  display: grid;
+  gap: var(--space-4);
+}
+
+.sk-hero-title {
+  width: min(60%, 520px);
+  height: 64px;
+  border-radius: var(--radius-sm);
+}
+
+.sk-hero-meta {
+  width: 280px;
+  height: 16px;
+  border-radius: var(--radius-xs);
+}
+
+.sk-hero-cta {
+  width: 220px;
+  height: 44px;
+  border-radius: var(--radius-full);
+}
+
+@media (max-width: 768px) {
+  .home-hero-skeleton {
+    height: 72vh;
+  }
+
+  .home-hero-skeleton-text {
+    padding: 0 var(--space-4) var(--space-10);
+  }
+
+  .sk-hero-title {
+    height: 44px;
+  }
 }
 
 /* subtle, non-blocking note when generated collections fail to load —
@@ -30,7 +76,9 @@
 /* ── Editorial Pick — the curated module ─────────────────────── */
 .editorial {
   max-width: 1440px;
-  margin: 0 auto;
+  /* match the rail rhythm below it — without this the editorial block had no
+     bottom margin and the next rail ("Islands of Isolation") crowded the CTA */
+  margin: 0 auto var(--space-16);
   padding: 0 var(--space-16);
   display: grid;
   /* balanced spread: the cover grows to meet the text so there's no dead gulf

@@ -41,6 +41,19 @@
   grid-auto-columns: 168px;
   gap: var(--space-5);
   overflow: hidden;
+  /* mirror the real .rail-scroll padding + edge-fade so the first card sits in
+     the same place and doesn't jump 8px when the skeleton swaps for content */
+  padding: var(--space-2);
+  margin: calc(-1 * var(--space-2));
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--space-2), #000 calc(100% - var(--space-12)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--space-2), #000 calc(100% - var(--space-12)), transparent 100%);
+}
+
+/* was a dead class — the real PosterCard is a grid with an 8px gap; mirror it
+   so skeleton spacing matches and the title/meta don't rely on margin hacks */
+.sk-card {
+  display: grid;
+  gap: var(--space-2);
 }
 
 .sk-row--wide {
@@ -56,16 +69,14 @@
 }
 
 .sk-line--title {
-  height: 13px;
+  height: 15px; /* ≈ the real card-title line box, so the row doesn't grow on load */
   width: 80%;
-  margin-top: var(--space-2);
   border-radius: var(--radius-xs);
 }
 
 .sk-line--meta {
   height: 11px;
   width: 55%;
-  margin-top: 6px;
   border-radius: var(--radius-xs);
 }
 

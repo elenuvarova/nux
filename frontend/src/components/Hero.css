@@ -46,7 +46,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  animation: hero-kenburns 9s ease-out both;
+  /* matches the 8s auto-advance so the zoom completes exactly as the slide
+     changes (was 9s, which froze mid-zoom then restarted) */
+  animation: hero-kenburns 8s ease-out both;
 }
 
 /* slow drift + crossfade as slides rotate */
@@ -155,8 +157,12 @@
 }
 
 /* slideshow pause/resume — a quiet sibling to the dots, never a CTA. Low-key
-   by default; amber only when the user has explicitly paused (engaged). */
+   by default; amber only when the user has explicitly paused (engaged).
+   Single source of truth for this control (a dead duplicate previously lived
+   in global.css). The visual stays a quiet 24px; the hit target grows to 44px
+   on touch via content-box padding so the glyph never moves. */
 .hero-pause {
+  box-sizing: content-box;
   display: inline-grid;
   place-items: center;
   width: 24px;
@@ -164,15 +170,32 @@
   margin-right: var(--space-1);
   border-radius: var(--radius-full);
   color: var(--white-a18);
-  transition: color var(--dur-base) var(--ease-out);
+  transition:
+    color var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.hero-pause svg {
+  width: 16px;
+  height: 16px;
 }
 
 .hero-pause:hover {
   color: var(--text-secondary);
 }
 
+.hero-pause:active {
+  transform: scale(var(--press-scale));
+}
+
 .hero-pause--paused {
   color: var(--amber-500);
+}
+
+@media (pointer: coarse) {
+  .hero-pause {
+    padding: 10px; /* 24 + 2×10 = 44px hit target, glyph stays put */
+  }
 }
 
 /* .btn / .btn-primary / .btn-secondary are now a global primitive in

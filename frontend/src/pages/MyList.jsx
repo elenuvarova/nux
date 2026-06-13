@@ -33,7 +33,7 @@ export default function MyList() {
               <path d="M7 3h10a1 1 0 0 1 1 1v17l-6-3.8L6 21V4a1 1 0 0 1 1-1z" />
             </svg>
             <p className="display-m">Your list is empty</p>
-            <p className="browse-empty-sub">Tap + on any film, doc, game or course and it’ll show up here.</p>
+            <p className="browse-empty-sub">Select + on any film, doc, game or course and it’ll show up here.</p>
             <Link to="/browse" className="btn btn-primary">
               Browse the catalog
             </Link>

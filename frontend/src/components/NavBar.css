@@ -68,15 +68,16 @@
   position: absolute;
   top: 50%;
   left: 0;
-  width: calc(var(--ind-width, 0) + var(--space-8));
-  height: 2.6em;
-  transform: translate(calc(var(--ind-left, 0) - var(--space-4)), -50%);
+  /* a touch wider + softer than before — more present, still light not a pill */
+  width: calc(var(--ind-width, 0) + var(--space-12));
+  height: 2.7em;
+  transform: translate(calc(var(--ind-left, 0) - var(--space-6)), -50%);
   border-radius: var(--radius-full);
   /* layered: a warmer core + a wider soft halo → reads as a lit spotlight */
   background:
-    radial-gradient(closest-side, var(--amber-sheen), transparent 58%),
-    radial-gradient(closest-side, var(--amber-glow), transparent 88%);
-  filter: blur(3px);
+    radial-gradient(closest-side, var(--amber-sheen), transparent 66%),
+    radial-gradient(closest-side, var(--amber-glow), transparent 96%);
+  filter: blur(4px);
   opacity: 1;
   pointer-events: none;
   z-index: 0;
@@ -109,7 +110,7 @@
   height: 36px;
   padding: 0 var(--space-4);
   border-radius: var(--radius-full);
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-input);
   color: var(--text-tertiary);
   font: var(--type-caption);
   min-width: 220px;

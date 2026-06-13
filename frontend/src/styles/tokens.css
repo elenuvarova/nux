@@ -41,6 +41,9 @@
   --white-a08: rgb(255 255 255 / 0.08);
   --white-a14: rgb(255 255 255 / 0.14);
   --white-a18: rgb(255 255 255 / 0.18);
+  /* field/input boundaries — clears the 3:1 non-text contrast (WCAG 1.4.11)
+     that the a18 hairline missed; ≈3.5:1 over the ink surfaces */
+  --white-a40: rgb(255 255 255 / 0.4);
 
   /* ── Semantic: surfaces ─────────────────────────────────────── */
   --surface-page: var(--ink-900);
@@ -63,6 +66,9 @@
   --glass-bg: rgb(13 12 11 / 0.72);
   --glass-bg-strong: rgb(13 12 11 / 0.92);
   --blur-chrome: 20px;
+  /* tighter on-artwork blur (poster badges, the play affordance, card labels) —
+     distinct from the 20px chrome blur so the two don't drift apart */
+  --blur-art: 8px;
   --shadow-glass-edge: inset 0 0 0 1px var(--white-a08);
 
   /* ── Semantic: hero scrim (poster/backdrop → page-color falloff) ─ */
@@ -111,6 +117,7 @@
   --border-subtle: var(--white-a08);
   --border-default: var(--white-a14);
   --border-strong: var(--white-a18);
+  --border-input: var(--white-a40); /* text-field boundaries (3:1 non-text contrast) */
   --border-focus: var(--amber-500);
   --border-danger: var(--status-danger);
 
@@ -209,6 +216,10 @@
 
   /* one tactile press-scale for every interactive primitive (btn/chip/icon/tab) */
   --press-scale: 0.97;
+  /* the single disabled-control opacity (was a repeated 0.4 literal) */
+  --opacity-disabled: 0.4;
+  /* one card-hover lift across rails / grid / collection (was 1.02 vs 1.03) */
+  --hover-lift: 1.03;
 
   /* ── Motion ─────────────────────────────────────────────────── */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

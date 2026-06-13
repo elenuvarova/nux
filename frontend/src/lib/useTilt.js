@@ -32,6 +32,10 @@ export function useTilt({ max = 7 } = {}) {
     if (!el) return;
     el.style.setProperty('--ry', '0deg');
     el.style.setProperty('--rx', '0deg');
+    /* recentre the sheen origin too, else the next hover flashes the cursor
+       sheen from the last exit position for one frame */
+    el.style.setProperty('--mx', '50%');
+    el.style.setProperty('--my', '50%');
   }, []);
 
   return { ref, onPointerMove, onPointerLeave: reset, onBlur: reset };

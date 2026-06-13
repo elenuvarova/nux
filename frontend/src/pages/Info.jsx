@@ -22,7 +22,7 @@ const PAGES = {
       ['h2', 'Playing something'],
       ['p', 'Press Play on any film, game or course to open the player. The player has speed control, captions, volume and fullscreen — press the gear for settings, or use the keyboard: Space to play/pause, ← → to seek, ↑ ↓ for volume, F for fullscreen.'],
       ['h2', 'My List'],
-      ['p', 'Tap + on any title to save it. Your list lives in this browser and appears under My List.'],
+      ['p', 'Select + on any title to save it. Your list lives in this browser and appears under My List.'],
       ['h2', 'Downloads & account'],
       ['p', 'Downloads, Profile and Settings are demonstrations of the flows; toggles and forms respond but don’t persist to a server.'],
     ],

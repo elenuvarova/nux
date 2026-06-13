@@ -120,7 +120,7 @@
 .poster-card:hover .poster-card-art {
   /* black depth + a warm amber bloom — same "projector light" language as the nav */
   box-shadow: var(--shadow-card-hover), 0 6px 30px var(--amber-glow);
-  transform: perspective(720px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(1.03);
+  transform: perspective(720px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--hover-lift));
 }
 
 .poster-card:hover .poster-card-art::after {
@@ -143,8 +143,8 @@
   height: 44px;
   border-radius: var(--radius-full);
   background: var(--glass-bg-strong);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(var(--blur-art));
+  backdrop-filter: blur(var(--blur-art));
   border: 1px solid var(--white-a18);
   color: var(--amber-300);
   opacity: 0;
@@ -162,6 +162,32 @@
 .poster-card:hover .poster-card-play {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
+}
+
+/* keyboard parity — the lift, glow, sheen and play glyph were :hover-only, so a
+   keyboard user got only the focus ring. Mirror them on :focus-within (plain
+   scale, no cursor tilt) for poster + continue cards */
+.poster-card:focus-within .poster-card-art {
+  box-shadow: var(--shadow-card-hover), 0 6px 30px var(--amber-glow);
+  transform: scale(var(--hover-lift));
+}
+
+.poster-card:focus-within .poster-card-art::after {
+  box-shadow: inset 0 0 0 1px var(--white-a18);
+}
+
+.poster-card:focus-within .poster-card-sheen {
+  opacity: 1;
+}
+
+.poster-card:focus-within .poster-card-play {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.continue-card:focus-within .continue-card-art {
+  transform: scale(var(--hover-lift));
+  box-shadow: var(--shadow-card-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -190,8 +216,8 @@
   color: var(--paper-100);
   /* small on-artwork chip — keeps its own tighter 8px blur, not chrome blur */
   background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(var(--blur-art));
+  backdrop-filter: blur(var(--blur-art));
   border-radius: var(--radius-xs);
   padding: 3px 5px;
 }
@@ -234,7 +260,7 @@
 }
 
 .continue-card:hover .continue-card-art {
-  transform: scale(1.02);
+  transform: scale(var(--hover-lift));
   box-shadow: var(--shadow-card-hover);
 }
 
@@ -253,8 +279,8 @@
   padding: var(--space-3);
   border-radius: var(--radius-full);
   background: rgb(13 12 11 / 0.55);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(var(--blur-art));
+  backdrop-filter: blur(var(--blur-art));
 }
 
 /* flush-bottom progress on artwork (Apple TV pattern) */

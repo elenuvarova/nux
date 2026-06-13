@@ -105,13 +105,13 @@ h1[tabindex='-1'] {
   }
 
   .browse-clear {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
   }
 
   .nav-avatar {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
   }
 }
 
@@ -314,42 +314,6 @@ h1[tabindex='-1'] {
 .settings-row:active,
 .profile-row:active {
   background: var(--surface-pressed);
-}
-
-/* ── Hero pause / play toggle ─────────────────────────────────────
-   Glass icon-button in the tone of the hero secondary controls. Sits in
-   .hero-content; ≥24px hit target; inherits the global focus-visible ring. */
-.hero-pause {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--action-secondary-border);
-  color: var(--icon-secondary);
-  background: var(--surface-scrim-pressed);
-  -webkit-backdrop-filter: blur(var(--blur-chrome));
-  backdrop-filter: blur(var(--blur-chrome));
-  transition:
-    background-color var(--dur-base) var(--ease-out),
-    border-color var(--dur-base) var(--ease-out),
-    color var(--dur-base) var(--ease-out),
-    transform var(--dur-fast) var(--ease-out);
-}
-
-.hero-pause svg {
-  width: 16px;
-  height: 16px;
-}
-
-.hero-pause:hover {
-  color: var(--text-primary);
-  border-color: var(--border-strong);
-  background: var(--surface-hover);
-}
-
-.hero-pause:active {
-  transform: scale(var(--press-scale));
 }
 
 /* ── View Transitions: poster → hero morph ───────────────────── */
