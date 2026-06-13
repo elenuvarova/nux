@@ -298,6 +298,22 @@ export default function Watch() {
     wake();
   }, [captions, wake]);
 
+  // announce transport state changes (play/pause/mute/captions/speed) to screen
+  // readers — the controls only flip aria on themselves, which AT misses when
+  // the change is triggered by a keyboard shortcut while focus is on the stage
+  const liveRef = useRef(null);
+  const prevTransport = useRef({ playing, muted, captions, rate });
+  useEffect(() => {
+    const p = prevTransport.current;
+    let msg = '';
+    if (playing !== p.playing) msg = playing ? 'Playing' : 'Paused';
+    else if (muted !== p.muted) msg = muted ? 'Muted' : 'Unmuted';
+    else if (captions !== p.captions) msg = captions ? 'Subtitles on' : 'Subtitles off';
+    else if (rate !== p.rate) msg = `Speed ${rate === 1 ? 'normal' : `${rate}×`}`;
+    prevTransport.current = { playing, muted, captions, rate };
+    if (msg && started && liveRef.current) liveRef.current.textContent = msg;
+  }, [playing, muted, captions, rate, started]);
+
   // keyboard map (universal player conventions)
   useEffect(() => {
     if (!started) return undefined;
@@ -452,6 +468,9 @@ export default function Watch() {
         </div>
       )}
 
+      {/* screen-reader announcements for transport state */}
+      <p className="sr-only" aria-live="polite" ref={liveRef} />
+
       {/* top chrome */}
       <div className="player-top">
         <button type="button" className="player-iconbtn" onClick={() => navigate(-1)} aria-label="Go back">
@@ -560,7 +579,7 @@ export default function Watch() {
                 type="button"
                 className={`player-iconbtn ${menu ? 'player-iconbtn--on' : ''}`}
                 onClick={() => setMenu(menu ? null : 'settings')}
-                aria-haspopup="menu"
+                aria-haspopup="true"
                 aria-expanded={!!menu}
                 aria-label="Settings"
               >
@@ -568,8 +587,8 @@ export default function Watch() {
               </button>
 
               {menu === 'settings' && (
-                <div className="player-menu" role="menu">
-                  <button type="button" className="player-menu-row" role="menuitem" onClick={() => setMenu('speed')}>
+                <div className="player-menu" role="group" aria-label="Settings">
+                  <button type="button" className="player-menu-row" onClick={() => setMenu('speed')}>
                     <span>Playback speed</span>
                     <span className="player-menu-value">
                       {rate === 1 ? 'Normal' : `${rate}×`}
@@ -577,7 +596,7 @@ export default function Watch() {
                     </span>
                   </button>
                   {qualities.length > 0 && (
-                    <button type="button" className="player-menu-row" role="menuitem" onClick={() => setMenu('quality')}>
+                    <button type="button" className="player-menu-row" onClick={() => setMenu('quality')}>
                       <span>Quality</span>
                       <span className="player-menu-value">
                         {quality === 'auto' ? 'Auto' : quality}
@@ -585,7 +604,7 @@ export default function Watch() {
                       </span>
                     </button>
                   )}
-                  <button type="button" className="player-menu-row" role="menuitemcheckbox" aria-checked={captions} onClick={toggleCaptions}>
+                  <button type="button" className="player-menu-row" aria-pressed={captions} onClick={toggleCaptions}>
                     <span>Subtitles</span>
                     <span className="player-menu-value">{captions ? 'On' : 'Off'}</span>
                   </button>
@@ -593,7 +612,7 @@ export default function Watch() {
               )}
 
               {menu === 'speed' && (
-                <div className="player-menu" role="menu">
+                <div className="player-menu" role="group" aria-label="Playback speed">
                   <button type="button" className="player-menu-head" onClick={() => setMenu('settings')}>
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M9 3 4.5 7 9 11" />
@@ -605,8 +624,7 @@ export default function Watch() {
                       key={r}
                       type="button"
                       className="player-menu-row"
-                      role="menuitemradio"
-                      aria-checked={rate === r}
+                      aria-pressed={rate === r}
                       onClick={() => applyRate(r)}
                     >
                       <span className="player-menu-check">{rate === r && <IconCheck />}</span>
@@ -617,7 +635,7 @@ export default function Watch() {
               )}
 
               {menu === 'quality' && (
-                <div className="player-menu" role="menu">
+                <div className="player-menu" role="group" aria-label="Quality">
                   <button type="button" className="player-menu-head" onClick={() => setMenu('settings')}>
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M9 3 4.5 7 9 11" />
@@ -629,8 +647,7 @@ export default function Watch() {
                       key={q}
                       type="button"
                       className="player-menu-row"
-                      role="menuitemradio"
-                      aria-checked={quality === q}
+                      aria-pressed={quality === q}
                       onClick={() => applyQuality(q)}
                     >
                       <span className="player-menu-check">{quality === q && <IconCheck />}</span>
