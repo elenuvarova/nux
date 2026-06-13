@@ -5,7 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { Op } from "sequelize";
 import { sequelize, dbKind } from "./db.js";
-import { Session, PasswordReset } from "./models.js";
+import { Session, PasswordReset, RateLimit } from "./models.js";
 import authRoutes from "./routes/auth.js";
 import listRoutes from "./routes/list.js";
 import historyRoutes from "./routes/history.js";
@@ -85,6 +85,7 @@ function sweepExpired() {
   Promise.all([
     Session.destroy({ where: { expiresAt: { [Op.lt]: now } } }),
     PasswordReset.destroy({ where: { expiresAt: { [Op.lt]: now } } }),
+    RateLimit.destroy({ where: { resetAt: { [Op.lt]: now } } }),
   ]).catch((err) => console.error("[sweep] failed:", err?.message || err));
 }
 const sweepTimer = setInterval(sweepExpired, 60 * 60 * 1000);

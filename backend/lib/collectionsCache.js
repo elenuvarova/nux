@@ -45,7 +45,9 @@ export function kickRegeneration() {
   (async () => {
     try {
       const cols = await generateCollections();
-      if (cols.length) await persist(cols);
+      // only replace the live shelf with a healthy set — never let a thin/odd
+      // regen overwrite a good cache for a week
+      if (cols.length >= 2) await persist(cols);
     } catch (e) {
       console.error("[collections] regen failed:", e?.message || e);
     } finally {

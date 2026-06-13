@@ -3,7 +3,8 @@
 // native fetch (Node 20) — no SDK. Each caller supplies its own JSON `schema`
 // (Gemini responseSchema) and a `validate(json)` that runs inside the attempt,
 // so a wrong-shape response also triggers failover.
-const TIMEOUT_MS = 12_000;
+const TIMEOUT_MS = 12_000; // per provider attempt
+const OVERALL_MS = 24_000; // hard ceiling across the whole failover chain
 
 // The model id is interpolated into the request URL (Gemini), so only allow
 // known-good values — an unexpected/misconfigured env var must not be able to
@@ -23,9 +24,9 @@ const cfg = () => ({
   groqModel: pick(process.env.GROQ_MODEL, GROQ_MODELS, "llama-3.3-70b-versatile"),
 });
 
-async function withTimeout(fn) {
+async function withTimeout(fn, ms = TIMEOUT_MS) {
   const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  const t = setTimeout(() => ctrl.abort(), ms);
   try {
     return await fn(ctrl.signal);
   } finally {
@@ -47,59 +48,73 @@ async function callWithRetry(fn, args) {
   }
 }
 
-async function callGeminiRaw({ system, messages, schema }) {
+async function callGeminiRaw({ system, messages, schema, timeoutMs }) {
   const { geminiKey, geminiModel } = cfg();
   const contents = messages.map((m) => ({
     role: m.role === "assistant" ? "model" : "user",
     parts: [{ text: m.content }],
   }));
-  const res = await withTimeout((signal) =>
-    fetch(
-      // key goes in a header, not the query string, so it can't leak into URL
-      // logs / proxies / error messages (Groq already uses an auth header)
-      `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": geminiKey },
-        signal,
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: system }] },
-          contents,
-          // cap output so a runaway/looping generation can't burn cost or stall
-          // for the full timeout
-          generationConfig: { responseMimeType: "application/json", responseSchema: schema, maxOutputTokens: 2048 },
-        }),
-      }
-    )
+  const t0 = Date.now();
+  const res = await withTimeout(
+    (signal) =>
+      fetch(
+        // key goes in a header, not the query string, so it can't leak into URL
+        // logs / proxies / error messages (Groq already uses an auth header)
+        `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": geminiKey },
+          signal,
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: system }] },
+            contents,
+            // cap output so a runaway/looping generation can't burn cost or stall
+            generationConfig: { responseMimeType: "application/json", responseSchema: schema, maxOutputTokens: 2048 },
+          }),
+        }
+      ),
+    timeoutMs
   );
   if (!res.ok) throw new Error(`gemini_http_${res.status}`);
   const data = await res.json();
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) throw new Error("gemini_empty");
+  // observability: latency + tokens. cachedContentTokenCount surfaces Gemini's
+  // implicit prefix caching, which already covers the static catalog block — so
+  // no explicit cachedContent is needed at this catalog size.
+  const u = data?.usageMetadata || {};
+  console.log(
+    `[ai] gemini model=${geminiModel} ms=${Date.now() - t0} in=${u.promptTokenCount ?? "?"} out=${u.candidatesTokenCount ?? "?"} cached=${u.cachedContentTokenCount ?? 0}`
+  );
   return JSON.parse(text);
 }
 
-async function callGroqRaw({ system, messages }) {
+async function callGroqRaw({ system, messages, timeoutMs }) {
   // Groq has no responseSchema; it relies on response_format json_object below.
   const { groqKey, groqModel } = cfg();
-  const res = await withTimeout((signal) =>
-    fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${groqKey}` },
-      signal,
-      body: JSON.stringify({
-        model: groqModel,
-        messages: [{ role: "system", content: system }, ...messages],
-        response_format: { type: "json_object" },
-        temperature: 0.7,
-        max_tokens: 2048, // cap runaway generation (cost + latency)
+  const t0 = Date.now();
+  const res = await withTimeout(
+    (signal) =>
+      fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${groqKey}` },
+        signal,
+        body: JSON.stringify({
+          model: groqModel,
+          messages: [{ role: "system", content: system }, ...messages],
+          response_format: { type: "json_object" },
+          temperature: 0.7,
+          max_tokens: 2048, // cap runaway generation (cost + latency)
+        }),
       }),
-    })
+    timeoutMs
   );
   if (!res.ok) throw new Error(`groq_http_${res.status}`);
   const data = await res.json();
   const text = data?.choices?.[0]?.message?.content;
   if (!text) throw new Error("groq_empty");
+  const u = data?.usage || {};
+  console.log(`[ai] groq model=${groqModel} ms=${Date.now() - t0} in=${u.prompt_tokens ?? "?"} out=${u.completion_tokens ?? "?"}`);
   return JSON.parse(text);
 }
 
@@ -115,11 +130,18 @@ export async function callModel({ system, messages, schema, validate }) {
       ? [["groq", c.groqKey, callGroqRaw], ["gemini", c.geminiKey, callGeminiRaw]]
       : [["gemini", c.geminiKey, callGeminiRaw], ["groq", c.groqKey, callGroqRaw]];
 
+  const deadline = Date.now() + OVERALL_MS;
   const errors = [];
   for (const [name, key, fn] of providers) {
     if (!key) continue; // skip unconfigured provider
+    const remaining = deadline - Date.now();
+    if (remaining <= 1000) {
+      errors.push(`${name}: chain_deadline`);
+      break;
+    }
+    const timeoutMs = Math.min(TIMEOUT_MS, remaining);
     try {
-      const json = await callWithRetry(fn, { system, messages, schema });
+      const json = await callWithRetry(fn, { system, messages, schema, timeoutMs });
       return validate(json);
     } catch (e) {
       errors.push(`${name}: ${e.message}`);

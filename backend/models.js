@@ -98,6 +98,19 @@ export const CuratorCollection = sequelize.define(
   { tableName: "curator_collections" }
 );
 
+// Fixed-window rate-limit counters, keyed by `${bucket}:${ip}`. Persisted (not
+// in-memory) so the window survives redeploys and is shared across instances —
+// an attacker can't reset their count by waiting for the next Coolify deploy.
+export const RateLimit = sequelize.define(
+  "RateLimit",
+  {
+    key: { type: DataTypes.STRING, primaryKey: true },
+    count: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    resetAt: { type: DataTypes.DATE, allowNull: false },
+  },
+  { tableName: "rate_limits", timestamps: false }
+);
+
 // Associations — onDelete cascade so deleting a user wipes their data.
 User.hasMany(Session, { onDelete: "CASCADE" });
 Session.belongsTo(User);

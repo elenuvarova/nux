@@ -58,7 +58,7 @@ export function sendPasswordResetEmail(to, resetUrl) {
       `<p style="font-size:15px;line-height:1.6;color:#b0a99e;margin:0 0 24px">
          We received a request to reset your password. This link expires in 1 hour.
        </p>
-       <a href="${resetUrl}" style="display:inline-block;background:#c8922a;color:#0d0c0b;text-decoration:none;font-weight:600;font-size:15px;padding:13px 24px;border-radius:999px">Reset password</a>
+       <a href="${esc(resetUrl)}" style="display:inline-block;background:#c8922a;color:#0d0c0b;text-decoration:none;font-weight:600;font-size:15px;padding:13px 24px;border-radius:999px">Reset password</a>
        <p style="font-size:13px;line-height:1.6;color:#8a8275;margin:24px 0 0">
          If you didn’t ask for this, you can safely ignore this email — your password won’t change.
        </p>`

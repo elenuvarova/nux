@@ -4,7 +4,7 @@
 // in-memory rate limiter on the auth routes.
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import { Session, User } from "../models.js";
+import { Session, User, RateLimit } from "../models.js";
 
 const COOKIE = "nux_session";
 const SESSION_DAYS = 30;
@@ -71,39 +71,34 @@ export function publicUser(user) {
   return { id: user.id, email: user.email, name: user.name, avatarUrl: user.avatarUrl };
 }
 
-// ── tiny fixed-window rate limiter (per IP + bucket) ──────────────────
-// Keyed by req.ip: server.js sets `trust proxy` so Express derives the real
-// client IP from X-Forwarded-For (set by nginx) — no manual header parsing,
-// which would otherwise be spoofable.
-//
-// SINGLE-INSTANCE ONLY: the counters live in this process's memory. They reset
-// on every redeploy/restart, and they do NOT span replicas — running two or
-// more app instances behind a load balancer would multiply the effective limit
-// (each instance counts independently). This is fine for our single-container
-// Coolify deploy. Before scaling out horizontally, move this store to Redis or
-// Postgres so the window is shared across instances.
-const hits = new Map();
+// ── persistent fixed-window rate limiter (per IP + bucket) ────────────
+// Backed by the rate_limits table, so the window SURVIVES redeploys/restarts
+// and is shared across instances — an attacker can't reset their count by
+// waiting for the next Coolify deploy. Keyed on req.ip: server.js sets
+// `trust proxy`, so this is the real client IP from nginx's X-Forwarded-For,
+// not a spoofable header. Expired rows are swept by sweepExpired() in server.js.
 export function rateLimit(bucket, max, windowMs) {
-  return (req, res, next) => {
-    const ip = req.ip || "local";
-    const key = `${bucket}:${ip}`;
+  return async (req, res, next) => {
+    const key = `${bucket}:${req.ip || "local"}`;
     const now = Date.now();
-    const rec = hits.get(key);
-    if (!rec || now > rec.reset) {
-      hits.set(key, { count: 1, reset: now + windowMs });
-      return next();
+    try {
+      const [row, created] = await RateLimit.findOrCreate({
+        where: { key },
+        defaults: { count: 1, resetAt: new Date(now + windowMs) },
+      });
+      if (!created) {
+        if (now > new Date(row.resetAt).getTime()) {
+          await row.update({ count: 1, resetAt: new Date(now + windowMs) }); // new window
+        } else if (row.count >= max) {
+          return res.status(429).json({ error: "too_many_requests" });
+        } else {
+          await row.increment("count"); // atomic at the DB level
+        }
+      }
+    } catch (err) {
+      // the limiter must never block legitimate auth on its own failure
+      console.error("[ratelimit] check failed:", err?.message || err);
     }
-    if (rec.count >= max) {
-      return res.status(429).json({ error: "too_many_requests" });
-    }
-    rec.count += 1;
     next();
   };
 }
-
-// Evict expired buckets so the Map can't grow unbounded under churn/abuse.
-// unref() so this timer never keeps the process alive on shutdown.
-setInterval(() => {
-  const now = Date.now();
-  for (const [k, v] of hits) if (now > v.reset) hits.delete(k);
-}, 10 * 60 * 1000).unref();

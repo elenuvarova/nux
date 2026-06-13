@@ -35,9 +35,11 @@ function passwordError(password) {
   return null;
 }
 
-// avatarUrl must be a same-origin path ("/...") or an absolute https URL.
+// avatarUrl must be a SAME-ORIGIN path ("/..."), never an external or
+// protocol-relative ("//evil.com") URL — the CSP blocks those from rendering
+// anyway, so accept only what can actually load.
 function validAvatarUrl(url) {
-  return url.length <= AVATAR_MAX && (url.startsWith("/") || url.startsWith("https://"));
+  return url.length <= AVATAR_MAX && url.startsWith("/") && !url.startsWith("//");
 }
 
 // POST /api/auth/signup — 5/hour per IP to blunt automated signups
@@ -153,13 +155,12 @@ router.post(
         );
       });
       const resetUrl = `${APP_URL}/reset?token=${token}`;
-      const result = await sendPasswordResetEmail(user.email, resetUrl);
-      // A real Resend failure must not be swallowed — log it (with user.id,
-      // never the email, to avoid leaking PII into logs). Response stays
-      // generic so we don't expose whether the account exists.
-      if (result?.error) {
-        console.error(`[forgot] reset email failed to send for user ${user.id}`);
-      }
+      // Fire-and-forget so the registered branch doesn't take measurably longer
+      // than the unregistered one (timing-safe enumeration). A real Resend
+      // failure is still logged (with user.id, never the email — no PII leak).
+      sendPasswordResetEmail(user.email, resetUrl).then((result) => {
+        if (result?.error) console.error(`[forgot] reset email failed to send for user ${user.id}`);
+      });
       // dev convenience: without email configured, surface the link in logs
       if (!emailConfigured && process.env.NODE_ENV !== "production") {
         console.log(`[dev] reset link for ${user.email}: ${resetUrl}`);

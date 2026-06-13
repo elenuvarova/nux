@@ -16,6 +16,8 @@ vi.mock("../lib/auth.js", async () => {
       req.user = TEST_USER;
       next();
     },
+    // no-op the (now DB-backed) limiter so the route test doesn't need a DB
+    rateLimit: () => (_req, _res, next) => next(),
   };
 });
 vi.mock("../models.js", () => ({
