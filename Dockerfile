@@ -21,7 +21,9 @@ RUN apk add --no-cache nginx wget su-exec \
 
 WORKDIR /srv/backend
 COPY backend/package*.json ./
-RUN npm ci --omit=dev
+# --omit=optional drops sqlite3 (local/CI-only — prod runs Postgres) and with it
+# its node-gyp/tar build chain, so the production image carries none of those deps
+RUN npm ci --omit=dev --omit=optional
 COPY backend/ ./
 # the API runs as the non-root `app` user, which must own its dir (it writes
 # ./data.sqlite when ALLOW_SQLITE is set, e.g. the CI smoke; prod uses Postgres)

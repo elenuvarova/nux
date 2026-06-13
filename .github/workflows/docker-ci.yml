@@ -1,8 +1,8 @@
 name: Docker CI
 
-# Build the REAL production image and smoke-test it end-to-end (nginx serving the
-# SPA + proxying /api → node → DB-aware /api/health). Catches integration bugs the
-# per-service tests miss.
+# Build the REAL production image and smoke-test it end-to-end against a real
+# Postgres (the prod path), via nginx serving the SPA + proxying /api → node →
+# the DB-aware /api/health. The image carries no sqlite3 (prod is Postgres-only).
 on:
   push:
     branches: [main]
@@ -11,19 +11,35 @@ on:
 jobs:
   build-and-smoke:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: nux
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
 
       - name: Build the production image
         run: docker build -t nux:ci .
 
-      - name: Run the container (ephemeral SQLite — no external DB in CI)
-        run: docker run -d --name nux-ci -p 8080:80 -e ALLOW_SQLITE=true nux:ci
+      - name: Run the container against the Postgres service
+        run: |
+          docker run -d --name nux-ci --network host \
+            -e DATABASE_URL="postgres://postgres:ci@localhost:5432/nux" \
+            nux:ci
 
       - name: Smoke /api/health through nginx
         run: |
           for i in $(seq 1 30); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/health || true)
+            code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost/api/health || true)
             if [ "$code" = "200" ]; then echo "healthy after ${i} tries"; exit 0; fi
             sleep 2
           done
@@ -33,7 +49,7 @@ jobs:
 
       - name: Smoke the SPA root
         run: |
-          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/)
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost/)
           test "$code" = "200" || { echo "::error::SPA root returned $code"; exit 1; }
 
       - name: Tear down
