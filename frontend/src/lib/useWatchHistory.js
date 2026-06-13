@@ -8,6 +8,8 @@ const KEY = 'nux-continue';
 // an empty list, so the Home rail is hidden rather than faking progress.
 let items = readGuest();
 let authed = false;
+let initialized = false; // false until the first configure() resolves, so a
+// consumer can tell "still loading" from "genuinely empty" (no empty-flash)
 let configSeq = 0; // guards against a stale fetch overwriting a newer account
 const subs = new Set();
 
@@ -41,15 +43,21 @@ export async function configureWatchHistory(user) {
   } else {
     items = readGuest();
   }
+  initialized = true;
   notify();
 }
 
 export function useWatchHistory() {
   const [history, setHistory] = useState(items);
+  const [ready, setReady] = useState(initialized);
   useEffect(() => {
-    subs.add(setHistory);
-    setHistory(items);
-    return () => subs.delete(setHistory);
+    const sub = (next) => {
+      setHistory(next);
+      setReady(initialized);
+    };
+    subs.add(sub);
+    sub(items);
+    return () => subs.delete(sub);
   }, []);
 
   // frac = how far through the trailer (0..1); most recent first, one entry
@@ -60,11 +68,13 @@ export function useWatchHistory() {
     items = next;
     notify();
     if (authed) {
-      api.put('/history', { filmId: id, frac: f }).catch(() => {});
+      api.put('/history', { filmId: id, frac: f }).catch((err) =>
+        console.warn('[watch-history] save failed:', err?.message || err)
+      );
     } else {
       localStorage.setItem(KEY, JSON.stringify(next));
     }
   }, []);
 
-  return { history, record };
+  return { history, ready, record };
 }

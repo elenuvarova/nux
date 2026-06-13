@@ -1,7 +1,6 @@
 import { useMemo, useRef, useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { PosterCard } from '../components/Rail.jsx';
-import { SkeletonGrid } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useCurator } from '../lib/useCurator.jsx';
 import { FILMS, GENRES, EXTRAS } from '../data/catalog.js';
@@ -42,13 +41,6 @@ export default function Browse() {
   useEffect(() => {
     if (params.has('search')) inputRef.current?.focus();
   }, [params]);
-
-  // brief skeleton on first mount
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setReady(true), 280);
-    return () => clearTimeout(t);
-  }, []);
 
   // recent searches (localStorage) + focus state for the suggestions panel
   const [focused, setFocused] = useState(false);
@@ -214,9 +206,7 @@ export default function Browse() {
             {films.length + extras.length} {films.length + extras.length === 1 ? 'title' : 'titles'}
           </span>
         </h2>
-        {!ready ? (
-          <SkeletonGrid count={14} />
-        ) : films.length + extras.length > 0 ? (
+        {films.length + extras.length > 0 ? (
           <div className="browse-grid">
             {extras.map((x) => (
               <Link to={`/title/${x.id}`} className="poster-card" key={x.id} viewTransition>

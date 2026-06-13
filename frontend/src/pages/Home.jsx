@@ -16,49 +16,19 @@ export default function Home() {
   const [trending, curated, fresh] = RAILS;
   const { history } = useWatchHistory();
   const { collections, loading: collectionsLoading, error: collectionsError } = useCollections();
-  // brief skeleton on first mount so the page assembles, then settles
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setReady(true), 320);
-    return () => clearTimeout(t);
-  }, []);
-
-  // First-run welcome tour — shown once (the localStorage flag gates re-shows).
+  // First-run welcome tour — shown once. A short delay lets the hero + rails lay
+  // out so the coachmark can measure its targets; it does NOT gate content
+  // (the catalog is synchronous, so the page renders immediately — no LCP delay).
   const [showTour, setShowTour] = useState(false);
   useEffect(() => {
-    if (!ready) return;
+    let t;
     try {
-      if (!localStorage.getItem('nux_tour_v1')) setShowTour(true);
+      if (!localStorage.getItem('nux_tour_v1')) t = setTimeout(() => setShowTour(true), 350);
     } catch {
       /* private mode — just skip the tour */
     }
-  }, [ready]);
-
-  if (!ready) {
-    return (
-      <main>
-        <h1 className="sr-only" tabIndex={-1}>
-          Home
-        </h1>
-        <div className="home-hero-skeleton">
-          <div className="home-hero-skeleton-text">
-            <span className="sk-line sk-hero-title" />
-            <span className="sk-line sk-hero-meta" />
-            <span className="sk-line sk-hero-cta" />
-          </div>
-        </div>
-        {/* mirror the real layout: 3 poster rails (trending/curated/fresh) +
-            the wide Continue Watching rail only when there's history to resume,
-            so the skeleton doesn't mis-promise a wide rail and reflow on load */}
-        <div className="home-rails">
-          <SkeletonRail />
-          {history.length > 0 && <SkeletonRail wide />}
-          <SkeletonRail />
-          <SkeletonRail />
-        </div>
-      </main>
-    );
-  }
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <main>

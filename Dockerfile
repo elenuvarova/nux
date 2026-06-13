@@ -1,5 +1,5 @@
 # NUX — full-stack single container: vite SPA served by nginx, Express API
-# behind it on localhost. nginx terminates :80, proxies /api → node:3001.
+# behind it on loopback. nginx terminates :80, proxies /api → 127.0.0.1:3001.
 
 # 1) build the SPA
 FROM node:20-alpine AS build
