@@ -1,6 +1,7 @@
 import { Router } from "express";
 import crypto from "crypto";
 import { Op } from "sequelize";
+import { sequelize } from "../db.js";
 import { User, Session, PasswordReset } from "../models.js";
 import {
   hashPassword,
@@ -136,13 +137,20 @@ router.post(
 
     const user = await User.findOne({ where: { email } });
     if (user) {
-      // invalidate any prior tokens for this user, then issue a fresh one
-      await PasswordReset.destroy({ where: { UserId: user.id } });
+      // invalidate any prior tokens for this user, then issue a fresh one — in
+      // one transaction so a crash/race between the two can't strand the user
+      // with zero valid reset tokens
       const token = crypto.randomBytes(32).toString("hex");
-      await PasswordReset.create({
-        tokenHash: sha256(token),
-        expiresAt: new Date(Date.now() + 60 * 60 * 1000),
-        UserId: user.id,
+      await sequelize.transaction(async (t) => {
+        await PasswordReset.destroy({ where: { UserId: user.id }, transaction: t });
+        await PasswordReset.create(
+          {
+            tokenHash: sha256(token),
+            expiresAt: new Date(Date.now() + 60 * 60 * 1000),
+            UserId: user.id,
+          },
+          { transaction: t }
+        );
       });
       const resetUrl = `${APP_URL}/reset?token=${token}`;
       const result = await sendPasswordResetEmail(user.email, resetUrl);

@@ -32,8 +32,10 @@ ENV NODE_ENV=production
 ENV BACKEND_PORT=3001
 EXPOSE 80
 
-# probe nginx (catches a dead ingress, not just a live API)
-HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:80/health || exit 1
+# probe the DB-aware /api/health THROUGH nginx — catches a dead ingress AND a
+# crash-looping node/DB (the static nginx /health would report healthy while
+# every /api 502s). start-period gives the API time to boot.
+HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:80/api/health || exit 1
 
 CMD ["/srv/start.sh"]
