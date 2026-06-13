@@ -7,12 +7,14 @@ import usePageTitle from '../lib/usePageTitle.js';
 import { useWatchHistory } from '../lib/useWatchHistory.js';
 import Rail, { PosterCard, ContinueCard } from '../components/Rail.jsx';
 import { RAILS, EDITORIAL_PICK } from '../data/catalog.js';
+import { useCollections } from '../lib/useCollections.js';
 import './Home.css';
 
 export default function Home() {
   usePageTitle(null);
   const [trending, curated, fresh] = RAILS;
   const { history } = useWatchHistory();
+  const { collections } = useCollections();
   // brief skeleton on first mount so the page assembles, then settles
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -84,6 +86,16 @@ export default function Home() {
             <img src={EDITORIAL_PICK.image} alt="" loading="lazy" />
           </div>
         </Reveal>
+
+        {collections.map((c) => (
+          <Reveal key={c.slug}>
+            <Rail title={c.title} seeAllTo={`/collection/${c.slug}`}>
+              {c.entries.map(([id]) => (
+                <PosterCard key={id} filmId={id} />
+              ))}
+            </Rail>
+          </Reveal>
+        ))}
       </div>
     </main>
   );
