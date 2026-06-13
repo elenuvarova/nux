@@ -10,6 +10,7 @@ import authRoutes from "./routes/auth.js";
 import listRoutes from "./routes/list.js";
 import historyRoutes from "./routes/history.js";
 import curatorRoutes from "./routes/curator.js";
+import collectionsRoutes from "./routes/collections.js";
 import { ah } from "./lib/asyncHandler.js";
 import { csrfOriginCheck } from "./lib/security.js";
 
@@ -57,6 +58,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/list", listRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/curator", curatorRoutes);
+app.use("/api/collections", collectionsRoutes);
 
 // Global error handler — must be registered AFTER all routes (so it catches
 // errors funnelled through next() by the ah() wrapper) and BEFORE the prod
