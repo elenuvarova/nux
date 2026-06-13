@@ -345,8 +345,8 @@ export const RAILS = [
 
 export const EDITORIAL_PICK = {
   eyebrow: 'Editorial Pick',
-  title: 'The 10 Best Films of 2026',
-  dek: 'Our critics select the most essential cinema of the year — from festival premieres to overlooked masterpieces.',
+  title: 'The Essential Ten',
+  dek: 'Ten films we keep returning to — the canon we’d hand a newcomer first.',
   cta: 'Read the list',
   image: genreImg('genre-arthouse.jpg'),
   slug: 'best-2026',
@@ -354,10 +354,10 @@ export const EDITORIAL_PICK = {
 
 export const COLLECTIONS = {
   'best-2026': {
-    eyebrow: 'The List · 2026',
-    title: 'The 10 Best Films of 2026',
+    eyebrow: 'The Curator’s Canon',
+    title: 'The Essential Ten',
     intro:
-      'A year of restraint and rupture. Our critics return to the films that earned a second, third, fourth watch — restorations that arrived like new releases, and new releases already built to last.',
+      'The ten we’d start anyone with — restorations that arrived like new releases, and modern films already built to last. Each one earned a second, third, fourth watch.',
     cover: genreImg('genre-arthouse.jpg'),
     entries: [
       ['aftersun', 'A camcorder holiday becomes the saddest film about memory in years — the one we kept coming back to.'],

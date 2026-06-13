@@ -8,6 +8,7 @@ import { useWatchHistory } from '../lib/useWatchHistory.js';
 import Rail, { PosterCard, ContinueCard } from '../components/Rail.jsx';
 import { RAILS, EDITORIAL_PICK } from '../data/catalog.js';
 import { useCollections } from '../lib/useCollections.js';
+import Tour from '../components/Tour.jsx';
 import './Home.css';
 
 export default function Home() {
@@ -21,6 +22,17 @@ export default function Home() {
     const t = setTimeout(() => setReady(true), 320);
     return () => clearTimeout(t);
   }, []);
+
+  // First-run welcome tour — shown once (the localStorage flag gates re-shows).
+  const [showTour, setShowTour] = useState(false);
+  useEffect(() => {
+    if (!ready) return;
+    try {
+      if (!localStorage.getItem('nux_tour_v1')) setShowTour(true);
+    } catch {
+      /* private mode — just skip the tour */
+    }
+  }, [ready]);
 
   if (!ready) {
     return (
@@ -111,6 +123,7 @@ export default function Home() {
           ))
         )}
       </div>
+      {showTour && <Tour onClose={() => setShowTour(false)} />}
     </main>
   );
 }

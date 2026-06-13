@@ -1,0 +1,90 @@
+/* First-run coachmark tour: a spotlight cut into a page scrim + a token-bound
+   card. Sits above the Curator overlay (110) and FAB (100). */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+}
+
+.tour-backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+}
+
+/* the centered sign-off step has no spotlight, so the backdrop carries the dim */
+.tour-backdrop--dim {
+  background: var(--surface-scrim-pressed);
+}
+
+/* the huge box-shadow dims everything outside the highlighted target */
+.tour-spotlight {
+  position: fixed;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 9999px var(--surface-scrim-pressed);
+  outline: 2px solid var(--amber-500);
+  outline-offset: 3px;
+  pointer-events: none;
+  transition:
+    top var(--dur-base) var(--ease-out),
+    left var(--dur-base) var(--ease-out),
+    width var(--dur-base) var(--ease-out),
+    height var(--dur-base) var(--ease-out);
+}
+
+.tour-card {
+  position: fixed;
+  width: 320px;
+  max-width: calc(100vw - 24px);
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-overlay);
+}
+
+.tour-progress {
+  margin: 0;
+  font: var(--type-eyebrow);
+  letter-spacing: var(--track-eyebrow);
+  color: var(--amber-500);
+}
+
+.tour-title {
+  margin: 0;
+  font: var(--type-headline);
+  color: var(--text-primary);
+}
+
+.tour-body {
+  margin: 0;
+  font: var(--type-body);
+  color: var(--text-secondary);
+}
+
+.tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-3);
+}
+
+.tour-skip {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  font: var(--type-label);
+}
+
+.tour-skip:hover {
+  color: var(--text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-spotlight {
+    transition: none;
+  }
+}

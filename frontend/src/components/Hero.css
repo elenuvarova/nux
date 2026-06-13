@@ -154,6 +154,27 @@
   background-clip: content-box;
 }
 
+/* slideshow pause/resume — a quiet sibling to the dots, never a CTA. Low-key
+   by default; amber only when the user has explicitly paused (engaged). */
+.hero-pause {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-right: var(--space-1);
+  border-radius: var(--radius-full);
+  color: var(--white-a18);
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.hero-pause:hover {
+  color: var(--text-secondary);
+}
+
+.hero-pause--paused {
+  color: var(--amber-500);
+}
+
 /* .btn / .btn-primary / .btn-secondary are now a global primitive in
    global.css (used by ~14 screens, not just the hero). */
 

@@ -9,6 +9,7 @@ export default function CuratorFab() {
   return (
     <button
       className="curator-fab"
+      data-tour="curator"
       onClick={openCurator}
       aria-label="Ask the Curator"
       hidden={open}

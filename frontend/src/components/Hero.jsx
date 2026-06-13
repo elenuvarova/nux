@@ -10,7 +10,12 @@ function metaLine(film) {
 
 export default function Hero() {
   const [i, setI] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [userPaused, setUserPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  // Timer pauses on an explicit user-pause OR a transient hover/focus, but the
+  // button reflects ONLY the explicit pause — so hovering the hero never flips
+  // the control's glyph (which is what made it read as a second "Play").
+  const paused = userPaused || hovered;
   const slide = HERO_ROTATION[i];
   const film = byId(slide.filmId);
   const { has, toggle } = useMyList();
@@ -30,11 +35,12 @@ export default function Hero() {
   return (
     <section
       className="hero"
+      data-tour="hero"
       aria-roledescription="carousel"
       aria-label={`Featured: ${film.title}`}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocusCapture={() => setHovered(true)}
     >
       <div className="hero-art" key={film.id} aria-live="off">
         <img src={film.backdrop2 || film.backdrop || film.poster} alt="" fetchpriority="high" width="1280" height="720" />
@@ -78,21 +84,17 @@ export default function Hero() {
         <div className="hero-dots" role="group" aria-label="Featured titles">
           <button
             type="button"
-            className="hero-pause"
-            onClick={() => setPaused((p) => !p)}
-            aria-pressed={paused}
-            aria-label={paused ? 'Play featured slideshow' : 'Pause featured slideshow'}
+            className={userPaused ? 'hero-pause hero-pause--paused' : 'hero-pause'}
+            onClick={() => setUserPaused((p) => !p)}
+            aria-pressed={userPaused}
+            aria-label={userPaused ? 'Resume featured slideshow' : 'Pause featured slideshow'}
           >
-            {paused ? (
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-                <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
-              </svg>
-            ) : (
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-                <rect x="2.5" y="1.8" width="3.2" height="10.4" rx="0.8" />
-                <rect x="8.3" y="1.8" width="3.2" height="10.4" rx="0.8" />
-              </svg>
-            )}
+            {/* Always the pause glyph — the play triangle read as a second
+                "Play" CTA beside the hero's. Paused state shows via --paused. */}
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+              <rect x="2.5" y="1.8" width="3.2" height="10.4" rx="0.8" />
+              <rect x="8.3" y="1.8" width="3.2" height="10.4" rx="0.8" />
+            </svg>
           </button>
           {HERO_ROTATION.map((s, n) => (
             <button
