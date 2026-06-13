@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { PosterCard } from '../components/Rail.jsx';
 import { SkeletonGrid } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
+import { useCurator } from '../lib/useCurator.jsx';
 import { FILMS, GENRES, EXTRAS } from '../data/catalog.js';
 import './Browse.css';
 
@@ -15,6 +16,13 @@ export default function Browse() {
   const chip = CHIPS.includes(params.get('type')) ? params.get('type') : 'All';
   const query = params.get('q') || '';
   const inputRef = useRef(null);
+  const { openCurator, send } = useCurator();
+  // hand the typed query (if any) straight to the Curator — search → curation
+  const askCurator = () => {
+    openCurator();
+    const q = query.trim();
+    if (q) send(q);
+  };
 
   const update = (patch) => {
     setParams(
@@ -94,6 +102,7 @@ export default function Browse() {
         <h1 className="page-title" tabIndex={-1}>
           Browse
         </h1>
+        <div className="browse-search-row">
         <div
           className="browse-search"
           // close the recent panel only when focus leaves the whole wrapper,
@@ -146,6 +155,16 @@ export default function Browse() {
               </svg>
             </button>
           )}
+        </div>
+          <button
+            type="button"
+            className="browse-ask"
+            onClick={askCurator}
+            aria-label="Ask the Curator about your search"
+          >
+            <span className="ask-spark" aria-hidden="true">✦</span>
+            <span className="browse-ask-label">Ask the Curator</span>
+          </button>
         </div>
         <div className="browse-chips" role="group" aria-label="Content type">
           {CHIPS.map((c) => (

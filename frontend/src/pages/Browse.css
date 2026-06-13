@@ -15,12 +15,52 @@
 }
 
 /* ── Search field ────────────────────────────────────────────── */
+.browse-search-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.browse-search-row .browse-search {
+  flex: 1 1 320px;
+}
+
 .browse-search {
   position: relative;
   display: flex;
   align-items: center;
   max-width: 520px;
   color: var(--text-tertiary);
+}
+
+/* "Ask the Curator" entry beside the search — hands the typed query to the AI */
+.browse-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 var(--space-5);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+.browse-ask:hover {
+  color: var(--action-primary);
+  border-color: var(--action-primary);
+}
+.browse-ask:focus-visible {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: var(--focus-ring);
+}
+.browse-ask .ask-spark {
+  color: var(--action-primary);
+  font-size: 15px;
 }
 
 /* only the leading magnifier is absolutely placed — scoping to the direct
