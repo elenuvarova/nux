@@ -346,7 +346,7 @@ export const RAILS = [
 export const EDITORIAL_PICK = {
   eyebrow: 'Editorial Pick',
   title: 'The Essential Ten',
-  dek: 'Ten films we keep returning to — the canon we’d hand a newcomer first.',
+  dek: 'Ten films we keep returning to — the canon we’d hand a newcomer first',
   cta: 'Read the list',
   image: genreImg('genre-arthouse.jpg'),
   slug: 'best-2026',

@@ -33,8 +33,10 @@
   margin: 0 auto;
   padding: 0 var(--space-16);
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: var(--space-12);
+  /* balanced spread: the cover grows to meet the text so there's no dead gulf
+     between the blurb (capped ~52ch) and a far-right cover */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-16);
   align-items: center;
 }
 

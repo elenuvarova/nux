@@ -35,6 +35,7 @@
 }
 
 .nav-links {
+  position: relative; /* anchors the sliding active indicator */
   display: flex;
   gap: var(--space-8);
 }
@@ -47,13 +48,52 @@
   transition: color var(--dur-base) var(--ease-out);
 }
 
+.nav-links a {
+  position: relative;
+  z-index: 1; /* keep the label crisp above the glow */
+}
+
 .nav-links a:hover {
   color: var(--text-secondary);
 }
 
 .nav-links a.active {
   color: var(--text-primary);
-  box-shadow: 0 14px 0 -12px var(--amber-500);
+  text-shadow: 0 0 16px var(--amber-glow); /* the label itself catches a little light */
+}
+
+/* A soft amber "spotlight" that glides to sit behind the active link — as if lit
+   by the projector. Position/width come from the measured active link. */
+.nav-indicator {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: calc(var(--ind-width, 0) + var(--space-8));
+  height: 2.6em;
+  transform: translate(calc(var(--ind-left, 0) - var(--space-4)), -50%);
+  border-radius: var(--radius-full);
+  /* layered: a warmer core + a wider soft halo → reads as a lit spotlight */
+  background:
+    radial-gradient(closest-side, var(--amber-sheen), transparent 58%),
+    radial-gradient(closest-side, var(--amber-glow), transparent 88%);
+  filter: blur(3px);
+  opacity: 1;
+  pointer-events: none;
+  z-index: 0;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    width var(--dur-base) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out);
+}
+
+.nav-indicator[data-on='false'] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-indicator {
+    transition: opacity var(--dur-fast) linear;
+  }
 }
 
 .nav-right {

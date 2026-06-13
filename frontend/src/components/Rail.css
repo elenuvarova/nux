@@ -37,6 +37,22 @@
   /* let card hover shadows breathe */
   padding: var(--space-2);
   margin: calc(-1 * var(--space-2));
+  /* edge-fade: first card stays crisp at the gutter (fade spans only the 8px
+     breathing pad), cards dissolve toward "more content" on the right */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--space-2),
+    #000 calc(100% - var(--space-12)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--space-2),
+    #000 calc(100% - var(--space-12)),
+    transparent 100%
+  );
 }
 
 .rail-scroll::-webkit-scrollbar {
@@ -102,7 +118,8 @@
 }
 
 .poster-card:hover .poster-card-art {
-  box-shadow: var(--shadow-card-hover);
+  /* black depth + a warm amber bloom — same "projector light" language as the nav */
+  box-shadow: var(--shadow-card-hover), 0 6px 30px var(--amber-glow);
   transform: perspective(720px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(1.03);
 }
 
@@ -112,6 +129,45 @@
 
 .poster-card:hover .poster-card-sheen {
   opacity: 1;
+}
+
+/* hover "watch" affordance — a glass circle with an amber glyph that fades +
+   scales in, signalling the card is actionable (refs: Prime Video, Paramount+) */
+.poster-card-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--white-a18);
+  color: var(--amber-300);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.82);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+
+.poster-card-play svg {
+  margin-left: 1px; /* optical-center the triangle */
+}
+
+.poster-card:hover .poster-card-play {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster-card-play {
+    transition: opacity var(--dur-fast) linear;
+  }
 }
 
 @media (prefers-reduced-motion: reduce), (pointer: coarse) {

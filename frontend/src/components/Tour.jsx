@@ -22,11 +22,11 @@ const STEPS = [
 ];
 
 const PAD = 8;
-const CARD_W = 320;
 
 export default function Tour({ onClose }) {
   const [step, setStep] = useState(0);
   const [rect, setRect] = useState(null);
+  const [cardStyle, setCardStyle] = useState(null);
   const cardRef = useRef(null);
   const s = STEPS[step];
   const last = step === STEPS.length - 1;
@@ -65,6 +65,35 @@ export default function Tour({ onClose }) {
     };
   }, [step, s.sel]);
 
+  // Position the card from the target rect and the card's *real* measured size:
+  // centred on the target horizontally, placed below/above it, and always kept
+  // fully on-screen. The centred sign-off step (no rect) falls back to the
+  // CSS-translate centre below.
+  useLayoutEffect(() => {
+    const card = cardRef.current;
+    if (!card || !rect) {
+      setCardStyle(null);
+      return;
+    }
+    const M = 12; // minimum gap from any viewport edge
+    const GAP = 14; // breathing room between the card and its target
+    const cardW = card.offsetWidth; // honours the max-width clamp on narrow screens
+    const cardH = card.offsetHeight;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const left = Math.min(Math.max(M, rect.left + rect.width / 2 - cardW / 2), Math.max(M, vw - cardW - M));
+    let top;
+    if (rect.bottom + GAP + cardH <= vh - M) {
+      top = rect.bottom + GAP; // below the target
+    } else if (rect.top - GAP - cardH >= M) {
+      top = rect.top - GAP - cardH; // above the target
+    } else {
+      top = vh - cardH - M; // target too tall to clear → pin to the bottom edge
+    }
+    top = Math.max(M, Math.min(top, vh - cardH - M)); // never clip top or bottom
+    setCardStyle({ top, left });
+  }, [step, rect]);
+
   // Move focus into the card; Escape ends the tour.
   useEffect(() => {
     cardRef.current?.focus();
@@ -80,23 +109,8 @@ export default function Tour({ onClose }) {
     ? { top: rect.top - PAD, left: rect.left - PAD, width: rect.width + PAD * 2, height: rect.height + PAD * 2 }
     : null;
 
-  let cardStyle;
-  if (rect) {
-    const APPROX_H = 200; // enough for the 3-line card; we only need a safe clamp
-    const left = Math.min(Math.max(12, rect.left), Math.max(12, window.innerWidth - CARD_W - 12));
-    let top;
-    if (rect.bottom + 14 + APPROX_H < window.innerHeight) {
-      top = rect.bottom + 14; // below the target
-    } else if (rect.top - 14 - APPROX_H > 12) {
-      top = rect.top - 14 - APPROX_H; // above the target
-    } else {
-      top = window.innerHeight - APPROX_H - 16; // tall target → pin near the bottom
-    }
-    top = Math.max(12, Math.min(top, window.innerHeight - APPROX_H - 12)); // always on-screen
-    cardStyle = { top, left };
-  } else {
-    cardStyle = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
-  }
+  // Until the layout effect measures the card (and for the sign-off step) sit dead-centre.
+  const centred = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
 
   return (
     <div className="tour" role="dialog" aria-modal="true" aria-label="Welcome tour">
@@ -106,7 +120,7 @@ export default function Tour({ onClose }) {
         aria-hidden="true"
       />
       {spot && <div className="tour-spotlight" style={spot} aria-hidden="true" />}
-      <div className="tour-card" ref={cardRef} tabIndex={-1} style={cardStyle}>
+      <div className="tour-card" ref={cardRef} tabIndex={-1} style={cardStyle || centred}>
         <p className="tour-progress">
           {step + 1} / {STEPS.length}
         </p>
