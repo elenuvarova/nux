@@ -46,7 +46,11 @@ router.post(
 router.delete(
   "/:filmId",
   ah(async (req, res) => {
-    await ListItem.destroy({ where: { UserId: req.user.id, filmId: req.params.filmId } });
+    const filmId = String(req.params.filmId || "").trim();
+    if (!filmId || filmId.length > FILM_ID_MAX) {
+      return res.status(400).json({ error: "film_required" });
+    }
+    await ListItem.destroy({ where: { UserId: req.user.id, filmId } });
     res.json({ ok: true });
   })
 );

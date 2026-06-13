@@ -30,14 +30,25 @@ describe("askCurator failover", () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it("falls over to groq when gemini errors", async () => {
+  it("retries the same provider once on a transient error", async () => {
+    global.fetch = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ error: "rate" }, false, 429)) // gemini 429
+      .mockResolvedValueOnce(jsonResponse(GEMINI_OK)); // gemini retry succeeds
+    const out = await askCurator({ system: "s", messages: [{ role: "user", content: "hi" }] });
+    expect(out).toEqual({ reply: "g", filmIds: ["naked"] });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("retries then falls over to groq when gemini keeps erroring", async () => {
     global.fetch = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ error: "boom" }, false, 500)) // gemini 500
+      .mockResolvedValueOnce(jsonResponse({ error: "boom" }, false, 500)) // gemini 500 (retry)
       .mockResolvedValueOnce(jsonResponse(GROQ_OK)); // groq ok
     const out = await askCurator({ system: "s", messages: [{ role: "user", content: "hi" }] });
     expect(out).toEqual({ reply: "q", filmIds: ["if"] });
-    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(global.fetch).toHaveBeenCalledTimes(3);
   });
 
   it("throws curator_unavailable when both providers fail", async () => {

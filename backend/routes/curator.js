@@ -79,8 +79,8 @@ router.post(
     const user = await currentUser(req);
     if (user) {
       const [li, wp] = await Promise.all([
-        ListItem.findAll({ where: { UserId: user.id }, limit: 200 }),
-        WatchProgress.findAll({ where: { UserId: user.id }, limit: 200 }),
+        ListItem.findAll({ where: { UserId: user.id }, order: [["createdAt", "DESC"]], limit: 30 }),
+        WatchProgress.findAll({ where: { UserId: user.id }, order: [["updatedAt", "DESC"]], limit: 30 }),
       ]);
       inList = li.map((i) => titleById.get(i.filmId)).filter(Boolean);
       continueWatching = wp.map((w) => titleById.get(w.filmId)).filter(Boolean);

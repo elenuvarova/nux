@@ -13,6 +13,7 @@ import curatorRoutes from "./routes/curator.js";
 import collectionsRoutes from "./routes/collections.js";
 import { ah } from "./lib/asyncHandler.js";
 import { csrfOriginCheck } from "./lib/security.js";
+import { readCache, isStale, kickRegeneration } from "./lib/collectionsCache.js";
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -91,8 +92,42 @@ sweepTimer.unref();
 
 let server;
 
+// sync() creates missing tables but never adds indexes to EXISTING ones, so add
+// the hot-path indexes idempotently here (a no-op if they already exist). This
+// is deliberately not a full migration framework — the schema is stable and a
+// bad baseline against the live Postgres is the bigger risk.
+async function ensureIndexes() {
+  const qi = sequelize.getQueryInterface();
+  const wanted = [
+    ["sessions", ["UserId"], "sessions_userid"],
+    ["sessions", ["expiresAt"], "sessions_expiresat"],
+    ["curator_messages", ["UserId", "createdAt"], "curator_messages_userid_createdat"],
+  ];
+  for (const [table, fields, name] of wanted) {
+    try {
+      await qi.addIndex(table, fields, { name });
+    } catch {
+      /* already exists (or table not present yet) — safe to ignore */
+    }
+  }
+}
+
+// Fill an empty/stale collections cache at boot so the first GET isn't empty
+// (regeneration is single-flight + only fires when actually stale).
+async function prewarmCollections() {
+  try {
+    const rows = await readCache();
+    if (isStale(rows)) kickRegeneration();
+  } catch (err) {
+    console.error("[prewarm] collections check failed:", err?.message || err);
+  }
+}
+
 async function start() {
   await sequelize.sync(); // create tables from the models if missing
+  await ensureIndexes(); // add hot-path indexes to existing tables (idempotent)
+  sweepExpired(); // clear rows that expired while we were down
+  prewarmCollections(); // warm the collections cache before the first request
   server = app.listen(PORT, () => {
     console.log(`db: ${dbKind}`);
     console.log(`NUX backend on port ${PORT}`);

@@ -11,9 +11,8 @@ const TIMEOUT_MS = 12_000;
 const GEMINI_MODELS = new Set(["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]);
 const GROQ_MODELS = new Set([
   "llama-3.3-70b-versatile",
-  "llama-3.1-70b-versatile",
   "llama-3.1-8b-instant",
-]);
+]); // note: llama-3.1-70b-versatile was retired by Groq — dropped from the allowlist
 const pick = (val, allowed, fallback) => (allowed.has(val) ? val : fallback);
 
 const cfg = () => ({
@@ -31,6 +30,20 @@ async function withTimeout(fn) {
     return await fn(ctrl.signal);
   } finally {
     clearTimeout(t);
+  }
+}
+
+// Retry ONCE on a fast transient HTTP error (rate-limit / 5xx) before failing
+// over to the other provider. Timeouts (AbortError → no _http_ code) are NOT
+// retried — that would double the wait toward the timeout wall.
+const RETRYABLE = /_http_(408|429|500|502|503|504)$/;
+async function callWithRetry(fn, args) {
+  try {
+    return await fn(args);
+  } catch (e) {
+    if (!RETRYABLE.test(e?.message || "")) throw e;
+    await new Promise((r) => setTimeout(r, 400));
+    return fn(args);
   }
 }
 
@@ -106,7 +119,7 @@ export async function callModel({ system, messages, schema, validate }) {
   for (const [name, key, fn] of providers) {
     if (!key) continue; // skip unconfigured provider
     try {
-      const json = await fn({ system, messages, schema });
+      const json = await callWithRetry(fn, { system, messages, schema });
       return validate(json);
     } catch (e) {
       errors.push(`${name}: ${e.message}`);
