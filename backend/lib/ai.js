@@ -63,6 +63,7 @@ async function callGeminiRaw({ system, messages, schema }) {
 }
 
 async function callGroqRaw({ system, messages }) {
+  // Groq has no responseSchema; it relies on response_format json_object below.
   const { groqKey, groqModel } = cfg();
   const res = await withTimeout((signal) =>
     fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -89,6 +90,7 @@ async function callGroqRaw({ system, messages }) {
 // caller. Throws an Error with code `curator_unavailable` if all configured
 // providers fail.
 export async function callModel({ system, messages, schema, validate }) {
+  if (typeof validate !== "function") throw new TypeError("callModel: validate must be a function");
   const c = cfg();
   const providers =
     c.primary === "groq"
