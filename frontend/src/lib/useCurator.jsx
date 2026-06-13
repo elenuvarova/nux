@@ -1,7 +1,16 @@
-import { createContext, useContext, useState, useCallback, useRef } from "react";
+import { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 import { api } from "./api.js";
 
 const CuratorContext = createContext(null);
+
+// Bridge from AuthProvider (which owns the user) into the Curator state —
+// mirrors the configureMyList/configureWatchHistory pattern. On sign-in we load
+// the saved conversation; on sign-out we clear it, so a shared device never
+// shows a previous user's chat.
+let authListener = null;
+export function configureCurator(user) {
+  authListener?.(user);
+}
 
 const ERROR_BY_CODE = {
   too_many_requests: "A bit too fast — give the Curator a minute.",
@@ -18,6 +27,26 @@ export function CuratorProvider({ children }) {
   // request even if a stale `send` reference is called (the `loading` state is
   // for rendering only).
   const loadingRef = useRef(false);
+  const [authed, setAuthed] = useState(false);
+
+  // Load saved history on sign-in; clear on sign-out (privacy on shared devices).
+  useEffect(() => {
+    authListener = (user) => {
+      setAuthed(!!user);
+      if (user) {
+        api
+          .get("/curator/history")
+          .then((r) => setMessages(r.messages || []))
+          .catch(() => {});
+      } else {
+        setMessages([]);
+        setError(null);
+      }
+    };
+    return () => {
+      authListener = null;
+    };
+  }, []);
 
   const openCurator = useCallback(() => setOpen(true), []);
   const closeCurator = useCallback(() => setOpen(false), []);
@@ -25,6 +54,19 @@ export function CuratorProvider({ children }) {
     setMessages([]);
     setError(null);
   }, []);
+
+  // "New chat" — clear locally and, for signed-in users, on the server too.
+  const clearHistory = useCallback(async () => {
+    setMessages([]);
+    setError(null);
+    if (authed) {
+      try {
+        await api.del("/curator/history");
+      } catch {
+        /* ignore — clearing locally is enough */
+      }
+    }
+  }, [authed]);
 
   const send = useCallback(
     async (text) => {
@@ -52,7 +94,7 @@ export function CuratorProvider({ children }) {
 
   return (
     <CuratorContext.Provider
-      value={{ open, messages, loading, error, openCurator, closeCurator, send, reset }}
+      value={{ open, messages, loading, error, openCurator, closeCurator, send, reset, clearHistory }}
     >
       {children}
     </CuratorContext.Provider>

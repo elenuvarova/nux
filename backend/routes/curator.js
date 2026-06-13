@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { ah } from "../lib/asyncHandler.js";
-import { rateLimit, currentUser } from "../lib/auth.js";
+import { rateLimit, currentUser, requireAuth } from "../lib/auth.js";
 import { askCurator } from "../lib/ai.js";
 import { buildSystemPrompt, validateFilmIds } from "../lib/curatorPrompt.js";
-import { ListItem, WatchProgress } from "../models.js";
+import { ListItem, WatchProgress, CuratorMessage } from "../models.js";
 import { FILMS } from "../data/films.js";
 
 const router = Router();
@@ -46,13 +46,55 @@ router.post(
     const system = buildSystemPrompt({ inList, continueWatching });
     try {
       const { reply, filmIds } = await askCurator({ system, messages });
-      return res.json({ reply: String(reply || "").trim(), films: validateFilmIds(filmIds) });
+      const cleanReply = String(reply || "").trim();
+      const films = validateFilmIds(filmIds);
+      // Persist this turn for signed-in users — best-effort, so a DB hiccup
+      // never breaks the reply. Guests are never stored.
+      if (user) {
+        CuratorMessage.bulkCreate([
+          { UserId: user.id, role: "user", content: messages[messages.length - 1].content, films: null },
+          { UserId: user.id, role: "assistant", content: cleanReply, films },
+        ]).catch((err) => console.error("[curator] save failed:", err?.message || err));
+      }
+      return res.json({ reply: cleanReply, films });
     } catch (e) {
       if (e.code === "curator_unavailable") {
         return res.status(503).json({ error: "curator_unavailable" });
       }
       throw e; // unexpected → global handler → 500 internal
     }
+  })
+);
+
+const HISTORY_LIMIT = 100;
+
+// GET /api/curator/history → the signed-in user's saved conversation (oldest→newest)
+router.get(
+  "/history",
+  requireAuth,
+  ah(async (req, res) => {
+    const rows = await CuratorMessage.findAll({
+      where: { UserId: req.user.id },
+      order: [["createdAt", "ASC"]],
+      limit: HISTORY_LIMIT,
+    });
+    res.json({
+      messages: rows.map((m) => ({
+        role: m.role,
+        content: m.content,
+        films: m.role === "assistant" ? m.films || [] : undefined,
+      })),
+    });
+  })
+);
+
+// DELETE /api/curator/history → clear the user's conversation
+router.delete(
+  "/history",
+  requireAuth,
+  ah(async (req, res) => {
+    await CuratorMessage.destroy({ where: { UserId: req.user.id } });
+    res.json({ ok: true });
   })
 );
 

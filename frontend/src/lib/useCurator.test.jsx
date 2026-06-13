@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { CuratorProvider, useCurator } from "./useCurator.jsx";
+import { CuratorProvider, useCurator, configureCurator } from "./useCurator.jsx";
 
-vi.mock("./api.js", () => ({ api: { post: vi.fn() } }));
+vi.mock("./api.js", () => ({ api: { post: vi.fn(), get: vi.fn(), del: vi.fn() } }));
 import { api } from "./api.js";
 
 const wrapper = ({ children }) => <CuratorProvider>{children}</CuratorProvider>;
@@ -53,5 +53,48 @@ describe("useCurator", () => {
       await result.current.send("hi");
     });
     await waitFor(() => expect(result.current.error).toMatch(/stepped away|moment/i));
+  });
+
+  it("loads saved history when a user signs in", async () => {
+    api.get.mockResolvedValue({
+      messages: [
+        { role: "user", content: "hi" },
+        { role: "assistant", content: "yo", films: [] },
+      ],
+    });
+    const { result } = renderHook(() => useCurator(), { wrapper });
+    await act(async () => {
+      configureCurator({ id: "u1" });
+    });
+    await waitFor(() => expect(result.current.messages).toHaveLength(2));
+    expect(api.get).toHaveBeenCalledWith("/curator/history");
+  });
+
+  it("clears the conversation on sign-out", async () => {
+    api.post.mockResolvedValue({ reply: "x", films: [] });
+    const { result } = renderHook(() => useCurator(), { wrapper });
+    await act(async () => {
+      await result.current.send("hi");
+    });
+    expect(result.current.messages).toHaveLength(2);
+    act(() => {
+      configureCurator(null);
+    });
+    expect(result.current.messages).toEqual([]);
+  });
+
+  it("clearHistory clears locally and deletes server history when signed in", async () => {
+    api.get.mockResolvedValue({ messages: [{ role: "user", content: "hi" }] });
+    api.del.mockResolvedValue({ ok: true });
+    const { result } = renderHook(() => useCurator(), { wrapper });
+    await act(async () => {
+      configureCurator({ id: "u1" });
+    });
+    await waitFor(() => expect(result.current.messages).toHaveLength(1));
+    await act(async () => {
+      await result.current.clearHistory();
+    });
+    expect(result.current.messages).toEqual([]);
+    expect(api.del).toHaveBeenCalledWith("/curator/history");
   });
 });

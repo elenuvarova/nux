@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import { api, onUnauthorized } from "./api.js";
 import { configureMyList } from "./useMyList.js";
 import { configureWatchHistory } from "./useWatchHistory.js";
+import { configureCurator } from "./useCurator.jsx";
 
 const AuthContext = createContext(null);
 
@@ -28,6 +29,7 @@ export function AuthProvider({ children }) {
     if (!ready) return;
     configureMyList(user);
     configureWatchHistory(user);
+    configureCurator(user);
   }, [user, ready]);
 
   const signup = useCallback(async (email, name, password) => {

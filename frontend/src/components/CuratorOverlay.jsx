@@ -63,7 +63,7 @@ function CuratorReply({ message, animate }) {
 }
 
 export default function CuratorOverlay() {
-  const { open, messages, loading, error, closeCurator, send } = useCurator();
+  const { open, messages, loading, error, closeCurator, send, clearHistory } = useCurator();
   const [draft, setDraft] = useState("");
   const inputRef = useRef(null);
   const bodyRef = useRef(null);
@@ -129,9 +129,16 @@ export default function CuratorOverlay() {
       >
         <header className="curator-head">
           <h2>The Curator</h2>
-          <button className="curator-close" onClick={closeCurator} aria-label="Close">
-            ✕
-          </button>
+          <div className="curator-head-actions">
+            {messages.length > 0 && (
+              <button className="curator-new" onClick={clearHistory}>
+                New
+              </button>
+            )}
+            <button className="curator-close" onClick={closeCurator} aria-label="Close">
+              ✕
+            </button>
+          </div>
         </header>
 
         <div className="curator-body" ref={bodyRef}>
