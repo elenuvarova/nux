@@ -79,6 +79,25 @@ export const PasswordReset = sequelize.define(
   { tableName: "password_resets" }
 );
 
+// Cached generative editorial collections (the "Curator's shelf"). Universal —
+// the same set for everyone, so there is no User association. The whole set is
+// regenerated as a batch; `generatedAt` is identical across a batch and drives
+// the staleness/refresh check. `entries` is [[filmId, note], ...]. JSON works
+// on both SQLite (TEXT) and Postgres.
+export const CuratorCollection = sequelize.define(
+  "CuratorCollection",
+  {
+    slug: { type: DataTypes.STRING, primaryKey: true },
+    title: { type: DataTypes.STRING, allowNull: false },
+    eyebrow: { type: DataTypes.STRING, allowNull: true },
+    intro: { type: DataTypes.TEXT, allowNull: true },
+    entries: { type: DataTypes.JSON, allowNull: false },
+    position: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    generatedAt: { type: DataTypes.DATE, allowNull: false },
+  },
+  { tableName: "curator_collections" }
+);
+
 // Associations — onDelete cascade so deleting a user wipes their data.
 User.hasMany(Session, { onDelete: "CASCADE" });
 Session.belongsTo(User);
