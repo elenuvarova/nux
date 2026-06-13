@@ -1,8 +1,8 @@
 .curator-scrim {
   position: fixed;
   inset: 0;
-  z-index: 110;
-  background: rgba(0, 0, 0, 0.5);
+  z-index: 110; /* overlay tier — above chrome (100), below skip-link (200) */
+  background: var(--surface-scrim-pressed);
   display: flex;
   justify-content: flex-end;
 }
@@ -11,10 +11,10 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--surface-overlay, #141210);
-  color: var(--text-primary, #f4f1ec);
-  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
-  animation: curator-slide 0.28s ease;
+  background: var(--surface-overlay);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-overlay);
+  animation: curator-slide var(--dur-crossfade) var(--ease-out);
 }
 @keyframes curator-slide {
   from { transform: translateX(24px); opacity: 0; }
@@ -24,65 +24,87 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
 }
-.curator-head h2 { font-size: 18px; margin: 0; }
-.curator-close { background: none; border: 0; color: inherit; font-size: 18px; cursor: pointer; }
-.curator-head-actions { display: flex; align-items: center; gap: 12px; }
+.curator-head h2 { font-size: 18px; margin: 0; } /* one-off: panel title between --type-title (17px) and --type-headline */
+.curator-close {
+  background: none; border: 0; color: inherit; font-size: 18px; cursor: pointer;
+  width: 36px; height: 36px; display: grid; place-items: center; /* >=24px hit target */
+}
+.curator-head-actions { display: flex; align-items: center; gap: var(--space-3); }
 .curator-new {
-  background: none; border: 1px solid var(--border-default, rgba(255, 255, 255, 0.18));
-  color: inherit; border-radius: 999px; padding: 4px 12px; font-size: 13px; cursor: pointer;
+  background: none; border: 1px solid var(--border-strong);
+  color: inherit; border-radius: var(--radius-full); padding: var(--space-1) var(--space-3);
+  font: var(--type-caption); cursor: pointer;
 }
-.curator-new:hover { background: rgba(255, 255, 255, 0.06); }
-.curator-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.curator-new:hover { background: var(--white-a07); }
+.curator-new:disabled { opacity: 0.4; cursor: default; }
+.curator-body { flex: 1; overflow-y: auto; padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
 .curator-greeting { opacity: 0.8; }
-.curator-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.curator-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
 .curator-chip {
-  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.12));
-  background: transparent; color: inherit; border-radius: 999px;
-  padding: 8px 14px; cursor: pointer; font-size: 14px;
+  border: 1px solid var(--border-subtle);
+  background: transparent; color: inherit; border-radius: var(--radius-full);
+  padding: var(--space-2) var(--space-4); cursor: pointer; font: var(--type-label);
 }
-.curator-chip:hover { background: rgba(255, 255, 255, 0.06); }
+.curator-chip:hover { background: var(--white-a07); }
 /* Follow-up refinements after a reply — lighter/secondary vs the empty-state chips */
-.curator-followups { display: flex; flex-wrap: wrap; gap: 8px; margin-top: -4px; }
-.curator-followups .curator-chip { font-size: 13px; padding: 6px 12px; opacity: 0.85; }
+.curator-followups { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: -4px; }
+.curator-followups .curator-chip { font: var(--type-caption); padding: 6px var(--space-3); opacity: 0.85; }
 .curator-followups .curator-chip:hover { opacity: 1; }
 .curator-user {
   align-self: flex-end; max-width: 85%;
-  background: var(--action-primary, #c8922a); color: #1a1a1a;
-  padding: 8px 12px; border-radius: 14px 14px 2px 14px; margin: 0;
+  background: var(--action-primary); color: var(--action-primary-text);
+  /* asymmetric speech-bubble radius — last corner squared toward the sender */
+  padding: var(--space-2) var(--space-3); border-radius: 14px 14px 2px 14px; margin: 0;
 }
-.curator-note { margin: 0 0 12px; line-height: 1.5; }
-.curator-results { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; animation: curator-fade 0.32s ease; }
+.curator-note { margin: 0 0 var(--space-3); line-height: 1.5; }
+.curator-results { display: flex; gap: var(--space-3); overflow-x: auto; padding-bottom: 4px; animation: curator-fade var(--dur-crossfade) var(--ease-out); }
 .curator-results .poster-card { flex: 0 0 120px; }
 @keyframes curator-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 /* typing caret shown while the latest reply reveals */
 .curator-caret {
   display: inline-block; width: 2px; height: 1em; margin-left: 2px;
-  background: var(--action-primary, #c8922a); vertical-align: text-bottom;
+  background: var(--action-primary); vertical-align: text-bottom;
   animation: curator-blink 0.9s steps(1) infinite;
 }
 @keyframes curator-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
 .curator-thinking { opacity: 0.6; font-style: italic; }
-.curator-error { color: var(--status-danger-text, #c73329); }
+.curator-error { color: var(--status-danger-text); display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
+.curator-retry {
+  background: none; border: 1px solid var(--border-strong);
+  color: inherit; border-radius: var(--radius-full); padding: var(--space-1) var(--space-3);
+  font: var(--type-caption); cursor: pointer;
+}
+.curator-retry:hover { background: var(--white-a07); }
 .curator-input {
-  display: flex; gap: 8px; padding: 16px 20px;
-  border-top: 1px solid var(--border-default, rgba(255, 255, 255, 0.08));
+  display: flex; gap: var(--space-2); padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border-subtle);
 }
 .curator-input input {
-  flex: 1; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-default, rgba(255, 255, 255, 0.12));
-  border-radius: 999px; padding: 10px 16px; color: inherit; font-size: 15px;
+  /* lightened opaque fill (surface-neutral) over the surface-overlay panel gives
+     the field a visible inset step; paired with the strongest hairline token so
+     the boundary reads far better than the old faint --border-default wash.
+     NOTE: a strict 3:1 boundary needs a ~0.40 white border token the ladder
+     doesn't yet expose (top white token is --white-a18) — flagged for tokens. */
+  flex: 1; background: var(--surface-neutral); border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full); padding: 10px var(--space-4); color: inherit; font: var(--type-input);
 }
 .curator-input button {
   width: 40px; border: 0; border-radius: 50%;
-  background: var(--action-primary, #c8922a); color: #1a1a1a; cursor: pointer; font-size: 16px;
+  background: var(--action-primary); color: var(--action-primary-text); cursor: pointer; font-size: 16px; /* one-off: send glyph */
 }
 .curator-input button:disabled { opacity: 0.4; cursor: default; }
+/* coarse pointers (touch) get a larger send target */
+@media (pointer: coarse) {
+  .curator-input button { width: 44px; height: 44px; }
+}
 /* Mobile: bottom-sheet instead of slide-over */
 @media (max-width: 640px) {
   .curator-scrim { align-items: flex-end; justify-content: stretch; }
-  .curator-panel { width: 100%; height: 85vh; border-radius: 18px 18px 0 0; animation: curator-rise 0.28s ease; }
+  /* asymmetric sheet radius — rounded top corners only */
+  .curator-panel { width: 100%; height: 85vh; border-radius: 18px 18px 0 0; animation: curator-rise var(--dur-crossfade) var(--ease-out); }
   @keyframes curator-rise { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 }
 @media (prefers-reduced-motion: reduce) {

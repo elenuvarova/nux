@@ -68,6 +68,13 @@ export function publicUser(user) {
 // Keyed by req.ip: server.js sets `trust proxy` so Express derives the real
 // client IP from X-Forwarded-For (set by nginx) — no manual header parsing,
 // which would otherwise be spoofable.
+//
+// SINGLE-INSTANCE ONLY: the counters live in this process's memory. They reset
+// on every redeploy/restart, and they do NOT span replicas — running two or
+// more app instances behind a load balancer would multiply the effective limit
+// (each instance counts independently). This is fine for our single-container
+// Coolify deploy. Before scaling out horizontally, move this store to Redis or
+// Postgres so the window is shared across instances.
 const hits = new Map();
 export function rateLimit(bucket, max, windowMs) {
   return (req, res, next) => {

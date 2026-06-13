@@ -35,7 +35,7 @@ export function PosterCard({ filmId }) {
   return (
     <Link to={`/film/${film.id}`} className="poster-card" viewTransition onClick={markHeroArt}>
       <div className="poster-card-art" ref={tilt.ref} onPointerMove={tilt.onPointerMove} onPointerLeave={tilt.onPointerLeave}>
-        <img src={film.poster} alt={`${film.title}, ${film.type}`} loading="lazy" />
+        <img src={film.poster} alt={`${film.title}, ${film.type}`} loading="lazy" width="200" height="300" />
         <span className="poster-card-badge">{film.type}</span>
         <span className="poster-card-sheen" aria-hidden="true" />
       </div>
@@ -58,7 +58,7 @@ export function ContinueCard({ item }) {
   return (
     <Link to={`/watch/${film.id}`} className="continue-card" viewTransition onClick={markHeroArt}>
       <div className="continue-card-art">
-        <img src={art} alt={`${film.title}, ${film.type}`} loading="lazy" />
+        <img src={art} alt={`${film.title}, ${film.type}`} loading="lazy" width="320" height="180" />
         <span className="continue-card-play" aria-hidden="true">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
             <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />

@@ -37,7 +37,7 @@ export default function Hero() {
       onFocusCapture={() => setPaused(true)}
     >
       <div className="hero-art" key={film.id} aria-live="off">
-        <img src={film.backdrop2 || film.backdrop || film.poster} alt="" fetchpriority="high" />
+        <img src={film.backdrop2 || film.backdrop || film.poster} alt="" fetchpriority="high" width="1280" height="720" />
       </div>
       <div className="hero-content">
         <p className="eyebrow">{slide.eyebrow}</p>

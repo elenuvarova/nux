@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { Op } from "sequelize";
 import { ah } from "../lib/asyncHandler.js";
 import { rateLimit, currentUser, requireAuth } from "../lib/auth.js";
 import { askCurator } from "../lib/ai.js";
@@ -9,7 +10,27 @@ import { FILMS } from "../data/films.js";
 const router = Router();
 const MAX_MESSAGES = 12;
 const MAX_LEN = 500;
+const HISTORY_LIMIT = 100;
 const titleById = new Map(FILMS.map((f) => [f.id, f.title]));
+
+// Trim a user's stored conversation back to the newest HISTORY_LIMIT rows so
+// storage can't grow unbounded. Best-effort and user-scoped; never throws.
+async function trimHistory(userId) {
+  try {
+    const keep = await CuratorMessage.findAll({
+      where: { UserId: userId },
+      order: [["createdAt", "DESC"]],
+      limit: HISTORY_LIMIT,
+      attributes: ["id"],
+    });
+    if (keep.length < HISTORY_LIMIT) return; // nothing to trim
+    await CuratorMessage.destroy({
+      where: { UserId: userId, id: { [Op.notIn]: keep.map((r) => r.id) } },
+    });
+  } catch (err) {
+    console.error("[curator] history trim failed:", err?.message || err);
+  }
+}
 
 router.post(
   "/",
@@ -54,7 +75,9 @@ router.post(
         CuratorMessage.bulkCreate([
           { UserId: user.id, role: "user", content: messages[messages.length - 1].content, films: null },
           { UserId: user.id, role: "assistant", content: cleanReply, films },
-        ]).catch((err) => console.error("[curator] save failed:", err?.message || err));
+        ])
+          .then(() => trimHistory(user.id))
+          .catch((err) => console.error("[curator] save failed:", err?.message || err));
       }
       return res.json({ reply: cleanReply, films });
     } catch (e) {
@@ -65,8 +88,6 @@ router.post(
     }
   })
 );
-
-const HISTORY_LIMIT = 100;
 
 // GET /api/curator/history → the signed-in user's saved conversation (oldest→newest)
 router.get(

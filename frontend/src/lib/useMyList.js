@@ -10,6 +10,8 @@ const KEY = 'nux-my-list';
 // localStorage so the feature still works without an account.
 let ids = readGuest();
 let authed = false;
+let initialized = false; // false until the first configure() resolves, so the
+// My List page can show a skeleton instead of flashing "empty" on a cold load
 let configSeq = 0; // guards against a stale fetch overwriting a newer account
 const subs = new Set();
 
@@ -49,6 +51,7 @@ export async function configureMyList(user) {
   } else {
     ids = readGuest();
   }
+  initialized = true;
   notify();
 }
 
@@ -68,15 +71,21 @@ function applyToggle(id, title) {
 
 export function useMyList() {
   const [list, setList] = useState(ids);
+  const [ready, setReady] = useState(initialized);
 
   useEffect(() => {
-    subs.add(setList);
-    setList(ids); // pick up any sync that happened before mount
-    return () => subs.delete(setList);
+    // notify() pushes ids; re-read the initialized flag in the same beat
+    const sub = (next) => {
+      setList(next);
+      setReady(initialized);
+    };
+    subs.add(sub);
+    sub(ids); // pick up any sync that happened before mount
+    return () => subs.delete(sub);
   }, []);
 
   const has = useCallback((id) => list.includes(id), [list]);
   const toggle = useCallback((id, title) => applyToggle(id, title), []);
 
-  return { list, has, toggle };
+  return { list, ready, has, toggle };
 }

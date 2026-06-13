@@ -3,8 +3,9 @@
 // on every state-changing /api request as a second layer.
 //
 // Allowlist: in prod the app's own origin (APP_URL); in dev the Vite servers.
-// Requests with no Origin header for safe methods pass through (e.g. top-level
-// navigations, same-origin GETs, server-to-server health checks).
+// Safe methods (GET/HEAD/OPTIONS) always pass through. For state-changing
+// methods with no Origin/Referer at all, prod requires the SPA's JSON
+// content-type rather than failing open; dev stays permissive.
 const isProd = process.env.NODE_ENV === "production";
 
 function allowedOrigins() {
@@ -32,9 +33,18 @@ export function csrfOriginCheck(req, res, next) {
     }
   }
 
-  // No Origin/Referer at all: not a browser cross-site request we can verify;
-  // allow it (native clients, same-origin fetches that omit the header).
-  if (!origin) return next();
+  // No Origin/Referer at all. In prod this is suspicious for a state-changing
+  // request, so we don't blanket-allow it (that would fail open). The SPA always
+  // sends Content-Type: application/json on writes, and browsers can't set that
+  // on a simple cross-site form post, so accepting only JSON bodies keeps the
+  // app working while rejecting the classic cross-site form attack. In dev we
+  // stay permissive (curl, native clients, same-origin fetches that omit it).
+  if (!origin) {
+    if (!isProd) return next();
+    const ct = String(req.headers["content-type"] || "");
+    if (ct.includes("application/json")) return next();
+    return res.status(403).json({ error: "bad_origin" });
+  }
 
   if (!allow.includes(origin)) {
     return res.status(403).json({ error: "bad_origin" });

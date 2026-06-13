@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { PosterCard } from '../components/Rail.jsx';
+import { SkeletonGrid } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useMyList } from '../lib/useMyList.js';
 import { byId } from '../data/catalog.js';
@@ -7,7 +8,7 @@ import './Browse.css';
 
 export default function MyList() {
   usePageTitle('My List');
-  const { list } = useMyList();
+  const { list, ready } = useMyList();
   const films = list.map(byId).filter(Boolean);
 
   return (
@@ -18,7 +19,9 @@ export default function MyList() {
         </h1>
       </header>
       <section className="browse-grid-wrap" aria-label="Saved titles">
-        {films.length > 0 ? (
+        {!ready ? (
+          <SkeletonGrid count={12} />
+        ) : films.length > 0 ? (
           <div className="browse-grid">
             {films.map((f) => (
               <PosterCard key={f.id} filmId={f.id} />

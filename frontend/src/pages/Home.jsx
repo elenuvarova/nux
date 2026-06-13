@@ -14,7 +14,7 @@ export default function Home() {
   usePageTitle(null);
   const [trending, curated, fresh] = RAILS;
   const { history } = useWatchHistory();
-  const { collections } = useCollections();
+  const { collections, loading: collectionsLoading, error: collectionsError } = useCollections();
   // brief skeleton on first mount so the page assembles, then settles
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -87,15 +87,29 @@ export default function Home() {
           </div>
         </Reveal>
 
-        {collections.map((c) => (
-          <Reveal key={c.slug}>
-            <Rail title={c.title} seeAllTo={`/collection/${c.slug}`}>
-              {c.entries.map(([id]) => (
-                <PosterCard key={id} filmId={id} />
-              ))}
-            </Rail>
-          </Reveal>
-        ))}
+        {/* Generated collections load after the static rails. Hold their place
+            with skeletons so they don't pop in (layout shift); degrade quietly
+            on error with a subtle, non-blocking note. */}
+        {collectionsLoading ? (
+          <>
+            <SkeletonRail />
+            <SkeletonRail />
+          </>
+        ) : collectionsError ? (
+          <p className="home-rails-note" role="status">
+            We couldn't load more collections right now.
+          </p>
+        ) : (
+          collections.map((c) => (
+            <Reveal key={c.slug}>
+              <Rail title={c.title} seeAllTo={`/collection/${c.slug}`}>
+                {c.entries.map(([id]) => (
+                  <PosterCard key={id} filmId={id} />
+                ))}
+              </Rail>
+            </Reveal>
+          ))
+        )}
       </div>
     </main>
   );

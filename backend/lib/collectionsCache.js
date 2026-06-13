@@ -17,6 +17,9 @@ export async function readOne(slug) {
 export function isStale(rows) {
   if (!rows || rows.length === 0) return true;
   const newest = Math.max(...rows.map((r) => new Date(r.generatedAt).getTime()));
+  // An unparseable generatedAt yields NaN; treat that as stale (don't trust a
+  // timestamp we can't read), since NaN comparisons would otherwise read fresh.
+  if (!Number.isFinite(newest)) return true;
   return Date.now() - newest > TTL_MS;
 }
 

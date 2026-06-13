@@ -47,10 +47,18 @@ function CuratorReply({ message, animate }) {
 
   return (
     <div className="curator-reply">
+      {/* The visible copy animates token-by-token with NO live region, so screen
+          readers aren't spammed per word. Once the newest reply lands we drop the
+          complete text into an sr-only polite region to announce it exactly once. */}
       <p className="curator-note">
         {tokens.slice(0, shown).join("")}
         {!done && <span className="curator-caret" aria-hidden="true" />}
       </p>
+      {animate && done && (
+        <p className="sr-only" role="status" aria-live="polite">
+          {message.content}
+        </p>
+      )}
       {done && message.films?.length > 0 && (
         <div className="curator-results">
           {message.films.map((id) => (
@@ -63,14 +71,25 @@ function CuratorReply({ message, animate }) {
 }
 
 export default function CuratorOverlay() {
-  const { open, messages, loading, error, closeCurator, send, clearHistory } = useCurator();
+  const { open, messages, loading, error, canRetry, closeCurator, send, retry, clearHistory } =
+    useCurator();
   const [draft, setDraft] = useState("");
   const inputRef = useRef(null);
   const bodyRef = useRef(null);
   const panelRef = useRef(null);
+  // The element focused before the overlay opened, restored on close so keyboard
+  // users land back where they were (usually the Curator FAB).
+  const lastFocusedRef = useRef(null);
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (open) {
+      lastFocusedRef.current = document.activeElement;
+      inputRef.current?.focus();
+    } else if (lastFocusedRef.current) {
+      // restore focus to the trigger when the panel closes
+      lastFocusedRef.current.focus?.();
+      lastFocusedRef.current = null;
+    }
   }, [open]);
 
   useEffect(() => {
@@ -131,7 +150,7 @@ export default function CuratorOverlay() {
           <h2>The Curator</h2>
           <div className="curator-head-actions">
             {messages.length > 0 && (
-              <button className="curator-new" onClick={clearHistory}>
+              <button className="curator-new" onClick={clearHistory} disabled={loading}>
                 New
               </button>
             )}
@@ -167,8 +186,21 @@ export default function CuratorOverlay() {
             )
           )}
 
-          {loading && <p className="curator-thinking">The Curator is considering…</p>}
-          {error && <p className="curator-error">{error}</p>}
+          {loading && (
+            <p className="curator-thinking" role="status" aria-live="polite">
+              The Curator is considering…
+            </p>
+          )}
+          {error && (
+            <div className="curator-error" role="alert">
+              <span>{error}</span>
+              {canRetry && (
+                <button type="button" className="curator-retry" onClick={retry}>
+                  Try again
+                </button>
+              )}
+            </div>
+          )}
 
           {showFollowups && (
             <div className="curator-followups" role="group" aria-label="Refine">

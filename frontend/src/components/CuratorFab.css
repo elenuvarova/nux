@@ -1,24 +1,25 @@
 .curator-fab {
   position: fixed;
-  right: 20px;
-  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-  z-index: 55;
+  right: var(--space-5);
+  bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+  z-index: 100; /* chrome tier — matches NavBar/TabBar; hidden under the overlay (110) */
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
   border: 0;
-  border-radius: 999px;
-  background: var(--action-primary, #c8922a);
-  color: #1a1a1a;
+  border-radius: var(--radius-full);
+  background: var(--action-primary);
+  color: var(--action-primary-text);
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-card-hover);
 }
 .curator-fab:hover { filter: brightness(1.05); }
-.curator-fab-label { font-size: 14px; }
-/* keep clear of the mobile tab bar */
-@media (max-width: 640px) {
+.curator-fab[hidden] { display: none; } /* kept mounted for focus restore; hidden while the panel is up */
+.curator-fab-label { font: var(--type-label); }
+/* keep clear of the mobile tab bar (present up to 768px) */
+@media (max-width: 768px) {
   .curator-fab { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
   .curator-fab-label { display: none; }
 }

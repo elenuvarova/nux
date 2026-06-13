@@ -5,6 +5,12 @@ const MIN_FILMS = 3;
 const MAX_FILMS = 6;
 const NOTE_MAX = 160;
 
+// Slugs owned by the static frontend COLLECTIONS pages (frontend/src/data/catalog.js).
+// A generated collection must never reuse one of these, or its "See all" link
+// would route to the hard-coded editorial page instead of the curated shelf.
+// Seed the uniquifier with these so any collision is bumped to "-2", "-3", etc.
+const RESERVED_SLUGS = ["best-2026"];
+
 // Gemini responseSchema (Groq ignores it but the prompt spells the shape out).
 const COLLECTIONS_SCHEMA = {
   type: "object",
@@ -103,7 +109,7 @@ export async function generateCollections() {
     },
   });
 
-  const slugs = new Set();
+  const slugs = new Set(RESERVED_SLUGS);
   const out = [];
   for (const c of collections) {
     const entries = validateCollectionEntries(c?.entries);

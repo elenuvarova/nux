@@ -81,16 +81,28 @@ export default function Browse() {
     return list;
   }, [chip, query]);
 
+  // the one game / one course live behind their chips (real detail pages);
+  // run them through the same title/genre/meta predicate so typing actually
+  // filters instead of hard-emptying the shelf into a dead-end
+  const extras = useMemo(() => {
+    const base = chip === 'Games' ? [EXTRAS.game] : chip === 'Courses' ? [EXTRAS.course] : [];
+    const q = query.trim().toLowerCase();
+    if (!q) return base;
+    return base.filter(
+      (x) =>
+        x.title.toLowerCase().includes(q) ||
+        x.genre.toLowerCase().includes(q) ||
+        x.meta.toLowerCase().includes(q)
+    );
+  }, [chip, query]);
+
   // remember a query once it settles and actually matched something
   useEffect(() => {
-    if (!query.trim() || films.length === 0) return undefined;
+    if (!query.trim() || films.length + extras.length === 0) return undefined;
     const t = setTimeout(() => remember(query), 900);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, films.length]);
-
-  // the one game / one course live behind their chips (real detail pages)
-  const extras = !query && chip === 'Games' ? [EXTRAS.game] : !query && chip === 'Courses' ? [EXTRAS.course] : [];
+  }, [query, films.length, extras.length]);
 
   const emptyCopy = query
     ? 'Try a different title, genre or year.'

@@ -6,6 +6,23 @@ import { useMyList } from '../lib/useMyList.js';
 import { byId, FILMS } from '../data/catalog.js';
 import './FilmDetail.css';
 
+/* Serialize JSON-LD safely for embedding in a <script> tag: escape `<` (so a
+   stray "</script>" in catalog text can't break out) and the U+2028/U+2029
+   separators that are valid JSON but break inline scripts. Content is
+   first-party (catalog.js), so this only guards the script-context boundary. */
+function jsonLd(obj) {
+  return JSON.stringify(obj)
+    .replace(/</g, '\\u003c')
+    .replace(/[\u2028\u2029]/g, (c) => '\\u' + c.charCodeAt(0).toString(16));
+}
+
+/* Resolve a root-relative asset path to an absolute URL for structured data. */
+function absoluteUrl(url) {
+  if (!url) return url;
+  if (/^https?:\/\//.test(url)) return url;
+  return window.location.origin + (url.startsWith('/') ? url : `/${url}`);
+}
+
 function related(film) {
   const sameGenre = FILMS.filter((f) => f.id !== film.id && f.genre === film.genre);
   const sameType = FILMS.filter((f) => f.id !== film.id && f.genre !== film.genre && f.type === film.type);
@@ -16,7 +33,7 @@ export default function FilmDetail() {
   const { id } = useParams();
   const film = byId(id);
   const { has, toggle } = useMyList();
-  usePageTitle(film?.title, film?.synopsis);
+  usePageTitle(film?.title, film?.synopsis, { image: film?.backdrop || film?.poster });
 
   if (!film) {
     return <NotFound message="We couldn't find that title in the catalog." />;
@@ -43,6 +60,21 @@ export default function FilmDetail() {
   ]
     .filter(Boolean)
     .join(' · ');
+
+  // schema.org Movie — lets search engines and AI answer engines parse the
+  // title as a film (rich results / citation). Only emit keys we actually have.
+  const movieLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Movie',
+    name: film.title,
+    ...(film.year ? { datePublished: String(film.year) } : {}),
+    ...(film.genre ? { genre: film.genre } : {}),
+    ...(film.synopsis ? { description: film.synopsis } : {}),
+    ...(film.backdrop || film.poster
+      ? { image: absoluteUrl(film.backdrop || film.poster) }
+      : {}),
+    ...(film.director ? { director: { '@type': 'Person', name: film.director } } : {}),
+  };
 
   const heroContent = (
     <>
@@ -79,6 +111,10 @@ export default function FilmDetail() {
 
   return (
     <main className="fd">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(movieLd) }}
+      />
       {film.backdrop ? (
         <section className="fd-hero">
           <div className="fd-art">

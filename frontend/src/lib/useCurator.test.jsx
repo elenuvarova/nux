@@ -83,6 +83,34 @@ describe("useCurator", () => {
     expect(result.current.messages).toEqual([]);
   });
 
+  it("ignores a stale history fetch when the account switches mid-fetch", async () => {
+    // first sign-in's fetch resolves LAST, but a newer sign-in already landed —
+    // the stale response must not overwrite the newer account's history
+    let resolveStale;
+    const stalePromise = new Promise((res) => {
+      resolveStale = res;
+    });
+    api.get
+      .mockReturnValueOnce(stalePromise) // user A — slow
+      .mockResolvedValueOnce({ messages: [{ role: "user", content: "B" }] }); // user B — fast
+    const { result } = renderHook(() => useCurator(), { wrapper });
+
+    await act(async () => {
+      configureCurator({ id: "a" }); // kicks off the slow fetch
+      configureCurator({ id: "b" }); // newer account, resolves first
+    });
+    await waitFor(() => expect(result.current.messages).toHaveLength(1));
+    expect(result.current.messages[0]).toMatchObject({ content: "B" });
+
+    // now the stale fetch finally resolves — it must be dropped
+    await act(async () => {
+      resolveStale({ messages: [{ role: "user", content: "A" }] });
+      await stalePromise;
+    });
+    expect(result.current.messages).toHaveLength(1);
+    expect(result.current.messages[0]).toMatchObject({ content: "B" });
+  });
+
   it("clearHistory clears locally and deletes server history when signed in", async () => {
     api.get.mockResolvedValue({ messages: [{ role: "user", content: "hi" }] });
     api.del.mockResolvedValue({ ok: true });

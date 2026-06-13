@@ -11,6 +11,22 @@
     var(--surface-raised);
 }
 
+/* subtle, non-blocking note when generated collections fail to load —
+   aligned to the rail content column so it sits where the rails would */
+.home-rails-note {
+  max-width: 1440px;
+  margin: 0 auto var(--space-16);
+  padding: 0 var(--space-16);
+  font: var(--type-metadata);
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 768px) {
+  .home-rails-note {
+    padding: 0 var(--space-4);
+  }
+}
+
 /* ── Editorial Pick — the curated module ─────────────────────── */
 .editorial {
   max-width: 1440px;

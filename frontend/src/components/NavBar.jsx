@@ -1,7 +1,9 @@
 import { NavLink, Link } from 'react-router-dom';
+import { useAuth } from '../lib/useAuth.jsx';
 import './NavBar.css';
 
 export default function NavBar() {
+  const { user } = useAuth();
   return (
     <header className="nav">
       <div className="nav-inner">
@@ -25,9 +27,15 @@ export default function NavBar() {
             </svg>
             <span>Search</span>
           </Link>
-          <Link to="/profile" className="nav-avatar" aria-label="Profile">
-            <img src="/assets/avatar-user.jpg" alt="" />
-          </Link>
+          {user ? (
+            <Link to="/profile" className="nav-avatar" aria-label="Profile">
+              <img src="/assets/avatar-user.jpg" alt="" width="32" height="32" />
+            </Link>
+          ) : (
+            <Link to="/signin" className="btn btn-secondary">
+              Sign in
+            </Link>
+          )}
         </div>
       </div>
     </header>
