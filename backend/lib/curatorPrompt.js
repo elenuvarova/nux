@@ -19,7 +19,7 @@ export function validateFilmIds(ids) {
   return out;
 }
 
-const CATALOG_LINES = FILMS.map(
+export const CATALOG_LINES = FILMS.map(
   (f) =>
     `- ${f.id} | ${f.title}${f.year ? ` (${f.year})` : ""}${
       f.genre ? ` | ${f.genre}` : ""
