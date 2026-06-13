@@ -1,8 +1,5 @@
 import { callModel } from "./ai.js";
-import { CATALOG_LINES } from "./curatorPrompt.js";
-import { FILMS } from "../data/films.js";
-
-const FILM_IDS = new Set(FILMS.map((f) => f.id));
+import { CATALOG_LINES, FILM_IDS } from "./curatorPrompt.js";
 const MAX_COLLECTIONS = 3;
 const MIN_FILMS = 3;
 const MAX_FILMS = 6;
@@ -40,6 +37,7 @@ export function slugify(s) {
   const base = String(s || "")
     .toLowerCase()
     .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 60);

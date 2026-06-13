@@ -1,6 +1,6 @@
 import { FILMS } from "../data/films.js";
 
-const VALID_IDS = new Set(FILMS.map((f) => f.id));
+export const FILM_IDS = new Set(FILMS.map((f) => f.id));
 const MAX_FILMS = 6;
 
 // Keep only ids that are real films (catalog.js also has genre/collection
@@ -10,7 +10,7 @@ export function validateFilmIds(ids) {
   const seen = new Set();
   const out = [];
   for (const id of ids) {
-    if (VALID_IDS.has(id) && !seen.has(id)) {
+    if (FILM_IDS.has(id) && !seen.has(id)) {
       seen.add(id);
       out.push(id);
       if (out.length >= MAX_FILMS) break;
