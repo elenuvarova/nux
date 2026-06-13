@@ -591,7 +591,7 @@ Create `backend/lib/collectionsCache.js`:
 
 ```js
 import { CuratorCollection } from "../models.js";
-import { sequelize } from "./db.js";
+import { sequelize } from "../db.js";
 import { generateCollections } from "./curatorCollections.js";
 
 const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
