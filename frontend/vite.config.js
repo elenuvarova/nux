@@ -11,5 +11,14 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
+    rollupOptions: {
+      output: {
+        // split the stable framework deps into their own chunk so an app-code
+        // change doesn't bust the ~50 KB react/router cache on every deploy
+        manualChunks: {
+          vendor: ["react", "react-dom", "react-router-dom"],
+        },
+      },
+    },
   },
 });

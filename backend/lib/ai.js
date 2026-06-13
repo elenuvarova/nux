@@ -52,7 +52,9 @@ async function callGeminiRaw({ system, messages, schema }) {
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: system }] },
           contents,
-          generationConfig: { responseMimeType: "application/json", responseSchema: schema },
+          // cap output so a runaway/looping generation can't burn cost or stall
+          // for the full timeout
+          generationConfig: { responseMimeType: "application/json", responseSchema: schema, maxOutputTokens: 2048 },
         }),
       }
     )
@@ -77,6 +79,7 @@ async function callGroqRaw({ system, messages }) {
         messages: [{ role: "system", content: system }, ...messages],
         response_format: { type: "json_object" },
         temperature: 0.7,
+        max_tokens: 2048, // cap runaway generation (cost + latency)
       }),
     })
   );

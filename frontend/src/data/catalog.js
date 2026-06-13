@@ -300,7 +300,10 @@ export const FILMS = [
   },
 ];
 
-export const byId = (id) => FILMS.find((f) => f.id === id);
+// O(1) lookup — byId is called once per card on every Browse/Home render, so a
+// linear scan over ~25 films added up across a grid
+const _filmById = new Map(FILMS.map((f) => [f.id, f]));
+export const byId = (id) => _filmById.get(id);
 
 // ── Home page composition (mirrors the Figma hi-fi Home) ──────────
 export const HERO = {
