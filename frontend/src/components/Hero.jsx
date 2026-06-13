@@ -31,6 +31,10 @@ export default function Hero() {
   if (!film) return null;
   const saved = has(film.id);
   const count = HERO_ROTATION.length;
+  // every hero backdrop ships a 660px-wide variant (X.jpg → X-660.jpg) so phones
+  // don't download the full 1600px LCP image
+  const bg = film.backdrop2 || film.backdrop || film.poster;
+  const bgSmall = bg.replace(/\.jpg$/, '-660.jpg');
 
   return (
     <section
@@ -43,7 +47,15 @@ export default function Hero() {
       onFocusCapture={() => setHovered(true)}
     >
       <div className="hero-art" key={film.id} aria-live="off">
-        <img src={film.backdrop2 || film.backdrop || film.poster} alt="" fetchpriority="high" width="1280" height="720" />
+        <img
+          src={bg}
+          srcSet={`${bgSmall} 660w, ${bg} 1600w`}
+          sizes="100vw"
+          alt=""
+          fetchpriority="high"
+          width="1280"
+          height="720"
+        />
       </div>
       <div className="hero-content">
         {/* announces each slide change to assistive tech (the carousel auto-
