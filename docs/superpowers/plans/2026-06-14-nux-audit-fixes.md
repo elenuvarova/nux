@@ -69,8 +69,7 @@
 **Files:** `frontend/index.html`, `pages/FilmDetail.jsx`, `lib/usePageTitle.js`
 **Verify:** Playwright network panel. Commit at end.
 
-- [ ] F1 — FilmDetail LCP backdrop not preloaded — `FilmDetail.jsx:132,139` + `usePageTitle.js` — inject dynamic `<link rel=preload>` per film.
-- [ ] F2 — hero preload wasted on non-Home routes (live warning) — `index.html:14` — move to Home-only runtime preload.
+- [x] F1 + F2 — DELIVERED VIA H's per-route prerender (static, the real LCP win a runtime preload can't give): each `/film/:id` (and collection/genre) page bakes a `<link rel=preload as=image fetchpriority=high>` for its backdrop/cover; the home hero still preload is emitted ONLY on `/` (gone from every other prerendered route, fixing the "preloaded but not used" waste).
 
 ## Cluster G — Performance: assets (heavy)
 **Files:** `public/assets/**`, `main.jsx`, `index.html`, build tooling
@@ -83,11 +82,11 @@
 **Files:** `vite.config.js`, build scripts, `index.html`, `pages/Collection.jsx`, `pages/Genre.jsx`, `public/robots.txt`
 **Verify:** `curl` served HTML per route shows real `<head>`+body. Commit at end.
 
-- [ ] H1 — no SSR → broken share cards — prerender public routes at build (`vite-react-ssg`/prerender plugin), route list from `catalog.js`+collections+genres.
-- [ ] H2 — sitemap omits 26 films/genres — generate `sitemap.xml` from catalog at build (exclude auth/watch).
-- [ ] H3 — collections/genres no per-route OG image — `Collection.jsx:56`, `Genre.jsx:41` — pass `col.cover`/genre still as OG image.
-- [ ] H4 — OG polish — `index.html` — `og:image:width/height/alt` + static `WebSite`+`Organization` JSON-LD.
-- [ ] H5 — robots — disallow `/watch /profile /settings /downloads /reset /forgot`.
+- [x] H1 — broken share cards — `scripts/prerender.mjs` (post-`vite build`) bakes a correct per-route `<head>` (title/description/OG/Twitter/canonical/LCP-preload + JSON-LD) into static HTML for home, browse, all 21 films, the collection, 10 live genres, 4 info pages. nginx serves them via `try_files $uri/` (no nginx change). **Verified live: `/film/the-third-man` serves the right card + boots the SPA.** Robust (per-route try/catch, never fails the build).
+- [x] H2 — sitemap — generated from the catalog by the same script: **38 URLs** (was 7), auth/watch/account excluded.
+- [x] H3 — per-route OG image — films→backdrop, collections→`col.cover`, genres→genre image (in the prerendered head; the runtime `usePageTitle` still sets them for JS clients).
+- [x] H4 — OG polish — `og:image:width/height` (for the 1200×630 default), `og:image:alt`, and `WebSite`+`Organization` JSON-LD on home.
+- [x] H5 — robots — `public/robots.txt` disallows `/watch/ /profile /settings /downloads /signin /signup /forgot /reset`; stale static `sitemap.xml` removed (now generated).
 
 ---
 

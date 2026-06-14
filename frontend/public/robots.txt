@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
+Disallow: /watch/
+Disallow: /profile
+Disallow: /settings
+Disallow: /downloads
+Disallow: /signin
+Disallow: /signup
+Disallow: /forgot
+Disallow: /reset
 
 Sitemap: https://nux.ontwrpn.com/sitemap.xml
