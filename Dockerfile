@@ -3,14 +3,17 @@
 
 # 1) build the SPA
 FROM node:20-alpine AS build
-# Coolify injects the app's NODE_ENV=production into the build too, which
-# would make npm ci skip devDependencies (vite) — force them in.
-ENV NODE_ENV=development
 WORKDIR /app
 COPY frontend/package*.json ./
+# Install devDependencies (vite) explicitly — --include=dev forces them even
+# though Coolify injects NODE_ENV=production into the build. Do NOT pin the whole
+# stage to NODE_ENV=development: that leaked into `vite build` and shipped a DEV
+# build of React — ~2x the vendor bundle AND StrictMode double-invoking every
+# effect (duplicate /api calls on every page load).
 RUN npm ci --include=dev
 COPY frontend/ ./
-RUN npm run build
+# Force a production build → minified, production React (single-invoke effects).
+RUN NODE_ENV=production npm run build
 
 # 2) runtime: node (for the API) + nginx (for the SPA)
 FROM node:20-alpine

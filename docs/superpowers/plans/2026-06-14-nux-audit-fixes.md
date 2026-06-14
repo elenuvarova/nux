@@ -21,7 +21,7 @@
 - [x] A3 — My List failed-save shows success+error toast at once — `useMyList.js` — success toast now fires only in the authed write `.then()` (immediate for guests); error stays in `.catch`.
 - [x] A4 — Curator chat messages keyed by index — `useCurator.jsx` (module `msgSeq` → `id` on every message) + `CuratorOverlay.jsx` (key on `m.id`).
 - [x] A5 — useTilt rAF not cancelled on unmount — `useTilt.js` — added `useEffect(() => () => cancelAnimationFrame(raf.current), [])`.
-- [x] A6 — Duplicate API fetches — RESOLVED, no code change. HEAD is clean: local prod-preview fires each endpoint **once** (single callers, traced). The 2×/4× seen live was the **stale deployed artifact** (vendor 352KB vs HEAD 179KB). Fix = redeploy from `main`. (Did NOT remove StrictMode — it's inert in prod.)
+- [x] A6 — Duplicate API fetches — ROOT CAUSE: the **Dockerfile** pinned the whole build stage to `ENV NODE_ENV=development` (to force the vite devDep to install), which leaked into `vite build` → the server shipped a **DEV build of React**: ~2× vendor (107KB vs 58KB gz) AND StrictMode double-invoking every effect = the duplicate /api calls. Fixed: removed the stage-wide env, build now runs `NODE_ENV=production npm run build` (devDeps still forced by `--include=dev`). Resolves the double-fetch AND halves the vendor bundle. [Corrects an earlier wrong "deploy-stale" call — confirmed double-fetch persisted on a fresh deploy until this Dockerfile fix.]
 
 ## Cluster B — Backend + security
 **Files:** `routes/auth.js`, `routes/list.js`, `routes/history.js`, `models.js`, `lib/auth.js`, `routes/history.test.js` (new), `lib/auth.test.js`, `nginx.conf`
