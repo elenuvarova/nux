@@ -170,3 +170,5 @@ export const FILMS = [
     "synopsis": "Ayrton Senna's decade in Formula One — faith, genius, politics and the weekend at Imola — told entirely through archive footage."
   }
 ];
+
+export const EXTRA_IDS = ["neon-drift","art-of-editing"];

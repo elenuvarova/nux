@@ -70,6 +70,17 @@ describe("POST /api/list", () => {
     expect(res.status).toBe(201);
     expect(ListItem.create).toHaveBeenCalledWith({ UserId: "user-1", filmId: "naked" });
   });
+
+  it("400 on a filmId not in the catalog (no junk in the list)", async () => {
+    const res = await request(makeApp()).post("/api/list").send({ filmId: "not-a-real-film" });
+    expect(res.status).toBe(400);
+    expect(ListItem.create).not.toHaveBeenCalled();
+  });
+
+  it("accepts a non-film catalog title (the game)", async () => {
+    const res = await request(makeApp()).post("/api/list").send({ filmId: "neon-drift" });
+    expect(res.status).toBe(201);
+  });
 });
 
 describe("DELETE /api/list/:filmId", () => {

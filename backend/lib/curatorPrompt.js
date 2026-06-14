@@ -1,6 +1,9 @@
-import { FILMS } from "../data/films.js";
+import { FILMS, EXTRA_IDS } from "../data/films.js";
 
 export const FILM_IDS = new Set(FILMS.map((f) => f.id));
+// Every addressable title (films + game/course) — for validating what a user may
+// save to their list/history. The Curator still recommends FILM_IDS only.
+export const TITLE_IDS = new Set([...FILM_IDS, ...EXTRA_IDS]);
 export const MAX_FILMS = 6;
 
 // Shared core: keep only items whose id (via idOf) is a real, not-yet-seen film

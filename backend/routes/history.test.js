@@ -75,4 +75,10 @@ describe("PUT /api/history", () => {
     await request(makeApp()).put("/api/history").send({ filmId: "naked", frac: "abc" });
     expect(WatchProgress.upsert).toHaveBeenCalledWith({ UserId: "user-1", filmId: "naked", frac: 0.05 });
   });
+
+  it("400 on a filmId not in the catalog", async () => {
+    const res = await request(makeApp()).put("/api/history").send({ filmId: "nope", frac: 0.5 });
+    expect(res.status).toBe(400);
+    expect(WatchProgress.upsert).not.toHaveBeenCalled();
+  });
 });

@@ -3,6 +3,7 @@ import { UniqueConstraintError } from "sequelize";
 import { ListItem } from "../models.js";
 import { requireAuth } from "../lib/auth.js";
 import { ah } from "../lib/asyncHandler.js";
+import { TITLE_IDS } from "../lib/curatorPrompt.js";
 
 const router = Router();
 router.use(requireAuth); // every route below is scoped to req.user
@@ -30,6 +31,10 @@ router.post(
     const filmId = String(req.body?.filmId || "").trim();
     if (!filmId || filmId.length > FILM_ID_MAX) {
       return res.status(400).json({ error: "film_required" });
+    }
+    // only real catalog titles (films + game/course) can be saved
+    if (!TITLE_IDS.has(filmId)) {
+      return res.status(400).json({ error: "unknown_film" });
     }
     // Race-safe idempotent add: a concurrent insert hitting the unique index
     // (UserId, filmId) is treated as success rather than an error.

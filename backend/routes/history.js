@@ -2,6 +2,7 @@ import { Router } from "express";
 import { WatchProgress } from "../models.js";
 import { requireAuth } from "../lib/auth.js";
 import { ah } from "../lib/asyncHandler.js";
+import { TITLE_IDS } from "../lib/curatorPrompt.js";
 
 const router = Router();
 router.use(requireAuth);
@@ -31,6 +32,9 @@ router.put(
     let frac = Number(req.body?.frac);
     if (!filmId || filmId.length > FILM_ID_MAX) {
       return res.status(400).json({ error: "film_required" });
+    }
+    if (!TITLE_IDS.has(filmId)) {
+      return res.status(400).json({ error: "unknown_film" });
     }
     if (!Number.isFinite(frac)) frac = 0.05;
     frac = Math.min(0.95, Math.max(0.04, frac));

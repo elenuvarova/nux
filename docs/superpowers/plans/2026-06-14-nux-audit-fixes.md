@@ -30,7 +30,7 @@
 - [x] B1 — signup 500 on non-string input — `routes/auth.js` — coerce `String(req.body?.email ?? "")` etc. before `.trim()`/`.toLowerCase()`. Test added.
 - [x] B2 — signup unique-email TOCTOU 500 — `routes/auth.js` — try/catch `UniqueConstraintError` → `409 email_taken` (kept fast-path findOne).
 - [x] B3 — case-sensitive email uniqueness — `models.js` — `set()` lowercases+trims on assignment, so every write normalizes and the `unique` index enforces case-insensitive uniqueness at the DB. (Functional `LOWER(email)` index unneeded once all writes are lowercased.)
-- [~] B4 — DEFERRED (low severity, self-pollution only). Validating against `FILM_IDS` would break adding the **game/course** to My List (backend catalog is films-only; `/title/neon-drift` offers "My List"). Correct fix = extend backend catalog to include extras. Existing ≤100-char guard stays.
+- [x] B4 — `filmId` now validated against the full catalog. `build-films.mjs` emits `EXTRA_IDS` (game/course); `curatorPrompt.js` exports `TITLE_IDS` = films ∪ extras; `/list` POST + `/history` PUT 400 on `unknown_film`. Curator still recommends `FILM_IDS` only. Tests: rejects junk, still accepts the game (`neon-drift`).
 - [x] B5 — REST status codes — `list.js` POST branches `201`(created)/`200`(no-op); `list.js` DELETE + `history.js` PUT → `204`. Tests updated.
 - [x] B6 — login lockout per-IP only — `lib/auth.js` `rateLimit` gained optional `keyFn`; `routes/auth.js` login adds a per-email bucket (10 / 15 min). Tested.
 - [x] B7 — tests — added `routes/history.test.js` (clamp + 204 + scope) and `lib/auth.test.js` (limiter: first-hit/increment/429/window-reset/keyFn-skip/fail-open).
