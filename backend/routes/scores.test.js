@@ -20,6 +20,12 @@ vi.mock("../lib/auth.js", async () => {
   };
 });
 
+// claim wraps fold+delete in a transaction; run the callback with a dummy tx so
+// the mocked model methods (which ignore the option) drive the assertions.
+vi.mock("../db.js", () => ({
+  sequelize: { transaction: async (cb) => cb({}) },
+}));
+
 vi.mock("../models.js", () => ({
   GameScore: {
     findAll: vi.fn().mockResolvedValue([]),
@@ -164,7 +170,7 @@ describe("POST /api/scores (registered)", () => {
     const res = await request(makeApp()).post("/api/scores").send({ game: "neon-drift", score: 150 });
     expect(res.status).toBe(200);
     expect(res.body.best).toBe(150);
-    expect(update).toHaveBeenCalledWith({ score: 150 });
+    expect(update).toHaveBeenCalledWith({ score: 150 }, {}); // no transaction on the plain POST path
   });
 
   it("ignores any name sent by a registered user", async () => {
@@ -213,10 +219,11 @@ describe("POST /api/scores/claim", () => {
     expect(GameScore.findOrCreate).toHaveBeenCalledWith(
       expect.objectContaining({ where: { game: "neon-drift", UserId: "u1" } })
     );
-    expect(update).toHaveBeenCalledWith({ score: 70 });
+    expect(update).toHaveBeenCalledWith({ score: 70 }, { transaction: {} });
     // only UserId:null rows matching the ids are deleted (no IDOR on accounts)
     expect(GameScore.destroy).toHaveBeenCalledWith({
       where: { game: "neon-drift", UserId: null, id: ["g1", "g2"] },
+      transaction: {},
     });
   });
 
@@ -237,5 +244,29 @@ describe("POST /api/scores/claim", () => {
     expect(res.body).toEqual({ ok: true, claimed: 0 });
     expect(GameScore.findOrCreate).not.toHaveBeenCalled();
     expect(GameScore.destroy).not.toHaveBeenCalled();
+  });
+
+  it("caps the number of ids at CLAIM_MAX (50)", async () => {
+    GameScore.findAll.mockResolvedValue([]);
+    const ids = Array.from({ length: 60 }, (_, i) => `g${i}`);
+    await request(makeApp()).post("/api/scores/claim").send({ game: "neon-drift", ids });
+    const queriedIds = GameScore.findAll.mock.calls[0][0].where.id;
+    expect(queriedIds).toHaveLength(50);
+  });
+
+  it("still deletes the guest rows even when the account score is already higher", async () => {
+    GameScore.findAll.mockResolvedValue([{ id: "g1", score: 20 }]);
+    const update = vi.fn();
+    GameScore.findOrCreate.mockResolvedValue([{ score: 100, update }, false]);
+    const res = await request(makeApp())
+      .post("/api/scores/claim")
+      .send({ game: "neon-drift", ids: ["g1"] });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ok: true, claimed: 1 });
+    expect(update).not.toHaveBeenCalled(); // 20 < 100, account best unchanged
+    expect(GameScore.destroy).toHaveBeenCalledWith({
+      where: { game: "neon-drift", UserId: null, id: ["g1"] },
+      transaction: {},
+    });
   });
 });

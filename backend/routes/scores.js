@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { Op, UniqueConstraintError } from "sequelize";
+import { sequelize } from "../db.js";
 import { GameScore, User } from "../models.js";
 import { currentUser, rateLimit, requireAuth } from "../lib/auth.js";
 import { ah } from "../lib/asyncHandler.js";
@@ -53,22 +54,24 @@ async function rankOf(game, score, createdAt) {
 // Race-safe against the unique index (mirrors list.js): a concurrent insert
 // hitting the unique (game, UserId) index is caught and retried as an update.
 // Returns the row instance, whether it was created, and the resulting best.
-async function upsertAccountBest(game, userId, score) {
+async function upsertAccountBest(game, userId, score, t) {
+  const opts = t ? { transaction: t } : {};
   let row, created;
   try {
     [row, created] = await GameScore.findOrCreate({
       where: { game, UserId: userId },
       defaults: { game, UserId: userId, score },
+      ...opts,
     });
   } catch (err) {
     if (err instanceof UniqueConstraintError) {
-      row = await GameScore.findOne({ where: { game, UserId: userId } });
+      row = await GameScore.findOne({ where: { game, UserId: userId }, ...opts });
       created = false;
     } else {
       throw err;
     }
   }
-  if (!created && score > row.score) await row.update({ score });
+  if (!created && score > row.score) await row.update({ score }, opts);
   const best = created ? score : Math.max(row.score, score);
   return { row, created, best };
 }
@@ -167,8 +170,15 @@ router.post(
     if (guestRows.length === 0) return res.json({ ok: true, claimed: 0 });
 
     const bestGuest = Math.max(...guestRows.map((r) => r.score));
-    await upsertAccountBest(game, req.user.id, bestGuest);
-    await GameScore.destroy({ where: { game, UserId: null, id: guestRows.map((r) => r.id) } });
+    // fold + delete must commit together: a crash between them could either
+    // re-introduce the duplicate or drop the run, so wrap both in a transaction.
+    await sequelize.transaction(async (t) => {
+      await upsertAccountBest(game, req.user.id, bestGuest, t);
+      await GameScore.destroy({
+        where: { game, UserId: null, id: guestRows.map((r) => r.id) },
+        transaction: t,
+      });
+    });
     return res.json({ ok: true, claimed: guestRows.length });
   })
 );
