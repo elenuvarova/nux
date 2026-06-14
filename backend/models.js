@@ -8,7 +8,17 @@ export const User = sequelize.define(
   "User",
   {
     id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    email: { type: DataTypes.STRING, allowNull: false, unique: true },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      // normalize at the model layer so the case-insensitive-uniqueness invariant
+      // lives in ONE place, not in every call site remembering to .toLowerCase().
+      // With every write lowercased, the unique index enforces it at the DB too.
+      set(value) {
+        this.setDataValue("email", typeof value === "string" ? value.trim().toLowerCase() : value);
+      },
+    },
     name: { type: DataTypes.STRING, allowNull: false },
     hashedPassword: { type: DataTypes.STRING, allowNull: false },
     avatarUrl: { type: DataTypes.STRING, allowNull: true },

@@ -62,6 +62,15 @@ describe("POST /api/auth/signup", () => {
     expect(r.body.error).toBe("weak_password");
   });
 
+  it("coerces non-string fields instead of 500ing", async () => {
+    User.findOne.mockResolvedValue(null);
+    User.create.mockResolvedValue({ id: "u1", email: "a@b.co", name: "123", avatarUrl: null });
+    const r = await request(makeApp())
+      .post("/api/auth/signup")
+      .send({ email: "a@b.co", name: 123, password: "password123" });
+    expect(r.status).toBe(201); // String(123) → "123"; no TypeError on .trim() → no 500
+  });
+
   it("409 when the email is already registered", async () => {
     User.findOne.mockResolvedValue({ id: "u1" });
     const r = await request(makeApp())

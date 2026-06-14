@@ -33,12 +33,15 @@ router.post(
     }
     // Race-safe idempotent add: a concurrent insert hitting the unique index
     // (UserId, filmId) is treated as success rather than an error.
+    let created = true;
     try {
       await ListItem.create({ UserId: req.user.id, filmId });
     } catch (err) {
-      if (!(err instanceof UniqueConstraintError)) throw err;
+      // already in the list (unique index) → idempotent no-op, not a creation
+      if (err instanceof UniqueConstraintError) created = false;
+      else throw err;
     }
-    res.status(201).json({ ok: true });
+    res.status(created ? 201 : 200).json({ ok: true });
   })
 );
 
@@ -51,7 +54,7 @@ router.delete(
       return res.status(400).json({ error: "film_required" });
     }
     await ListItem.destroy({ where: { UserId: req.user.id, filmId } });
-    res.json({ ok: true });
+    res.status(204).end(); // idempotent delete, no body
   })
 );
 

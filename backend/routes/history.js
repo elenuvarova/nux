@@ -38,7 +38,7 @@ router.put(
     // Atomic upsert on the unique index (UserId, filmId): always bumps
     // updatedAt, with no read-modify-write race between two concurrent saves.
     await WatchProgress.upsert({ UserId: req.user.id, filmId, frac });
-    res.json({ ok: true });
+    res.status(204).end(); // idempotent upsert, no body
   })
 );
 

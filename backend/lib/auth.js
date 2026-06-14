@@ -77,9 +77,13 @@ export function publicUser(user) {
 // waiting for the next Coolify deploy. Keyed on req.ip: server.js sets
 // `trust proxy`, so this is the real client IP from nginx's X-Forwarded-For,
 // not a spoofable header. Expired rows are swept by sweepExpired() in server.js.
-export function rateLimit(bucket, max, windowMs) {
+export function rateLimit(bucket, max, windowMs, keyFn) {
   return async (req, res, next) => {
-    const key = `${bucket}:${req.ip || "local"}`;
+    // default key is the client IP; an optional keyFn lets a bucket key on
+    // something else (e.g. the target email) for per-account throttling
+    const suffix = keyFn ? keyFn(req) : req.ip || "local";
+    if (!suffix) return next(); // nothing to key on yet (e.g. no email in body)
+    const key = `${bucket}:${suffix}`;
     const now = Date.now();
     try {
       const [row, created] = await RateLimit.findOrCreate({

@@ -80,7 +80,7 @@ describe("DELETE /api/list/:filmId", () => {
 
   it("destroys only the caller's row (no IDOR)", async () => {
     const res = await request(makeApp()).delete("/api/list/naked");
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(204);
     expect(ListItem.destroy).toHaveBeenCalledWith({
       where: { UserId: "user-1", filmId: "naked" },
     });

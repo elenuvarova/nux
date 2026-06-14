@@ -1,6 +1,6 @@
 import { Router } from "express";
 import crypto from "crypto";
-import { Op } from "sequelize";
+import { Op, UniqueConstraintError } from "sequelize";
 import { sequelize } from "../db.js";
 import { User, Session, PasswordReset } from "../models.js";
 import {
@@ -47,7 +47,12 @@ router.post(
   "/signup",
   rateLimit("signup", 5, 60 * 60 * 1000),
   ah(async (req, res) => {
-    const { email = "", name = "", password = "" } = req.body || {};
+    // coerce to strings FIRST: a non-string email/name (e.g. {"email":123})
+    // would otherwise throw on .trim()/.toLowerCase() → an unhelpful 500 instead
+    // of a clean 400 validation error
+    const email = String(req.body?.email ?? "");
+    const name = String(req.body?.name ?? "");
+    const password = String(req.body?.password ?? "");
     const cleanName = name.trim();
     if (!emailRe.test(email)) return res.status(400).json({ error: "invalid_email" });
     if (!cleanName) return res.status(400).json({ error: "name_required" });
@@ -59,11 +64,19 @@ router.post(
     // course variant B (UX): tell the user the email is taken
     if (existing) return res.status(409).json({ error: "email_taken" });
 
-    const user = await User.create({
-      email: email.toLowerCase(),
-      name: cleanName,
-      hashedPassword: await hashPassword(password),
-    });
+    let user;
+    try {
+      user = await User.create({
+        email: email.toLowerCase(),
+        name: cleanName,
+        hashedPassword: await hashPassword(password),
+      });
+    } catch (err) {
+      // a concurrent signup won the unique-email index between the findOne above
+      // and here — surface the intended 409, not an unhandled 500
+      if (err instanceof UniqueConstraintError) return res.status(409).json({ error: "email_taken" });
+      throw err;
+    }
     await createSession(res, user, req.headers["user-agent"]);
     res.status(201).json({ user: publicUser(user) });
   })
@@ -73,6 +86,9 @@ router.post(
 router.post(
   "/login",
   rateLimit("login", 5, 60 * 1000),
+  // second bucket keyed on the target email: throttles credential-stuffing that
+  // rotates source IPs (the per-IP bucket alone can't see a distributed attack)
+  rateLimit("login_acct", 10, 15 * 60 * 1000, (req) => String(req.body?.email || "").trim().toLowerCase() || null),
   ah(async (req, res) => {
     const { email = "", password = "" } = req.body || {};
     // Over-long password can't be valid (bcrypt caps at 72 bytes); reject

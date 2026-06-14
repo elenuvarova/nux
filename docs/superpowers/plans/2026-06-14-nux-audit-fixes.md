@@ -27,14 +27,14 @@
 **Files:** `routes/auth.js`, `routes/list.js`, `routes/history.js`, `models.js`, `lib/auth.js`, `routes/history.test.js` (new), `lib/auth.test.js`, `nginx.conf`
 **Verify:** `cd backend && npm test`. Commit at end.
 
-- [ ] B1 — signup 500 on non-string input — `routes/auth.js:50` — coerce `String(req.body?.email||'')` / `String(req.body?.name||'')` before `.toLowerCase()`/`.trim()`.
-- [ ] B2 — signup unique-email TOCTOU 500 — `routes/auth.js:62` — try/catch `UniqueConstraintError` → `409 email_taken`.
-- [ ] B3 — case-sensitive email uniqueness on PG — `models.js:11` — model `set()` lowercases on assignment; functional unique index `LOWER(email)` (or document citext).
-- [ ] B4 — unvalidated `filmId` writes — `routes/list.js:30`, `routes/history.js:32` — validate against `FILM_IDS` set → 400 on miss.
-- [ ] B5 — REST status codes — `list.js:36` (201→200 on idempotent no-op), `history.js:42` + `list.js:54` (→ 204).
-- [ ] B6 — login lockout per-IP only — `lib/auth.js:80-104` + `routes/auth.js:75` — add per-email limiter bucket.
-- [ ] B7 — missing tests — add `routes/history.test.js` (clamp + upsert) + rate-limiter unit test (window rollover, 429 boundary).
-- [ ] B8 — CSP hardening — `nginx.conf` — append `object-src 'none'; base-uri 'self'; form-action 'self'`.
+- [x] B1 — signup 500 on non-string input — `routes/auth.js` — coerce `String(req.body?.email ?? "")` etc. before `.trim()`/`.toLowerCase()`. Test added.
+- [x] B2 — signup unique-email TOCTOU 500 — `routes/auth.js` — try/catch `UniqueConstraintError` → `409 email_taken` (kept fast-path findOne).
+- [x] B3 — case-sensitive email uniqueness — `models.js` — `set()` lowercases+trims on assignment, so every write normalizes and the `unique` index enforces case-insensitive uniqueness at the DB. (Functional `LOWER(email)` index unneeded once all writes are lowercased.)
+- [~] B4 — DEFERRED (low severity, self-pollution only). Validating against `FILM_IDS` would break adding the **game/course** to My List (backend catalog is films-only; `/title/neon-drift` offers "My List"). Correct fix = extend backend catalog to include extras. Existing ≤100-char guard stays.
+- [x] B5 — REST status codes — `list.js` POST branches `201`(created)/`200`(no-op); `list.js` DELETE + `history.js` PUT → `204`. Tests updated.
+- [x] B6 — login lockout per-IP only — `lib/auth.js` `rateLimit` gained optional `keyFn`; `routes/auth.js` login adds a per-email bucket (10 / 15 min). Tested.
+- [x] B7 — tests — added `routes/history.test.js` (clamp + 204 + scope) and `lib/auth.test.js` (limiter: first-hit/increment/429/window-reset/keyFn-skip/fail-open).
+- [x] B8 — CSP hardening — `nginx.conf` (both blocks) — appended `object-src 'none'; base-uri 'self'; form-action 'self'`.
 
 ## Cluster C — Accessibility
 **Files:** `App.jsx`, `pages/Collection.jsx`, `pages/Downloads.jsx`, `components/CuratorOverlay.css`, `components/Hero.css`
