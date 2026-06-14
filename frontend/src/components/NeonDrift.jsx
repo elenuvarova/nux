@@ -89,7 +89,7 @@ export default function NeonDrift({ onClose }) {
 
   const loadBoard = useCallback(async () => {
     try {
-      const data = await api.get(`/api/scores?game=${GAME}`);
+      const data = await api.get(`/scores?game=${GAME}`);
       setBoard(data);
     } catch {
       /* board just won't show; the game is unaffected */
@@ -102,7 +102,7 @@ export default function NeonDrift({ onClose }) {
     setSubmitState('submitting');
     try {
       const body = user ? { game: GAME, score } : { game: GAME, score, name };
-      const res = await api.post('/api/scores', body);
+      const res = await api.post('/scores', body);
       setMyRank(res.rank);
       if (!user) {
         try {

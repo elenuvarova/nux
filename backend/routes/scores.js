@@ -125,11 +125,14 @@ router.post(
       return res.status(created ? 201 : 200).json({ ok: true, rank, best });
     }
 
-    // guest: a handle is required
+    // guest: a handle is required. We don't dedup guests (no identity), but we
+    // can tell them where THIS run placed — compute the rank of the row we just
+    // inserted, using the same tiebreak as the board.
     const name = cleanName(req.body?.name);
     if (!name) return res.status(400).json({ error: "name_required" });
-    await GameScore.create({ game, UserId: null, name, score });
-    return res.status(201).json({ ok: true, rank: null, best: score });
+    const row = await GameScore.create({ game, UserId: null, name, score });
+    const rank = await rankOf(game, score, row.createdAt);
+    return res.status(201).json({ ok: true, rank, best: score });
   })
 );
 

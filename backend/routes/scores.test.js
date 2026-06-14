@@ -99,7 +99,7 @@ describe("POST /api/scores (guest)", () => {
       .post("/api/scores")
       .send({ game: "neon-drift", score: 50, name: "  kai  " });
     expect(res.status).toBe(201);
-    expect(res.body).toEqual({ ok: true, rank: null, best: 50 });
+    expect(res.body).toEqual({ ok: true, rank: 1, best: 50 });
     expect(GameScore.create).toHaveBeenCalledWith({
       game: "neon-drift",
       UserId: null,
