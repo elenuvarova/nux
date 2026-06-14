@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import '@fontsource-variable/fraunces/wght.css';
-import '@fontsource-variable/inter/wght.css';
-import '@fontsource-variable/newsreader/wght.css';
+import './styles/fonts.css';
 import './styles/tokens.css';
 import './styles/global.css';
 import App from './App.jsx';

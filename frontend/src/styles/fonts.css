@@ -1,0 +1,39 @@
+/* Self-hosted SUBSET fonts — replaces the @fontsource-variable full imports.
+   Eager font payload 138KB → 73KB (−47%) on the render-blocking path:
+   - Inter stays VARIABLE (the UI uses 400/500/600/700).
+   - Fraunces is instanced to its only weight, 600 (display/headings/wordmark).
+   - Newsreader is instanced to its only weight, 400 (editorial body).
+   Each is subset to the glyphs the app actually renders (Basic Latin + Latin-1
+   accents + the punctuation/arrows/symbols in use — verified by scanning source).
+   font-weight: 100 900 on the static instances lets them satisfy any weight
+   request (always rendering their single instance) so a stray weight can't tofu.
+
+   Regenerate after a glyph/weight change (source = @fontsource-variable latin files):
+     fonttools varLib.instancer <fraunces-latin>.woff2 wght=600 -o /tmp/f.woff2
+     pyftsubset /tmp/f.woff2 --unicodes="U+0020-007E,U+00A0-00FF,U+2010-2027,U+2190-2193,U+2605,U+2715,U+2726" \
+       --layout-features='*' --flavor=woff2 --output-file=src/fonts/fraunces-subset.woff2
+   (Inter: skip the instancer step — keep it variable.) */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../fonts/inter-subset.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Fraunces Variable';
+  font-style: normal;
+  font-weight: 100 900; /* static 600 instance — matches any requested weight */
+  font-display: swap;
+  src: url('../fonts/fraunces-subset.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Newsreader Variable';
+  font-style: normal;
+  font-weight: 100 900; /* static 400 instance */
+  font-display: swap;
+  src: url('../fonts/newsreader-subset.woff2') format('woff2');
+}
