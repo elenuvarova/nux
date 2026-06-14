@@ -16,12 +16,12 @@
 **Files:** `Hero.jsx`, `pages/Browse.jsx`, `lib/useMyList.js`, `components/CuratorOverlay.jsx`, `lib/useCurator.jsx`, `lib/useTilt.js`, `lib/useAuth.jsx`, `lib/useCollections.js`, `main.jsx`
 **Verify:** `cd frontend && npm test` + Playwright spot-check. Commit at end.
 
-- [ ] A1 — Hero carousel permanently freezes after keyboard focus — `Hero.jsx:47` — add `onBlurCapture` resetting `hovered=false` when focus leaves the `<section>` (`!e.currentTarget.contains(e.relatedTarget)`).
-- [ ] A2 — Browse recent-search crash on non-array localStorage — `Browse.jsx:47-60` — wrap parse in `Array.isArray(v) ? v : []` (mirror `useMyList.readGuest`).
-- [ ] A3 — My List failed-save shows success+error toast at once — `useMyList.js:58-76` — fire success toast for guests immediately; for authed users only in the write `.then()` (error stays in `.catch`).
-- [ ] A4 — Curator chat messages keyed by index — `CuratorOverlay.jsx:191,195` + `useCurator.jsx` — assign stable `id` at message creation, key on it.
-- [ ] A5 — useTilt rAF not cancelled on unmount — `useTilt.js` — add `useEffect(() => () => cancelAnimationFrame(raf.current), [])`.
-- [ ] A6 — Duplicate API fetches on load (live: each endpoint 2×) — investigate `useAuth.jsx` / `useCollections.js` / `main.jsx` (StrictMode in prod build? double provider mount?) — dedupe so each fires once.
+- [x] A1 — Hero carousel permanently freezes after keyboard focus — `Hero.jsx:47` — added `onBlurCapture` resetting `hovered=false` when focus leaves the `<section>`.
+- [x] A2 — Browse recent-search crash on non-array localStorage — `Browse.jsx:47-53` — `Array.isArray(v) ? v : []` guard.
+- [x] A3 — My List failed-save shows success+error toast at once — `useMyList.js` — success toast now fires only in the authed write `.then()` (immediate for guests); error stays in `.catch`.
+- [x] A4 — Curator chat messages keyed by index — `useCurator.jsx` (module `msgSeq` → `id` on every message) + `CuratorOverlay.jsx` (key on `m.id`).
+- [x] A5 — useTilt rAF not cancelled on unmount — `useTilt.js` — added `useEffect(() => () => cancelAnimationFrame(raf.current), [])`.
+- [x] A6 — Duplicate API fetches — RESOLVED, no code change. HEAD is clean: local prod-preview fires each endpoint **once** (single callers, traced). The 2×/4× seen live was the **stale deployed artifact** (vendor 352KB vs HEAD 179KB). Fix = redeploy from `main`. (Did NOT remove StrictMode — it's inert in prod.)
 
 ## Cluster B — Backend + security
 **Files:** `routes/auth.js`, `routes/list.js`, `routes/history.js`, `models.js`, `lib/auth.js`, `routes/history.test.js` (new), `lib/auth.test.js`, `nginx.conf`

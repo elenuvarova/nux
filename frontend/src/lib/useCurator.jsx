@@ -9,6 +9,7 @@ const CuratorContext = createContext(null);
 // shows a previous user's chat.
 let authListener = null;
 let configSeq = 0; // guards against a stale history fetch overwriting a newer account
+let msgSeq = 0; // stable per-message id so React keys survive retry/clear without a flash
 export function configureCurator(user) {
   authListener?.(user);
 }
@@ -51,7 +52,7 @@ export function CuratorProvider({ children }) {
           .then((r) => {
             // a newer configure() ran while we awaited — drop this stale response
             if (token !== configSeq) return;
-            setMessages(r.messages || []);
+            setMessages((r.messages || []).map((m) => ({ ...m, id: ++msgSeq })));
           })
           .catch(() => {});
       } else {
@@ -88,7 +89,7 @@ export function CuratorProvider({ children }) {
     if (!content || loadingRef.current) return;
     setError(null);
     setRetryText(null);
-    const userMsg = { role: "user", content };
+    const userMsg = { id: ++msgSeq, role: "user", content };
     // history sent to the API: prior turns + this one, role+content only
     const history = [...messagesRef.current, userMsg].map((m) => ({
       role: m.role,
@@ -102,7 +103,7 @@ export function CuratorProvider({ children }) {
       const { reply, films } = await api.post("/curator", { messages: history });
       // a New/sign-out happened mid-request — drop this now-orphaned reply
       if (gen !== genRef.current) return;
-      setMessages((prev) => [...prev, { role: "assistant", content: reply, films: films || [] }]);
+      setMessages((prev) => [...prev, { id: ++msgSeq, role: "assistant", content: reply, films: films || [] }]);
     } catch (e) {
       if (gen !== genRef.current) return;
       setError(ERROR_BY_CODE[e?.code] || ERROR_FALLBACK);

@@ -45,6 +45,12 @@ export default function Hero() {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocusCapture={() => setHovered(true)}
+      // pair for onFocusCapture: when focus leaves the hero entirely, clear the
+      // pause latch so a keyboard user tabbing through doesn't freeze the
+      // carousel for the rest of the session
+      onBlurCapture={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setHovered(false);
+      }}
     >
       <div className="hero-art" key={film.id} aria-live="off">
         <img

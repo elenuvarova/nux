@@ -46,7 +46,10 @@ export default function Browse() {
   const [focused, setFocused] = useState(false);
   const [recent, setRecent] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('nux-recent-search') || '[]');
+      // guard against non-array JSON (older builds / tampering) so remember()'s
+      // .filter() can't throw — mirrors useMyList.readGuest
+      const v = JSON.parse(localStorage.getItem('nux-recent-search') || '[]');
+      return Array.isArray(v) ? v : [];
     } catch {
       return [];
     }

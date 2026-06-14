@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 
 /* Pointer-driven 3D tilt + a warm sheen that follows the cursor.
    Returns props to spread on the element that should tilt. Pointer-only
@@ -6,6 +6,10 @@ import { useRef, useCallback } from 'react';
 export function useTilt({ max = 7 } = {}) {
   const ref = useRef(null);
   const raf = useRef(0);
+
+  // cancel any queued frame if the element unmounts mid-tilt (e.g. a fast
+  // filter change in Browse) so the callback never runs against a detached node
+  useEffect(() => () => cancelAnimationFrame(raf.current), []);
 
   const onPointerMove = useCallback(
     (e) => {

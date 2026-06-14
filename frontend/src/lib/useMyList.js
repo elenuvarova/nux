@@ -60,19 +60,25 @@ function applyToggle(id, title) {
   const prev = ids;
   const next = adding ? [id, ...ids] : ids.filter((x) => x !== id);
   setIds(next);
-  if (authed) {
-    (adding ? api.post('/list', { filmId: id }) : api.del(`/list/${id}`)).catch(() => {
-      // the write failed — undo the optimistic change and surface it rather
-      // than letting the save silently not persist
-      setIds(prev);
-      toast(adding ? 'Couldn’t save to My List — try again' : 'Couldn’t update My List — try again');
+  const successToast = () =>
+    toast(adding ? 'Added to My List' : 'Removed from My List', {
+      action: { label: 'Undo', onClick: () => applyToggle(id, title) },
     });
+  if (authed) {
+    (adding ? api.post('/list', { filmId: id }) : api.del(`/list/${id}`))
+      // only confirm success once the write actually persisted — otherwise a
+      // failed save showed a success toast AND an error toast at the same time
+      .then(successToast)
+      .catch(() => {
+        // the write failed — undo the optimistic change and surface it rather
+        // than letting the save silently not persist
+        setIds(prev);
+        toast(adding ? 'Couldn’t save to My List — try again' : 'Couldn’t update My List — try again');
+      });
   } else {
     localStorage.setItem(KEY, JSON.stringify(next));
+    successToast(); // guests have no server round-trip — the optimistic state is the truth
   }
-  toast(adding ? 'Added to My List' : 'Removed from My List', {
-    action: { label: 'Undo', onClick: () => applyToggle(id, title) },
-  });
 }
 
 export function useMyList() {

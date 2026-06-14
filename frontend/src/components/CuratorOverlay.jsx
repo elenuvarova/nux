@@ -188,11 +188,11 @@ export default function CuratorOverlay() {
 
           {messages.map((m, i) =>
             m.role === "user" ? (
-              <p key={i} className="curator-user">
+              <p key={m.id} className="curator-user">
                 {m.content}
               </p>
             ) : (
-              <CuratorReply key={i} message={m} animate={i === messages.length - 1} />
+              <CuratorReply key={m.id} message={m} animate={i === messages.length - 1} />
             )
           )}
 
