@@ -332,7 +332,11 @@ export default function NeonDrift({ onClose }) {
     };
   }, []);
 
-  const stageTap = () => {
+  const stageTap = (e) => {
+    // tapping the stage (re)launches a run — but NOT when the tap lands on the
+    // leaderboard controls, or their pointerdown would relaunch the game and
+    // unmount the submit form before it can fire.
+    if (e.target.closest('.ndg-submit, .ndg-board')) return;
     if (phase !== 'playing') start();
   };
 
