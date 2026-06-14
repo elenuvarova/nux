@@ -11,6 +11,12 @@ vi.mock("../lib/auth.js", async () => {
     ...actual,
     currentUser: vi.fn(async () => null),
     rateLimit: () => (req, _res, next) => next(),
+    // /claim is auth-gated; stub requireAuth to a fixed user (the 401 path is
+    // the shared middleware, covered in auth.test.js).
+    requireAuth: (req, _res, next) => {
+      req.user = { id: "u1", name: "Elena Uvarova" };
+      next();
+    },
   };
 });
 
@@ -20,6 +26,7 @@ vi.mock("../models.js", () => ({
     findOne: vi.fn().mockResolvedValue(null),
     findOrCreate: vi.fn(),
     create: vi.fn().mockResolvedValue({}),
+    destroy: vi.fn().mockResolvedValue(0),
     count: vi.fn().mockResolvedValue(0),
   },
   User: {}, // referenced only as an include target; the mocked findAll ignores it
@@ -45,6 +52,7 @@ beforeEach(() => {
   GameScore.findOne.mockResolvedValue(null);
   GameScore.count.mockResolvedValue(0);
   GameScore.create.mockResolvedValue({});
+  GameScore.destroy.mockResolvedValue(0);
 });
 
 describe("GET /api/scores", () => {
@@ -94,12 +102,13 @@ describe("POST /api/scores (guest)", () => {
     expect(GameScore.create).not.toHaveBeenCalled();
   });
 
-  it("inserts a guest row with the trimmed handle and UserId null", async () => {
+  it("inserts a guest row with the trimmed handle and UserId null, returning its id", async () => {
+    GameScore.create.mockResolvedValue({ id: "g9" });
     const res = await request(makeApp())
       .post("/api/scores")
       .send({ game: "neon-drift", score: 50, name: "  kai  " });
     expect(res.status).toBe(201);
-    expect(res.body).toEqual({ ok: true, rank: 1, best: 50 });
+    expect(res.body).toEqual({ ok: true, id: "g9", rank: 1, best: 50 });
     expect(GameScore.create).toHaveBeenCalledWith({
       game: "neon-drift",
       UserId: null,
@@ -184,5 +193,49 @@ describe("guest name cleaning", () => {
       .send({ game: "neon-drift", score: 5, name: " " });
     expect(res.status).toBe(400);
     expect(GameScore.create).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/scores/claim", () => {
+  it("folds the best guest run into the account and deletes only the guest rows", async () => {
+    GameScore.findAll.mockResolvedValue([
+      { id: "g1", score: 30 },
+      { id: "g2", score: 70 },
+    ]);
+    const update = vi.fn().mockResolvedValue({});
+    GameScore.findOrCreate.mockResolvedValue([{ score: 50, update }, false]);
+    const res = await request(makeApp())
+      .post("/api/scores/claim")
+      .send({ game: "neon-drift", ids: ["g1", "g2"] });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ok: true, claimed: 2 });
+    // best guest (70) folded into the caller's own account row via upsert-max
+    expect(GameScore.findOrCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { game: "neon-drift", UserId: "u1" } })
+    );
+    expect(update).toHaveBeenCalledWith({ score: 70 });
+    // only UserId:null rows matching the ids are deleted (no IDOR on accounts)
+    expect(GameScore.destroy).toHaveBeenCalledWith({
+      where: { game: "neon-drift", UserId: null, id: ["g1", "g2"] },
+    });
+  });
+
+  it("400 when no ids are given", async () => {
+    const res = await request(makeApp())
+      .post("/api/scores/claim")
+      .send({ game: "neon-drift", ids: [] });
+    expect(res.status).toBe(400);
+    expect(GameScore.destroy).not.toHaveBeenCalled();
+  });
+
+  it("no-ops (claimed 0) when none of the ids are guest rows", async () => {
+    GameScore.findAll.mockResolvedValue([]);
+    const res = await request(makeApp())
+      .post("/api/scores/claim")
+      .send({ game: "neon-drift", ids: ["nope"] });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ok: true, claimed: 0 });
+    expect(GameScore.findOrCreate).not.toHaveBeenCalled();
+    expect(GameScore.destroy).not.toHaveBeenCalled();
   });
 });
