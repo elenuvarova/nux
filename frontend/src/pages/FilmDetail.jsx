@@ -1,9 +1,9 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import Rail, { PosterCard } from '../components/Rail.jsx';
 import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useMyList } from '../lib/useMyList.js';
-import { byId, FILMS } from '../data/catalog.js';
+import { byId, FILMS, anyTitleById } from '../data/catalog.js';
 import './FilmDetail.css';
 
 /* Serialize JSON-LD safely for embedding in a <script> tag: escape `<` (so a
@@ -47,6 +47,8 @@ export default function FilmDetail() {
   usePageTitle(film?.title, film?.synopsis, { image: film?.backdrop || film?.poster });
 
   if (!film) {
+    // a non-film title (game / course) deep-linked to /film — its template is /title
+    if (anyTitleById(id)) return <Navigate to={`/title/${id}`} replace />;
     return <NotFound message="We couldn't find that title in the catalog." />;
   }
 

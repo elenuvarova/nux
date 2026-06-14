@@ -38,16 +38,28 @@ export async function configureMyList(user) {
   const token = ++configSeq;
   authed = !!user;
   if (user) {
+    // merge any guest-saved titles into the account so signing in never silently
+    // loses them (the unique index dedupes server-side), then load the merged list
+    const guest = readGuest();
+    if (guest.length) {
+      await Promise.allSettled(guest.map((id) => api.post('/list', { filmId: id })));
+    }
     let next;
+    let ok = true;
     try {
       const r = await api.get('/list');
       next = Array.isArray(r.list) ? r.list : [];
     } catch {
       next = [];
+      ok = false;
     }
     // a newer configure() ran while we awaited — drop this stale response
     if (token !== configSeq) return;
     ids = next;
+    if (guest.length && ok) {
+      localStorage.removeItem(KEY); // they live on the server now
+      toast('Saved titles synced to your account');
+    }
   } else {
     ids = readGuest();
   }

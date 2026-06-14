@@ -67,7 +67,11 @@
 - [x] E2 (lite) — dropped the game's dead "Watch trailer" link (`TitleDetail.jsx`) — the only true dead-end. Watch "Back to film page" copy is correct now that only films reach the player.
 - [x] E3 — dead buttons — Settings Privacy/Terms → `/p/*` links, Manage devices → "Demo"; Profile Help & Support → `/p/help`, Notifications + Subscription → "Demo".
 - [x] E7 (lite) — genre eyebrow "Collection" → "Genre" (taxonomy). Empty genres already render a graceful "Coming soon" state.
-- [~] E2 (full), E4, E5 (static-rail see-all; note: the personal rail DOES link `/genre/:id`), E6, E8 — DEFERRED (Medium polish; app works without them): full `/film`·`/title` template merge + related rail, Curator header sub-line, static-rail see-all destinations, Hero trailer tag, guest→account merge toast.
+- [x] E2 (full) — `/film` and `/title` now unify: a non-film on `/film` redirects to `/title`, a film on `/title` redirects to `/film` (canonical per type, no divergence). TitleDetail gained a "More to explore" rail so game/course pages aren't terminal.
+- [x] E4 — Curator header now carries a persistent tagline ("Describe a mood — I'll pull real picks from the catalogue") so its purpose is clear beyond the empty state.
+- [x] E5 — `Rail` only renders "See all" when it has a real destination; the finite editorial rails (shown in full) + Continue Watching no longer link misleadingly to the generic grid. Collections/personal/genre rails keep theirs.
+- [x] E8 — signing in now MERGES a guest's saved titles into the account (dedupe server-side) instead of silently dropping them, with a "Saved titles synced to your account" toast.
+- [~] E6 — Hero "Trailer" tag SKIPPED: the player facade already discloses "Play trailer"; a tag would clutter the cinematic hero for marginal gain (audit itself called the current behavior "defensible").
 
 ## Cluster F — Performance: preloads
 **Files:** `frontend/index.html`, `pages/FilmDetail.jsx`, `lib/usePageTitle.js`

@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useMyList } from '../lib/useMyList.js';
-import { anyTitleById } from '../data/catalog.js';
+import { anyTitleById, byId, FILMS } from '../data/catalog.js';
+import Rail, { PosterCard } from '../components/Rail.jsx';
 import NeonDrift from '../components/NeonDrift.jsx';
 import './FilmDetail.css';
 import './TitleDetail.css';
@@ -24,6 +25,8 @@ export default function TitleDetail() {
   const [playing, setPlaying] = useState(false);
   usePageTitle(title?.title, title?.synopsis);
 
+  // a film's canonical home is /film/:id — redirect so the two routes never diverge
+  if (byId(id)) return <Navigate to={`/film/${id}`} replace />;
   if (!title) return <NotFound message="We couldn't find that title in the catalog." />;
   const saved = has(title.id);
   const isCourse = title.type === 'COURSE';
@@ -96,6 +99,14 @@ export default function TitleDetail() {
           </section>
         )}
       </div>
+
+      <section className="td-more">
+        <Rail title="More to explore">
+          {FILMS.slice(0, 8).map((f) => (
+            <PosterCard key={f.id} filmId={f.id} />
+          ))}
+        </Rail>
+      </section>
     </main>
     {isGame && playing && <NeonDrift onClose={() => setPlaying(false)} />}
     </>

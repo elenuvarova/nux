@@ -91,17 +91,21 @@ export function ContinueCard({ item }) {
   );
 }
 
-export default function Rail({ title, wide = false, seeAllTo = '/browse', children }) {
+export default function Rail({ title, wide = false, seeAllTo = null, children }) {
   return (
     <section className="rail">
       <header className="rail-header">
         <h2 className="headline">{title}</h2>
-        <Link to={seeAllTo} className="rail-seeall">
-          See all
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-            <path d="M4.5 2.5 8 6l-3.5 3.5" />
-          </svg>
-        </Link>
+        {/* only rails with a real destination show "See all" — the finite editorial
+            rails are shown in full, so a link to the generic grid would mislead */}
+        {seeAllTo && (
+          <Link to={seeAllTo} className="rail-seeall">
+            See all
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+              <path d="M4.5 2.5 8 6l-3.5 3.5" />
+            </svg>
+          </Link>
+        )}
       </header>
       <div className={wide ? 'rail-scroll rail-scroll--wide' : 'rail-scroll'} role="group" aria-label={title}>
         {children}
