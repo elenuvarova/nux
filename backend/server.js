@@ -11,6 +11,7 @@ import listRoutes from "./routes/list.js";
 import historyRoutes from "./routes/history.js";
 import curatorRoutes from "./routes/curator.js";
 import collectionsRoutes from "./routes/collections.js";
+import scoresRoutes from "./routes/scores.js";
 import { ah } from "./lib/asyncHandler.js";
 import { csrfOriginCheck } from "./lib/security.js";
 import { readCache, isStale, kickRegeneration } from "./lib/collectionsCache.js";
@@ -60,6 +61,7 @@ app.use("/api/list", listRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/curator", curatorRoutes);
 app.use("/api/collections", collectionsRoutes);
+app.use("/api/scores", scoresRoutes);
 
 // Global error handler — must be registered AFTER all routes (so it catches
 // errors funnelled through next() by the ah() wrapper) and BEFORE the prod
@@ -103,6 +105,8 @@ async function ensureIndexes() {
     ["sessions", ["UserId"], "sessions_userid"],
     ["sessions", ["expiresAt"], "sessions_expiresat"],
     ["curator_messages", ["UserId", "createdAt"], "curator_messages_userid_createdat"],
+    ["game_scores", ["game", "score"], "game_scores_game_score"],
+    ["game_scores", ["game", "UserId"], "game_scores_game_userid"],
   ];
   for (const [table, fields, name] of wanted) {
     try {
