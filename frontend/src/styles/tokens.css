@@ -154,6 +154,9 @@
   /* fixed nav height — page top-padding anchors to this, not a magic 64.
      Drops to 56px under 768px (see media query at end of file). */
   --nav-h: 64px;
+  /* space the floating mobile tab bar needs cleared below content. One source
+     for body padding, the Curator FAB and toast offsets (was 84/84/96 by hand). */
+  --tabbar-clearance: 84px;
 
   /* repeated content measures (max-width of reading/list columns) */
   --measure-sm: 640px; /* settings / lessons / details column */
@@ -186,6 +189,14 @@
   --type-display-m: 600 28px/1.12 var(--font-display);
   --type-headline: 600 24px/1.2 var(--font-display);
   --track-display: -0.015em;
+
+  /* Brand wordmark — Fraunces with its OWN positive tracking (distinct from the
+     negative display track). md for chrome/auth, lg for the welcome hero, sm for
+     the footer — so the logo is never hand-set four different ways again. */
+  --type-wordmark: 600 24px/1 var(--font-display);
+  --type-wordmark-lg: 600 28px/1 var(--font-display);
+  --type-wordmark-sm: 600 18px/1 var(--font-display);
+  --track-wordmark: 0.02em;
 
   /* Functional ramp (Inter) */
   --type-page-title: 600 34px/1.18 var(--font-ui);

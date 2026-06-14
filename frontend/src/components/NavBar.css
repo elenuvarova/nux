@@ -29,8 +29,8 @@
 }
 
 .nav-wordmark {
-  font: 600 24px/1 var(--font-display);
-  letter-spacing: 0.02em;
+  font: var(--type-wordmark);
+  letter-spacing: var(--track-wordmark);
   color: var(--text-primary);
 }
 

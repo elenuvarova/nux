@@ -38,8 +38,8 @@
 }
 
 .welcome-wordmark {
-  font: 600 28px/1 var(--font-display);
-  letter-spacing: 0.02em;
+  font: var(--type-wordmark-lg);
+  letter-spacing: var(--track-wordmark);
 }
 
 .welcome-title {

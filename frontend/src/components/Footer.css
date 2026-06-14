@@ -13,7 +13,8 @@
 }
 
 .footer-wordmark {
-  font: 600 18px/1 var(--font-display);
+  font: var(--type-wordmark-sm);
+  letter-spacing: var(--track-wordmark);
   color: var(--text-tertiary);
 }
 

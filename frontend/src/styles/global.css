@@ -27,7 +27,7 @@ body {
    the footer links at the bottom of every page */
 @media (max-width: 768px) {
   body {
-    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--tabbar-clearance) + env(safe-area-inset-bottom, 0px));
   }
 }
 

@@ -24,6 +24,6 @@
 .curator-fab-label { font: var(--type-label); }
 /* keep clear of the mobile tab bar (present up to 768px) */
 @media (max-width: 768px) {
-  .curator-fab { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+  .curator-fab { bottom: calc(var(--tabbar-clearance) + env(safe-area-inset-bottom, 0px)); }
   .curator-fab-label { display: none; }
 }

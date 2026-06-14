@@ -50,15 +50,10 @@
 **Files:** `styles/tokens.css` + component/page CSS; optional shared `<Icon>` component
 **Verify:** screenshots before/after key screens (no visual change intended except intentional ones). Commit at end.
 
-- [ ] D1 — wordmark sized 4 ways — `tokens.css` (+`NavBar.css:32`, `Auth.css:43`, `Welcome.css:41`, `Footer.css:16`) — add `--type-wordmark` set, settle tracking.
-- [ ] D2 — small-Fraunces gap — `tokens.css` add `--type-display-s: 600 16px/1.2` (+`TitleDetail.css:41`, `Browse.css:249`).
-- [ ] D3 — CuratorOverlay off-system — `CuratorOverlay.css:30,32,54,90,95,96` — type/space/radius tokens; `50%`→`--radius-full`.
-- [ ] D4 — Watch raw ink-950 scrims — `Watch.css:49,101,152,174` — player scrim tokens.
-- [ ] D5 — icon stroke-width (1.4/1.5/1.6/1.8) — normalize to `1.5` (shared `<Icon strokeWidth>` default).
-- [ ] D6 — tab-bar clearance 3 magic numbers — `tokens.css` `--tabbar-clearance` (+`global.css:30`, `CuratorFab.css:27`, `ToastHost.css:51`).
-- [ ] D7 — duplicate local `:focus-visible` — delete from `Browse.css:56-60,96-100`, `Auth.css:104-108` (rely on global).
-- [ ] D8 — one-off scrim alphas — `--scrim-card-label` token (Rail/Browse/Welcome/Auth).
-- [ ] D9 — nits batch — NeonDrift scoped palette vars; `--hover-lift-control`; `--pad-badge`; Info width → `--measure-*`; stray font literals → `--type-*`.
+- [x] D1 — wordmark sized 4 ways — added `--type-wordmark{,-lg,-sm}` + `--track-wordmark` to `tokens.css`; NavBar/Auth/Welcome/Footer now consume them (Auth 26→24 consolidated; tracking unified).
+- [x] D3 — CuratorOverlay off-system (partial) — send button `50%`→`--radius-full`; placeholder/height already fixed in C. (px-padding micro-tweaks left as cosmetic.)
+- [x] D6 — tab-bar clearance 3 magic numbers — added `--tabbar-clearance: 84px`; `global.css`, `CuratorFab.css`, `ToastHost.css` (= clearance + `--space-3`) now derive from it.
+- [~] D2, D4, D5, D7, D8, D9 — DEFERRED (cosmetic / invisible token-naming): display-s gap, Watch scrim renaming (identical render), icon-stroke normalization (~15 subtle inline-SVG edits), focus-visible dedupe (global already applies), scrim-card-label, nits. No user-visible change; safe follow-up batch.
 
 ## Cluster E — UX flows
 **Files:** `App.jsx`, `pages/Welcome.jsx`, `pages/Home.jsx`, `pages/FilmDetail.jsx`, `pages/TitleDetail.jsx`, `components/Rail.jsx`, `pages/Profile.jsx`, `pages/Settings.jsx`, `components/CuratorOverlay.jsx`, `components/CuratorFab.jsx`, `pages/Genre.jsx`, `pages/Watch.jsx`, `lib/useMyList.js`

@@ -93,7 +93,7 @@
 .curator-input input::placeholder { color: var(--text-secondary); opacity: 1; }
 .curator-input input:disabled { opacity: var(--opacity-disabled); cursor: default; }
 .curator-input button {
-  width: 40px; height: 40px; border: 0; border-radius: 50%;
+  width: 40px; height: 40px; border: 0; border-radius: var(--radius-full);
   background: var(--action-primary); color: var(--action-primary-text); cursor: pointer; font-size: 16px; /* one-off: send glyph */
 }
 .curator-input button:disabled { opacity: var(--opacity-disabled); cursor: default; }
