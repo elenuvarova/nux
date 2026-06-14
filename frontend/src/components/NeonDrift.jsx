@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { useAuth } from '../lib/useAuth';
+import { api } from '../lib/api';
 import './NeonDrift.css';
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -17,6 +19,25 @@ import './NeonDrift.css';
    ────────────────────────────────────────────────────────────────────────── */
 
 const BEST_KEY = 'nux_neondrift_best';
+const GAME = 'neon-drift';
+const HANDLE_KEY = 'nux_neondrift_handle'; // remembers a guest's last handle
+
+// mirror of the server's display rule: first name + LAST name's initial.
+// "Elena Uvarova" -> "Elena U." ; "Mary Jane Watson" -> "Mary W." ; single token passes through.
+const abbreviate = (name) => {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return 'Player';
+  if (parts.length === 1) return parts[0];
+  return `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}.`;
+};
+
+const readHandle = () => {
+  try {
+    return localStorage.getItem(HANDLE_KEY) || '';
+  } catch {
+    return '';
+  }
+};
 
 // the game's own synthwave palette (deliberately off the warm-ink system)
 const C = {
@@ -59,6 +80,43 @@ export default function NeonDrift({ onClose }) {
   const [phase, setPhase] = useState('ready'); // 'ready' | 'playing' | 'crashed'
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(readBest);
+
+  const { user } = useAuth();
+  const [handle, setHandle] = useState(readHandle);
+  const [submitState, setSubmitState] = useState('idle'); // 'idle'|'submitting'|'done'|'error'
+  const [board, setBoard] = useState(null); // { top, you } | null
+  const [myRank, setMyRank] = useState(null); // rank from the submit response
+
+  const loadBoard = useCallback(async () => {
+    try {
+      const data = await api.get(`/scores?game=${GAME}`);
+      setBoard(data);
+    } catch {
+      /* board just won't show; the game is unaffected */
+    }
+  }, []);
+
+  const submitScore = useCallback(async () => {
+    const name = handle.trim();
+    if (!user && !name) return; // guest must type a handle
+    setSubmitState('submitting');
+    try {
+      const body = user ? { game: GAME, score } : { game: GAME, score, name };
+      const res = await api.post('/scores', body);
+      setMyRank(res.rank);
+      if (!user) {
+        try {
+          localStorage.setItem(HANDLE_KEY, name);
+        } catch {
+          /* private mode — handle just won't persist */
+        }
+      }
+      setSubmitState('done');
+      await loadBoard();
+    } catch {
+      setSubmitState('error');
+    }
+  }, [handle, user, score, loadBoard]);
 
   const reduceMotion =
     typeof window !== 'undefined' &&
@@ -175,6 +233,9 @@ export default function NeonDrift({ onClose }) {
     const r = canvas.getBoundingClientRect();
     resetGame(r.width, r.height);
     setScore(0);
+    setSubmitState('idle');
+    setBoard(null);
+    setMyRank(null);
     setPhase('playing');
   }, [resetGame]);
 
@@ -271,7 +332,11 @@ export default function NeonDrift({ onClose }) {
     };
   }, []);
 
-  const stageTap = () => {
+  const stageTap = (e) => {
+    // tapping the stage (re)launches a run — but NOT when the tap lands on the
+    // leaderboard controls, or their pointerdown would relaunch the game and
+    // unmount the submit form before it can fire.
+    if (e.target.closest('.ndg-submit, .ndg-board')) return;
     if (phase !== 'playing') start();
   };
 
@@ -323,6 +388,83 @@ export default function NeonDrift({ onClose }) {
                 <p className="ndg-sub" aria-hidden="true">
                   {score >= best && score > 0 ? 'New best run' : `Best ${best}`}
                 </p>
+
+                {submitState !== 'done' && score > 0 && (
+                  <div className="ndg-submit">
+                    {user ? (
+                      <button
+                        type="button"
+                        className="btn btn-ghost ndg-submit-btn"
+                        onClick={submitScore}
+                        disabled={submitState === 'submitting'}
+                      >
+                        {submitState === 'submitting'
+                          ? 'Submitting…'
+                          : `Submit as ${abbreviate(user.name)}`}
+                      </button>
+                    ) : (
+                      <form
+                        className="ndg-submit-form"
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          submitScore();
+                        }}
+                      >
+                        <label className="sr-only" htmlFor="ndg-handle">Your name for the leaderboard</label>
+                        <input
+                          id="ndg-handle"
+                          className="ndg-handle"
+                          value={handle}
+                          onChange={(e) => setHandle(e.target.value)}
+                          placeholder="Your name"
+                          maxLength={16}
+                          autoComplete="off"
+                        />
+                        <button
+                          type="submit"
+                          className="btn btn-ghost ndg-submit-btn"
+                          disabled={submitState === 'submitting' || !handle.trim()}
+                        >
+                          {submitState === 'submitting' ? 'Submitting…' : 'Add to leaderboard'}
+                        </button>
+                      </form>
+                    )}
+                    {submitState === 'error' && (
+                      <p className="ndg-submit-err" role="alert">
+                        Couldn’t save your score.{' '}
+                        <button type="button" className="ndg-retry" onClick={submitScore}>Try again</button>
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {board?.top?.length > 0 && (
+                  <div className="ndg-board" aria-label="Leaderboard">
+                    <p className="ndg-board-head">Leaderboard</p>
+                    <ol className="ndg-board-list">
+                      {board.top.map((row) => (
+                        <li
+                          key={`${row.rank}-${row.name}`}
+                          className={`ndg-board-row${row.isYou ? ' ndg-board-row--you' : ''}`}
+                        >
+                          <span className="ndg-board-rank">{row.rank}</span>
+                          <span className="ndg-board-name">
+                            {row.name}
+                            {row.registered && (
+                              <span className="ndg-board-verified" title="Signed-in player" aria-label="signed-in player">●</span>
+                            )}
+                          </span>
+                          <span className="ndg-board-score">{row.score}</span>
+                        </li>
+                      ))}
+                    </ol>
+                    {(board.you || myRank) && !board.top.some((r) => r.isYou) && (
+                      <p className="ndg-board-you">
+                        You’re #{board.you?.rank ?? myRank}
+                      </p>
+                    )}
+                  </div>
+                )}
               </>
             )}
             <button type="button" className="btn btn-primary ndg-go" onClick={start}>

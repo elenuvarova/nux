@@ -108,6 +108,30 @@ export const CuratorCollection = sequelize.define(
   { tableName: "curator_collections" }
 );
 
+// Arcade leaderboard scores. ONE board per game (the `game` column future-proofs
+// for more games). A registered entry is keyed by (game, UserId) and kept at the
+// player's best (upsert-max); its display name is derived from User.name at READ
+// time, so `name` stays null for registered rows. A guest entry has UserId=null
+// and stores the typed handle in `name` — one row per submitted run (no identity
+// to dedup on). The unique (game, UserId) index allows many NULL UserIds, so
+// guests are unconstrained while accounts get exactly one row.
+export const GameScore = sequelize.define(
+  "GameScore",
+  {
+    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    game: { type: DataTypes.STRING, allowNull: false, defaultValue: "neon-drift" },
+    name: { type: DataTypes.STRING, allowNull: true }, // guest handle; null for registered
+    score: { type: DataTypes.INTEGER, allowNull: false },
+  },
+  {
+    tableName: "game_scores",
+    indexes: [
+      { fields: ["game", "score"] }, // leaderboard read (score DESC scan)
+      { unique: true, fields: ["game", "UserId"] }, // one row per account per game
+    ],
+  }
+);
+
 // Fixed-window rate-limit counters, keyed by `${bucket}:${ip}`. Persisted (not
 // in-memory) so the window survives redeploys and is shared across instances —
 // an attacker can't reset their count by waiting for the next Coolify deploy.
@@ -132,3 +156,5 @@ User.hasMany(WatchProgress, { onDelete: "CASCADE" });
 WatchProgress.belongsTo(User);
 User.hasMany(CuratorMessage, { onDelete: "CASCADE" });
 CuratorMessage.belongsTo(User);
+User.hasMany(GameScore, { onDelete: "CASCADE" });
+GameScore.belongsTo(User);
