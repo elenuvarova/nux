@@ -84,7 +84,7 @@
 **Verify:** report build/asset sizes (target images 8.6MB→~2MB, fonts 290KB→~110KB). Commit at end.
 
 - [x] G1 (resize) — in-place `sips` downscale of the oversized-for-display art (no markup/format change, grade preserved): **cast 4.7M→1.2M** (−74%; were 500×630 shown at 96px), posters 1.6M→1.4M (kept 600px for the TitleDetail poster-hero use). Stills left alone (`srcSet`-managed, shown large). Net ~3.7M off.
-- [~] G1 (webp/avif) — DEFERRED (tooling): no webp encoder on this machine (sips-webp unsupported, no `cwebp`). The safe delivery is designed — generate `.webp` siblings + nginx `try_files $uri$webp_suffix $uri` with the jpg as guaranteed fallback (zero markup change, images can't break) — and needs only `brew install webp` (or a `sharp` build dep). Focused follow-up.
+- [x] G1 (webp) — DONE via Pillow (already installed, no system change). 117 `.webp` siblings generated (catalog imagery **4.7MB → 1.5MB, −69%** for webp-capable browsers); nginx serves them through `map $http_accept` + `try_files $uri$webp_suffix $uri` with the original jpg as guaranteed fallback and an explicit `types{}` for correct Content-Type — zero markup change, images can't break. Regenerate after image changes: `python3` Pillow loop over `public/assets/**/*.jpg`.
 - [~] G2 (font subset) — DEFERRED (risk): `pyftsubset` is available, but the win requires replacing the `@fontsource` pre-subset variable files with self-hosted subset `@font-face` + exhaustive glyph coverage (curly quotes, em dashes, ë/é/ö) to avoid tofu — a careful, glyphhanger-verified pass, not a safe pre-deploy rush. The cast resize already captured the largest asset win (~3.7M).
 
 ## Cluster H — SEO (heavy / architectural)
