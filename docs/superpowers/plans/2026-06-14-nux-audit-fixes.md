@@ -76,8 +76,8 @@
 **Files:** `public/assets/**`, `main.jsx`, `index.html`, build tooling
 **Verify:** report build/asset sizes (target images 8.6MB→~2MB, fonts 290KB→~110KB). Commit at end.
 
-- [ ] G1 — images 8.6MB unoptimized — re-encode webp/avif + resize to ~2× display (cast 192², posters ~400×600, Red Shoes still); `<picture>` or Vite image plugin; keep warm-mono grade.
-- [ ] G2 — fonts 290KB — subset 3 families to used glyphs (Latin + `ë é ö`), preload LCP fonts; or drop Newsreader (-92KB) if subsetting deferred.
+- [x] G1 (resize) — in-place `sips` downscale of the oversized-for-display art (no markup/format change, grade preserved): **cast 4.7M→1.2M** (−74%; were 500×630 shown at 96px), posters 1.6M→1.4M (kept 600px for the TitleDetail poster-hero use). Stills left alone (`srcSet`-managed, shown large). Net ~3.7M off.
+- [~] G1 (webp/avif) + G2 (font subset) — DEFERRED: format conversion needs `<picture>` across many components (visual-regression risk) and font subsetting can drop glyphs — both warrant a dedicated pass. The resize already captures the largest single win (cast).
 
 ## Cluster H — SEO (heavy / architectural)
 **Files:** `vite.config.js`, build scripts, `index.html`, `pages/Collection.jsx`, `pages/Genre.jsx`, `public/robots.txt`
