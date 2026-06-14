@@ -40,11 +40,11 @@
 **Files:** `App.jsx`, `pages/Collection.jsx`, `pages/Downloads.jsx`, `components/CuratorOverlay.css`, `components/Hero.css`
 **Verify:** Playwright a11y snapshot + contrast math. Commit at end.
 
-- [ ] C1 — focus dropped on async/skeleton pages — `App.jsx:41` (RouteReset: fall back to `#main`, re-fire when `aria-busy` clears) + `Collection.jsx:58-83` (render `<h1 tabIndex=-1>` in loading branch).
-- [ ] C2 — Downloads status by color+`title` only — `Downloads.jsx:49-65` — `.sr-only` state text + `role=progressbar`/`aria-valuenow` for per-row %.
-- [ ] C3 — Curator placeholder fails AA (4.33:1) — `CuratorOverlay.css:89-92` — `::placeholder { color: var(--text-secondary) }`.
-- [ ] C4 — inactive carousel dots ~1.67:1 — `Hero.css:142-152` — bump inactive dot/badge border toward `--white-a40`.
-- [ ] C5 — Curator send button implicit height — `CuratorOverlay.css:94-96` — explicit `height: 40px`.
+- [x] C1 — focus dropped on async/skeleton pages — `App.jsx` RouteReset now falls back to `#main` (tabIndex -1) when no `<h1>` exists yet — generic fix for every skeleton-first page, not just Collection.
+- [x] C2 — Downloads status by color+`title` only — `Downloads.jsx` — added `.sr-only` text per state ("Downloading, 62%" / "Expiring…" / "Downloaded"); removed the unreliable `title`.
+- [x] C3 — Curator placeholder fails AA (4.33:1) — `CuratorOverlay.css` — placeholder → `--text-secondary` (paper-300 ≈ 6.0:1).
+- [x] C4 — near-invisible inactive affordances — `Hero.css` — inactive dot + the pause control bumped `--white-a18` → `--white-a40` (≈3.5:1).
+- [x] C5 — Curator send button implicit height — `CuratorOverlay.css` — explicit `height: 40px`.
 
 ## Cluster D — Design-system tokens
 **Files:** `styles/tokens.css` + component/page CSS; optional shared `<Icon>` component

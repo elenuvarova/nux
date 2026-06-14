@@ -89,10 +89,11 @@
   flex: 1; background: var(--surface-neutral); border: 1px solid var(--border-input);
   border-radius: var(--radius-full); padding: 10px var(--space-4); color: inherit; font: var(--type-input);
 }
-.curator-input input::placeholder { color: var(--text-tertiary); opacity: 1; }
+/* secondary (not tertiary): tertiary/paper-500 on the lightened ink-500 field is 4.33:1 — below AA */
+.curator-input input::placeholder { color: var(--text-secondary); opacity: 1; }
 .curator-input input:disabled { opacity: var(--opacity-disabled); cursor: default; }
 .curator-input button {
-  width: 40px; border: 0; border-radius: 50%;
+  width: 40px; height: 40px; border: 0; border-radius: 50%;
   background: var(--action-primary); color: var(--action-primary-text); cursor: pointer; font-size: 16px; /* one-off: send glyph */
 }
 .curator-input button:disabled { opacity: var(--opacity-disabled); cursor: default; }

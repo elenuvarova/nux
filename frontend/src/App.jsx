@@ -38,7 +38,10 @@ function RouteReset() {
   useEffect(() => {
     if (navType !== 'POP') window.scrollTo(0, 0);
     requestAnimationFrame(() => {
-      document.querySelector('main h1')?.focus({ preventScroll: true });
+      // focus the page heading; fall back to the #main container when a page is
+      // still loading (skeleton, no <h1> yet) so keyboard focus never drops to <body>
+      const target = document.querySelector('main h1') || document.getElementById('main');
+      target?.focus({ preventScroll: true });
     });
   }, [pathname, navType]);
   return null;

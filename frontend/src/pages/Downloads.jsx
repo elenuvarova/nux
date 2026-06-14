@@ -28,6 +28,14 @@ export default function Downloads() {
         {DOWNLOADS.map((d) => {
           const film = byId(d.id);
           if (!film) return null;
+          // text equivalent of the icon-only status (screen readers don't get
+          // the icon shape/colour, and `title` isn't reliably announced)
+          const statusLabel =
+            d.state === 'downloading'
+              ? `Downloading, ${d.progress}%`
+              : d.state === 'expiring'
+                ? d.note || 'Expiring soon'
+                : 'Downloaded';
           return (
             <li key={d.id}>
               <Link to={`/film/${film.id}`} className="downloads-row">
@@ -46,7 +54,7 @@ export default function Downloads() {
                     </span>
                   )}
                 </span>
-                <span className={`downloads-status downloads-status--${d.state}`} title={d.state}>
+                <span className={`downloads-status downloads-status--${d.state}`}>
                   {d.state === 'downloading' ? (
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M10 3v8M6.5 7.5 10 11l3.5-3.5M4 15.5h12" />
@@ -62,6 +70,7 @@ export default function Downloads() {
                       <path d="M6.5 10 9 12.5 13.5 7.5" />
                     </svg>
                   )}
+                  <span className="sr-only">{statusLabel}</span>
                 </span>
               </Link>
             </li>
