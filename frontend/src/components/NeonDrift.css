@@ -3,10 +3,21 @@
    stays on the NUX token system so it reads as "NUX Arcade", not a foreign app. */
 
 .ndg-overlay {
+  /* the game's synthwave palette — a deliberately "foreign world" set, scoped
+     here (not in global tokens) so it never leaks into the NUX amber system */
+  --ndg-void: #0a041c;
+  --ndg-void-rgb: 10 4 28;
+  --ndg-cyan: #2de2e6;
+  --ndg-cyan-rgb: 45 226 230;
+  --ndg-magenta: #ff2d95;
+  --ndg-magenta-rgb: 255 45 149;
+  --ndg-glow: #fdf3ff;
+  --ndg-lavender: #d9c7e8;
+  --ndg-lavender-dim: #9d8fb5;
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: #0a041c; /* matches the game's deep-space base for clean letterbox */
+  background: var(--ndg-void); /* deep-space base for clean letterbox */
   display: grid;
   place-items: center;
   outline: none;
@@ -50,7 +61,7 @@
   /* high opacity floor so the title/sub/hint clear 4.5:1 regardless of the
      bright sun/grid rendered behind them (was 0.55→0.78, which let the sun
      bleed through under the text) */
-  background: radial-gradient(ellipse at center, rgb(10 4 28 / 0.88), rgb(10 4 28 / 0.96));
+  background: radial-gradient(ellipse at center, rgb(var(--ndg-void-rgb) / 0.88), rgb(var(--ndg-void-rgb) / 0.96));
   -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
 }
@@ -59,8 +70,8 @@
   font: var(--type-eyebrow);
   letter-spacing: var(--track-eyebrow);
   text-transform: uppercase;
-  color: #2de2e6;
-  text-shadow: 0 0 12px rgb(45 226 230 / 0.6);
+  color: var(--ndg-cyan);
+  text-shadow: 0 0 12px rgb(var(--ndg-cyan-rgb) / 0.6);
   margin: 0;
 }
 
@@ -68,23 +79,23 @@
   font: 600 clamp(40px, 9vw, 76px) / 1 var(--font-display);
   letter-spacing: 0.04em;
   margin: 0;
-  color: #fdf3ff;
+  color: var(--ndg-glow);
   text-shadow:
-    0 0 18px rgb(255 45 149 / 0.7),
-    0 0 42px rgb(255 45 149 / 0.45),
-    0 2px 0 rgb(45 226 230 / 0.5);
+    0 0 18px rgb(var(--ndg-magenta-rgb) / 0.7),
+    0 0 42px rgb(var(--ndg-magenta-rgb) / 0.45),
+    0 2px 0 rgb(var(--ndg-cyan-rgb) / 0.5);
 }
 
 .ndg-title--score {
   font-variant-numeric: tabular-nums;
   text-shadow:
-    0 0 18px rgb(45 226 230 / 0.7),
-    0 0 42px rgb(45 226 230 / 0.4);
+    0 0 18px rgb(var(--ndg-cyan-rgb) / 0.7),
+    0 0 42px rgb(var(--ndg-cyan-rgb) / 0.4);
 }
 
 .ndg-sub {
   font: var(--type-body);
-  color: #d9c7e8;
+  color: var(--ndg-lavender);
   max-width: 36ch;
   margin: 0;
 }
@@ -93,10 +104,10 @@
   margin-top: var(--space-3);
   min-width: 168px;
   /* the game's primary action wears neon, not amber, to match its world */
-  background: linear-gradient(120deg, #ff2d95, #2de2e6);
-  color: #0a041c;
+  background: linear-gradient(120deg, var(--ndg-magenta), var(--ndg-cyan));
+  color: var(--ndg-void);
   border: none;
-  box-shadow: 0 0 24px rgb(255 45 149 / 0.5);
+  box-shadow: 0 0 24px rgb(var(--ndg-magenta-rgb) / 0.5);
 }
 
 .ndg-go:hover {
@@ -105,13 +116,13 @@
 
 .ndg-hint {
   font: var(--type-caption);
-  color: #9d8fb5;
+  color: var(--ndg-lavender-dim);
   margin: var(--space-2) 0 0;
 }
 
 .ndg-hint kbd {
   font: 600 11px/1 var(--font-ui);
-  color: #d9c7e8;
+  color: var(--ndg-lavender);
   background: rgb(255 255 255 / 0.08);
   border: 1px solid rgb(255 255 255 / 0.16);
   border-radius: var(--radius-xs);
@@ -140,7 +151,7 @@
 
 .ndg-close:hover {
   border-color: var(--border-strong);
-  transform: scale(1.06);
+  transform: scale(var(--hover-lift-control));
 }
 
 .ndg-close:active {

@@ -154,6 +154,8 @@
   --space-20: 80px;
   --space-24: 96px;
   --space-30: 120px;
+  /* tiny uppercase chip/badge padding (poster + hero badges) */
+  --pad-badge: 3px 6px;
 
   /* fixed nav height — page top-padding anchors to this, not a magic 64.
      Drops to 56px under 768px (see media query at end of file). */
@@ -166,6 +168,7 @@
   --measure-sm: 640px; /* settings / lessons / details column */
   --measure-md: 720px; /* downloads / film details */
   --measure-lg: 880px; /* collection editorial column */
+  --measure-prose: 680px; /* Info / legal reading column */
 
   /* ── Radius ─────────────────────────────────────────────────── */
   --radius-xs: 4px;
@@ -239,6 +242,8 @@
   --opacity-disabled: 0.4;
   /* one card-hover lift across rails / grid / collection (was 1.02 vs 1.03) */
   --hover-lift: 1.03;
+  /* springier lift for round media controls (player big-play, game close) */
+  --hover-lift-control: 1.06;
 
   /* ── Motion ─────────────────────────────────────────────────── */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

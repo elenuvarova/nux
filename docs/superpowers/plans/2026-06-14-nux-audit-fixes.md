@@ -57,7 +57,7 @@
 - [x] D4 + D8 — added channel tokens `--ink-950-rgb` / `--ink-900-rgb`; the Watch player scrims (×4) and the one-off component label/dim scrims (Rail, Browse, Welcome, Auth) now reference them via `rgb(var(--ink-Xrgb) / a)` — no more raw `7 6 6` / `13 12 11` triplets in components, identical render.
 - [x] D5 — icon strokes converged to a clean two-tier: **1.5** (house, 40 uses) + **1.8** (small-glyph tier, 11); the 1.4/1.6 outliers normalized to 1.5.
 - [x] D7 — deleted the redundant local `:focus-visible` blocks in `Browse.css` (×2) and `Auth.css` (the global `:focus-visible` already applies the ring).
-- [~] D9 — micro-nits left (NeonDrift scoped palette, `--pad-badge`, Info width → `--measure`, `--hover-lift-control`): truly cosmetic, ~zero visible/functional value; intentionally skipped.
+- [x] D9 — done: `--measure-prose` (Info width), `--pad-badge` (poster+hero badges), `--hover-lift-control: 1.06` (player big-play + game close), and the NeonDrift synthwave palette scoped into `--ndg-*` vars on `.ndg-overlay` (identical render). Deliberately LEFT (tokenizing would change rendering for no gain, or is an intentional one-off): the few context-specific font literals (Footer 12.5/1, OfflineBanner 500/12.5, FilmDetail dd 14/1.45, Welcome genre 600/13 — each a deliberate weight+leading), `gap: 3px` hairlines, and the NeonDrift kbd white hairlines.
 
 ## Cluster E — UX flows
 **Files:** `App.jsx`, `pages/Welcome.jsx`, `pages/Home.jsx`, `pages/FilmDetail.jsx`, `pages/TitleDetail.jsx`, `components/Rail.jsx`, `pages/Profile.jsx`, `pages/Settings.jsx`, `components/CuratorOverlay.jsx`, `components/CuratorFab.jsx`, `pages/Genre.jsx`, `pages/Watch.jsx`, `lib/useMyList.js`

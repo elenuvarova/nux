@@ -115,7 +115,7 @@
 }
 
 .player-facade:hover .player-bigplay {
-  transform: scale(1.06);
+  transform: scale(var(--hover-lift-control));
   background: var(--action-primary-hover);
 }
 
