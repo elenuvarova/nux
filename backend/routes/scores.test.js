@@ -73,6 +73,18 @@ describe("GET /api/scores", () => {
     const res = await request(makeApp()).get("/api/scores?game=pong");
     expect(res.status).toBe(400);
   });
+
+  it("reports the caller's rank when they're registered but off the top", async () => {
+    currentUser.mockResolvedValue({ id: "u9", name: "Zoe Quinn" });
+    GameScore.findAll.mockResolvedValue([
+      { UserId: "u1", name: null, score: 500, User: { name: "Ann Bee" } },
+    ]);
+    GameScore.findOne.mockResolvedValue({ score: 90, createdAt: new Date("2020-01-01") });
+    GameScore.count.mockResolvedValue(6); // 6 ahead → rank 7
+    const res = await request(makeApp()).get("/api/scores?game=neon-drift");
+    expect(res.status).toBe(200);
+    expect(res.body.you).toEqual({ rank: 7, score: 90 });
+  });
 });
 
 describe("POST /api/scores (guest)", () => {
@@ -152,5 +164,25 @@ describe("POST /api/scores (registered)", () => {
     expect(GameScore.findOrCreate).toHaveBeenCalledWith(
       expect.objectContaining({ defaults: expect.not.objectContaining({ name: "hacker" }) })
     );
+  });
+});
+
+describe("guest name cleaning", () => {
+  it("strips control chars and caps length at 16", async () => {
+    const res = await request(makeApp())
+      .post("/api/scores")
+      .send({ game: "neon-drift", score: 5, name: "ka i_supercalifragilistic" });
+    expect(res.status).toBe(201);
+    const arg = GameScore.create.mock.calls[0][0];
+    expect(arg.name).toBe("ka i_supercalifr"); // control chars gone, 16-char cap
+    expect(arg.name.length).toBe(16);
+  });
+
+  it("400 when the name is only control chars", async () => {
+    const res = await request(makeApp())
+      .post("/api/scores")
+      .send({ game: "neon-drift", score: 5, name: " " });
+    expect(res.status).toBe(400);
+    expect(GameScore.create).not.toHaveBeenCalled();
   });
 });

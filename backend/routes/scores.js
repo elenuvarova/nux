@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Op } from "sequelize";
+import { Op, UniqueConstraintError } from "sequelize";
 import { GameScore, User } from "../models.js";
 import { currentUser, rateLimit } from "../lib/auth.js";
 import { ah } from "../lib/asyncHandler.js";
@@ -11,13 +11,14 @@ const TOP_N = 10;
 const SCORE_MAX = 1_000_000;
 const NAME_MAX = 16;
 
-// "Elena Uvarova" -> "Elena U." ; single-token names pass through. Keeps the
-// last name server-side. Used for registered display names (derived at read).
+// "Elena Uvarova" -> "Elena U." ; "Mary Jane Watson" -> "Mary W." ; single-token
+// names pass through. Uses the FIRST name + the LAST name's initial, so the full
+// surname never leaves the server. Used for registered display names at read time.
 function abbreviate(name) {
   const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "Player";
   if (parts.length === 1) return parts[0];
-  return `${parts[0]} ${parts[1][0].toUpperCase()}.`;
+  return `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}.`;
 }
 
 // Trim, strip control chars, cap length. Returns "" if nothing usable remains.
@@ -29,6 +30,22 @@ function cleanName(raw) {
 function resolveGame(value) {
   const game = String(value || "neon-drift").trim();
   return GAMES.has(game) ? game : null;
+}
+
+// Rank = 1 + (rows strictly ahead under the board's ordering: higher score, or
+// equal score but an earlier createdAt). Matches the GET board's tiebreak so a
+// player's reported rank never disagrees with their position on the board.
+async function rankOf(game, score, createdAt) {
+  const ahead = await GameScore.count({
+    where: {
+      game,
+      [Op.or]: [
+        { score: { [Op.gt]: score } },
+        { score, createdAt: { [Op.lt]: createdAt } },
+      ],
+    },
+  });
+  return ahead + 1;
 }
 
 // GET /api/scores?game=neon-drift → { top: [...], you: {rank, score} | null }
@@ -59,10 +76,7 @@ router.get(
     if (me && !top.some((r) => r.isYou)) {
       const mine = await GameScore.findOne({ where: { game, UserId: me.id } });
       if (mine) {
-        const ahead = await GameScore.count({
-          where: { game, score: { [Op.gt]: mine.score } },
-        });
-        you = { rank: ahead + 1, score: mine.score };
+        you = { rank: await rankOf(game, mine.score, mine.createdAt), score: mine.score };
       }
     }
 
@@ -88,15 +102,27 @@ router.post(
     const me = await currentUser(req);
 
     if (me) {
-      // one row per account, kept at the best
-      const [row, created] = await GameScore.findOrCreate({
-        where: { game, UserId: me.id },
-        defaults: { game, UserId: me.id, score },
-      });
+      // one row per account, kept at the best. findOrCreate can still race the
+      // unique (game, UserId) index under concurrent submits — on collision,
+      // re-fetch and apply the same upsert-max (mirrors list.js).
+      let row, created;
+      try {
+        [row, created] = await GameScore.findOrCreate({
+          where: { game, UserId: me.id },
+          defaults: { game, UserId: me.id, score },
+        });
+      } catch (err) {
+        if (err instanceof UniqueConstraintError) {
+          row = await GameScore.findOne({ where: { game, UserId: me.id } });
+          created = false;
+        } else {
+          throw err;
+        }
+      }
       if (!created && score > row.score) await row.update({ score });
       const best = created ? score : Math.max(row.score, score);
-      const ahead = await GameScore.count({ where: { game, score: { [Op.gt]: best } } });
-      return res.status(created ? 201 : 200).json({ ok: true, rank: ahead + 1, best });
+      const rank = await rankOf(game, best, row.createdAt);
+      return res.status(created ? 201 : 200).json({ ok: true, rank, best });
     }
 
     // guest: a handle is required
