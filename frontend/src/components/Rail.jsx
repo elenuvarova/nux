@@ -1,22 +1,26 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { byId } from '../data/catalog.js';
 import { useTilt } from '../lib/useTilt.js';
 import './Rail.css';
 
-/* Mark the clicked artwork as the shared element for the
+/* Mark the artwork inside `scope` as the shared element for the
    poster → hero View Transition morph. Clear stale marks AND the current
    detail hero first — duplicate view-transition-names silently skip the
    whole transition (e.g. when navigating FilmDetail → FilmDetail). */
-function markHeroArt(e) {
+function markHeroArtIn(scope) {
   document.querySelectorAll('[data-vt="hero-art"], .fd-art img, .fd-poster-frame img').forEach((el) => {
     el.style.viewTransitionName = '';
     delete el.dataset.vt;
   });
-  const img = e.currentTarget.querySelector('img');
+  const img = scope?.querySelector('img');
   if (img) {
     img.style.viewTransitionName = 'hero-art';
     img.dataset.vt = 'hero-art';
   }
+}
+
+function markHeroArt(e) {
+  markHeroArtIn(e.currentTarget);
 }
 
 function minutesLabel(min) {
@@ -31,18 +35,28 @@ function minutesLabel(min) {
 export function PosterCard({ filmId }) {
   const film = byId(filmId);
   const tilt = useTilt();
+  const navigate = useNavigate();
   if (!film) return null;
+  // Play glyph jumps straight to the player; a click anywhere else on the card
+  // opens the film page. preventDefault/stopPropagation keep the wrapping Link
+  // from also firing on its way up.
+  function playNow(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    markHeroArtIn(e.currentTarget.closest('.poster-card-art'));
+    navigate(`/watch/${film.id}`, { viewTransition: true });
+  }
   return (
     <Link to={`/film/${film.id}`} className="poster-card" viewTransition onClick={markHeroArt}>
       <div className="poster-card-art" ref={tilt.ref} onPointerMove={tilt.onPointerMove} onPointerLeave={tilt.onPointerLeave}>
         <img src={film.poster} alt={`${film.title}, ${film.type}`} loading="lazy" width="200" height="300" />
         <span className="poster-card-badge">{film.type}</span>
         <span className="poster-card-sheen" aria-hidden="true" />
-        <span className="poster-card-play" aria-hidden="true">
-          <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor">
+        <button type="button" className="poster-card-play" onClick={playNow} aria-label={`Play ${film.title}`}>
+          <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
             <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
           </svg>
-        </span>
+        </button>
       </div>
       <p className="poster-card-title">{film.title}</p>
       <p className="metadata">

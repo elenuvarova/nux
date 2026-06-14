@@ -141,6 +141,7 @@
   place-items: center;
   width: 44px;
   height: 44px;
+  padding: 0;
   border-radius: var(--radius-full);
   background: var(--glass-bg-strong);
   -webkit-backdrop-filter: blur(var(--blur-art));
@@ -152,7 +153,16 @@
   transition:
     opacity var(--dur-base) var(--ease-out),
     transform var(--dur-base) var(--ease-out);
+  /* hidden until the card is hovered/focused, so block clicks until then */
   pointer-events: none;
+  cursor: pointer;
+}
+
+/* once revealed (hover/focus, below), the glyph is a real click target that
+   opens the player directly */
+.poster-card:hover .poster-card-play,
+.poster-card:focus-within .poster-card-play {
+  pointer-events: auto;
 }
 
 .poster-card-play svg {
