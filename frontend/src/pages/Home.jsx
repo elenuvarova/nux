@@ -6,14 +6,35 @@ import { SkeletonRail } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useWatchHistory } from '../lib/useWatchHistory.js';
 import Rail, { PosterCard, ContinueCard } from '../components/Rail.jsx';
-import { RAILS, EDITORIAL_PICK } from '../data/catalog.js';
+import { RAILS, EDITORIAL_PICK, GENRES, GENRE_MATCH, FILMS } from '../data/catalog.js';
 import { useCollections } from '../lib/useCollections.js';
 import Tour from '../components/Tour.jsx';
 import './Home.css';
 
+// Personalized rail from the onboarding genre picks (Welcome) — makes the taste
+// step visibly real. Returns {gid, label, ids} for the first picked genre with
+// matching catalog films, else null.
+function readPersonalRail() {
+  try {
+    const prefs = JSON.parse(localStorage.getItem('nux-genre-prefs') || '[]');
+    if (!Array.isArray(prefs)) return null;
+    for (const gid of prefs) {
+      const labels = GENRE_MATCH[gid];
+      const genre = GENRES.find((g) => g.id === gid);
+      if (!labels?.length || !genre) continue;
+      const ids = FILMS.filter((f) => labels.includes(f.genre)).map((f) => f.id);
+      if (ids.length) return { gid, label: genre.label, ids };
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
 export default function Home() {
   usePageTitle(null);
   const [trending, curated, fresh] = RAILS;
+  const [personal] = useState(readPersonalRail);
   const { history } = useWatchHistory();
   const { collections, loading: collectionsLoading, error: collectionsError } = useCollections();
   // First-run welcome tour — shown once. A short delay lets the hero + rails lay
@@ -34,6 +55,15 @@ export default function Home() {
     <main>
       <Hero />
       <div className="home-rails">
+        {personal && (
+          <Reveal>
+            <Rail title={`Because you like ${personal.label}`} seeAllTo={`/genre/${personal.gid}`}>
+              {personal.ids.map((id) => (
+                <PosterCard key={id} filmId={id} />
+              ))}
+            </Rail>
+          </Reveal>
+        )}
         <Reveal>
           <Rail title={trending.title}>
             {trending.filmIds.map((id) => (

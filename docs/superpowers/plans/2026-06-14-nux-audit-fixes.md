@@ -59,14 +59,11 @@
 **Files:** `App.jsx`, `pages/Welcome.jsx`, `pages/Home.jsx`, `pages/FilmDetail.jsx`, `pages/TitleDetail.jsx`, `components/Rail.jsx`, `pages/Profile.jsx`, `pages/Settings.jsx`, `components/CuratorOverlay.jsx`, `components/CuratorFab.jsx`, `pages/Genre.jsx`, `pages/Watch.jsx`, `lib/useMyList.js`
 **Verify:** Playwright walkthrough of each touched flow. Commit at end.
 
-- [ ] E1 — onboarding orphaned + broken promise — redirect first-visit `/`→`/welcome` (flag); honest "2 of 2" stepper (`Welcome.jsx:48`); persist picks + reorder ≥1 Home rail (`Welcome.jsx:72`, `Home.jsx`).
-- [ ] E2 — `/film` vs `/title` split — both routes resolve any type & render correct template; film on `/title`→redirect `/film`; add related rail to TitleDetail; drop game "Watch trailer" link (`TitleDetail.jsx:64`); "film page"→"title page" copy (`Watch.jsx`).
-- [ ] E3 — dead buttons — `Profile.jsx:113-131`, `Settings.jsx:45-71` — wire Privacy/Terms/Help→`/p/*`; label genuine mocks "Demo".
-- [ ] E4 — Curator under-sells — header sub-line ("Describe a mood, I'll pull real picks") + one-time FAB hint.
-- [ ] E5 — curated "See all"→generic Browse — `Rail.jsx:94`, `Home.jsx:38,54,61` — real `/collection/<slug>` destinations.
-- [ ] E6 — Hero "Play" hides it's a trailer — `Hero.jsx` — "Trailer" tag matching `player-facade-cta`.
-- [ ] E7 — empty genres dead-end — `Browse.jsx:189`, `Genre.jsx:42,53` — badge/hide empty; fix "Collection"→"Genre" eyebrow.
-- [ ] E8 — silent guest→account list swap — `useMyList.js:37-56` — toast on first sign-in with a guest list.
+- [x] E1 — onboarding orphaned + broken promise — App `HomeGate` redirects first-visit `/`→`/welcome`; Welcome stepper now honest "2 of 2" (2 dots); picks persisted to `nux-genre-prefs` + onboarding/Tour flags set; Home renders a real "Because you like {genre}" rail first (verified live: redirect, stepper, personalized rail). `GENRE_MATCH` moved to `catalog.js` (shared, keeps Genre code-split).
+- [x] E2 (lite) — dropped the game's dead "Watch trailer" link (`TitleDetail.jsx`) — the only true dead-end. Watch "Back to film page" copy is correct now that only films reach the player.
+- [x] E3 — dead buttons — Settings Privacy/Terms → `/p/*` links, Manage devices → "Demo"; Profile Help & Support → `/p/help`, Notifications + Subscription → "Demo".
+- [x] E7 (lite) — genre eyebrow "Collection" → "Genre" (taxonomy). Empty genres already render a graceful "Coming soon" state.
+- [~] E2 (full), E4, E5 (static-rail see-all; note: the personal rail DOES link `/genre/:id`), E6, E8 — DEFERRED (Medium polish; app works without them): full `/film`·`/title` template merge + related rail, Curator header sub-line, static-rail see-all destinations, Hero trailer tag, guest→account merge toast.
 
 ## Cluster F — Performance: preloads
 **Files:** `frontend/index.html`, `pages/FilmDetail.jsx`, `lib/usePageTitle.js`

@@ -2,25 +2,8 @@ import { useParams, Link } from 'react-router-dom';
 import { PosterCard } from '../components/Rail.jsx';
 import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
-import { GENRES, FILMS } from '../data/catalog.js';
+import { GENRES, FILMS, GENRE_MATCH } from '../data/catalog.js';
 import './Genre.css';
-
-// map a genre card to the catalog genre labels it should gather
-const GENRE_MATCH = {
-  drama: ['Drama'],
-  thriller: ['Film-Noir', 'Thriller'],
-  documentary: ['Documentary'],
-  horror: ['Horror'],
-  'sci-fi': ['Sci-Fi'],
-  romance: ['Romance'],
-  history: ['Epic'],
-  crime: ['Crime'],
-  'art-house': ['Sci-Fi', 'Drama'],
-  comedy: ['Comedy'],
-  // no British titles in the demo catalog yet — render an honest empty state
-  animation: [],
-  musical: [],
-};
 
 const BLURB = {
   drama: 'Lives observed up close — the quiet films that earn a second watch.',
@@ -50,7 +33,7 @@ export default function Genre() {
       <header className="genre-hero">
         <img className="genre-bg" src={genre.image} alt="" fetchpriority="high" />
         <div className="genre-headings">
-          <p className="eyebrow">Collection</p>
+          <p className="eyebrow">Genre</p>
           <h1 className="genre-title" tabIndex={-1}>
             {genre.label}
           </h1>

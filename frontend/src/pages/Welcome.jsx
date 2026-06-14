@@ -17,6 +17,32 @@ export default function Welcome() {
     setPicked(next);
   };
 
+  // Onboarding is the single first-run path: mark it done AND suppress the Home
+  // Tour coachmark so a new visitor never gets two first-run systems stacked.
+  const markOnboarded = () => {
+    try {
+      localStorage.setItem('nux-onboarded', '1');
+      localStorage.setItem('nux_tour_v1', '1');
+    } catch {
+      /* private mode — nothing to persist */
+    }
+  };
+  // Persist the genre picks so Home can show a real "Because you like…" rail —
+  // the taste step is no longer collected-then-thrown-away.
+  const finish = () => {
+    try {
+      localStorage.setItem('nux-genre-prefs', JSON.stringify([...picked]));
+    } catch {
+      /* private mode */
+    }
+    markOnboarded();
+    navigate('/');
+  };
+  const goSignIn = () => {
+    markOnboarded();
+    navigate('/signin');
+  };
+
   if (step === 0) {
     return (
       <main className="welcome">
@@ -35,7 +61,7 @@ export default function Welcome() {
               <path d="M2.5 7h9M8 3.5 11.5 7 8 10.5" />
             </svg>
           </button>
-          <button type="button" className="welcome-signin" onClick={() => navigate('/signin')}>
+          <button type="button" className="welcome-signin" onClick={goSignIn}>
             Already have an account? <span>Sign in</span>
           </button>
         </div>
@@ -45,11 +71,9 @@ export default function Welcome() {
 
   return (
     <main className="welcome welcome--genres">
-      <div className="welcome-steps" role="group" aria-label="Onboarding progress — step 2 of 4">
+      <div className="welcome-steps" role="group" aria-label="Onboarding progress — step 2 of 2">
         <span className="welcome-dot" aria-hidden="true" />
         <span className="welcome-dot welcome-dot--active" aria-hidden="true" />
-        <span className="welcome-dot" aria-hidden="true" />
-        <span className="welcome-dot" aria-hidden="true" />
       </div>
       <h1 className="welcome-genres-title" tabIndex={-1}>
         What kinds of stories move you?
@@ -69,7 +93,7 @@ export default function Welcome() {
           </button>
         ))}
       </div>
-      <button type="button" className="btn btn-primary welcome-cta" onClick={() => navigate('/')}>
+      <button type="button" className="btn btn-primary welcome-cta" onClick={finish}>
         Continue
       </button>
     </main>

@@ -60,11 +60,9 @@ export default function TitleDetail() {
             <button type="button" className={saved ? "btn btn-secondary btn-secondary--on" : "btn btn-secondary"} onClick={() => toggle(title.id, title.title)} aria-pressed={saved}>
               {saved ? 'In My List' : 'My List'}
             </button>
-            {isGame && (
-              <Link to={`/watch/${title.id}`} className="td-trailer-link">
-                Watch trailer
-              </Link>
-            )}
+            {/* the game has no trailer — the playable demo above is the CTA, so we
+                don't offer a "Watch trailer" link that only dead-ends on the
+                "Trailer unavailable" fallback */}
           </div>
         </div>
       </section>

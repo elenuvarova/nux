@@ -639,6 +639,24 @@ export const GENRES = [
   { id: 'musical', label: 'Musical', image: genreImg('genre-musical.jpg') },
 ];
 
+// map each genre card to the catalog genre labels it gathers — shared by the
+// Genre page and Home's personalized "Because you like…" rail. Empty list =
+// honest "coming soon" shelf (no British titles in the demo catalog yet).
+export const GENRE_MATCH = {
+  drama: ['Drama'],
+  thriller: ['Film-Noir', 'Thriller'],
+  documentary: ['Documentary'],
+  horror: ['Horror'],
+  'sci-fi': ['Sci-Fi'],
+  romance: ['Romance'],
+  history: ['Epic'],
+  crime: ['Crime'],
+  'art-house': ['Sci-Fi', 'Drama'],
+  comedy: ['Comedy'],
+  animation: [],
+  musical: [],
+};
+
 // ── Fictional non-film content (generated key art) ────────────────
 export const EXTRAS = {
   game: {

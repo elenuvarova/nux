@@ -57,6 +57,18 @@ function RequireAuth({ children }) {
   return children;
 }
 
+/* First-run gate: a brand-new visitor (no onboarding flag) is sent to the
+   Welcome flow once; everyone who has onboarded or signed in lands on Home. */
+function HomeGate() {
+  let onboarded = true;
+  try {
+    onboarded = !!localStorage.getItem('nux-onboarded');
+  } catch {
+    /* private mode → don't trap the user in a redirect */
+  }
+  return onboarded ? <Home /> : <Navigate to="/welcome" replace />;
+}
+
 export default function App() {
   // the player owns the whole screen — app chrome hides on /watch
   const { pathname } = useLocation();
@@ -73,7 +85,7 @@ export default function App() {
       <div id="main" tabIndex={-1}>
         <Suspense fallback={<div className="route-fallback" aria-hidden="true" />}>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<HomeGate />} />
             <Route path="/browse" element={<Browse />} />
             <Route path="/my-list" element={<MyList />} />
             <Route path="/film/:id" element={<FilmDetail />} />

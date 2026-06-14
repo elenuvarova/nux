@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import usePageTitle from '../lib/usePageTitle.js';
 import './Settings.css';
 
@@ -63,12 +63,18 @@ export default function Settings() {
       <section aria-label="Account">
         <p className="eyebrow settings-eyebrow">Account</p>
         <div className="settings-group">
-          {['Manage devices', 'Privacy', 'Terms of Service'].map((l) => (
-            <button type="button" className="settings-row" key={l}>
-              {l}
-              <Chevron />
-            </button>
-          ))}
+          <button type="button" className="settings-row">
+            Manage devices
+            <span className="settings-value"><span className="metadata">Demo</span></span>
+          </button>
+          <Link to="/p/privacy" className="settings-row">
+            Privacy
+            <Chevron />
+          </Link>
+          <Link to="/p/terms" className="settings-row">
+            Terms of Service
+            <Chevron />
+          </Link>
         </div>
       </section>
 

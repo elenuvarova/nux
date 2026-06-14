@@ -21,6 +21,7 @@ const items = [
   },
   {
     label: 'Notifications',
+    demo: true,
     icon: (
       <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M9 2.5a4.5 4.5 0 0 0-4.5 4.5c0 3.5-1.5 5-1.5 5h12s-1.5-1.5-1.5-5A4.5 4.5 0 0 0 9 2.5zM7.5 14.5a1.7 1.7 0 0 0 3 0" />
@@ -29,6 +30,7 @@ const items = [
   },
   {
     label: 'Subscription & Billing',
+    demo: true,
     icon: (
       <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
         <rect x="2" y="4" width="14" height="10" rx="2" />
@@ -48,6 +50,7 @@ const items = [
   },
   {
     label: 'Help & Support',
+    to: '/p/help',
     icon: (
       <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
         <circle cx="9" cy="9" r="6.5" />
@@ -123,7 +126,7 @@ export default function Profile() {
               <button type="button" className="profile-row">
                 <span className="row-icon">{it.icon}</span>
                 {it.label}
-                <Chevron />
+                <span className="metadata" style={{ marginLeft: 'auto' }}>Demo</span>
               </button>
             )}
           </li>
