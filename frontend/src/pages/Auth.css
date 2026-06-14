@@ -19,7 +19,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: rgb(13 12 11 / 0.62);
+  background: rgb(var(--ink-900-rgb) / 0.62);
 }
 
 .auth-card {
@@ -99,12 +99,6 @@
    system ring (matches :focus-visible everywhere else in the app) */
 .auth-input:focus {
   border-color: var(--border-focus);
-}
-
-.auth-input:focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow: var(--focus-ring);
 }
 
 .auth-input--err {

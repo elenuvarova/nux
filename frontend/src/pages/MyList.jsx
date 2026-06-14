@@ -29,7 +29,7 @@ export default function MyList() {
           </div>
         ) : (
           <div className="browse-empty">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" aria-hidden="true" style={{ color: 'var(--icon-tertiary)' }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true" style={{ color: 'var(--icon-tertiary)' }}>
               <path d="M7 3h10a1 1 0 0 1 1 1v17l-6-3.8L6 21V4a1 1 0 0 1 1-1z" />
             </svg>
             <p className="display-m">Your list is empty</p>

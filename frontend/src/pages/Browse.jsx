@@ -144,7 +144,7 @@ export default function Browse() {
                 {recent.map((r) => (
                   <li key={r}>
                     <button type="button" className="browse-recent-row" onClick={() => update({ q: r })}>
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <circle cx="7" cy="7" r="5.2" />
                         <path d="M7 4.2V7l1.8 1.1" />
                       </svg>
@@ -233,7 +233,7 @@ export default function Browse() {
           </div>
         ) : (
           <div className="browse-empty">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true" style={{ color: 'var(--icon-tertiary)' }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true" style={{ color: 'var(--icon-tertiary)' }}>
               <circle cx="10.5" cy="10.5" r="7" />
               <path d="M15.5 15.5 21 21" />
             </svg>

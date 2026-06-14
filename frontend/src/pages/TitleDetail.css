@@ -38,7 +38,7 @@
 }
 
 .td-lesson-n {
-  font: 600 16px/1 var(--font-display);
+  font: var(--type-display-s);
   color: var(--text-tertiary);
   font-variant-numeric: tabular-nums;
   width: 28px;

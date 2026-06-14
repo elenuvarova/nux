@@ -53,7 +53,11 @@
 - [x] D1 — wordmark sized 4 ways — added `--type-wordmark{,-lg,-sm}` + `--track-wordmark` to `tokens.css`; NavBar/Auth/Welcome/Footer now consume them (Auth 26→24 consolidated; tracking unified).
 - [x] D3 — CuratorOverlay off-system (partial) — send button `50%`→`--radius-full`; placeholder/height already fixed in C. (px-padding micro-tweaks left as cosmetic.)
 - [x] D6 — tab-bar clearance 3 magic numbers — added `--tabbar-clearance: 84px`; `global.css`, `CuratorFab.css`, `ToastHost.css` (= clearance + `--space-3`) now derive from it.
-- [~] D2, D4, D5, D7, D8, D9 — DEFERRED (cosmetic / invisible token-naming): display-s gap, Watch scrim renaming (identical render), icon-stroke normalization (~15 subtle inline-SVG edits), focus-visible dedupe (global already applies), scrim-card-label, nits. No user-visible change; safe follow-up batch.
+- [x] D2 — added `--type-display-s: 600 16px/1.2`; consumed in `TitleDetail.css` (lesson number) + `Browse.css` (genre-card caption).
+- [x] D4 + D8 — added channel tokens `--ink-950-rgb` / `--ink-900-rgb`; the Watch player scrims (×4) and the one-off component label/dim scrims (Rail, Browse, Welcome, Auth) now reference them via `rgb(var(--ink-Xrgb) / a)` — no more raw `7 6 6` / `13 12 11` triplets in components, identical render.
+- [x] D5 — icon strokes converged to a clean two-tier: **1.5** (house, 40 uses) + **1.8** (small-glyph tier, 11); the 1.4/1.6 outliers normalized to 1.5.
+- [x] D7 — deleted the redundant local `:focus-visible` blocks in `Browse.css` (×2) and `Auth.css` (the global `:focus-visible` already applies the ring).
+- [~] D9 — micro-nits left (NeonDrift scoped palette, `--pad-badge`, Info width → `--measure`, `--hover-lift-control`): truly cosmetic, ~zero visible/functional value; intentionally skipped.
 
 ## Cluster E — UX flows
 **Files:** `App.jsx`, `pages/Welcome.jsx`, `pages/Home.jsx`, `pages/FilmDetail.jsx`, `pages/TitleDetail.jsx`, `components/Rail.jsx`, `pages/Profile.jsx`, `pages/Settings.jsx`, `components/CuratorOverlay.jsx`, `components/CuratorFab.jsx`, `pages/Genre.jsx`, `pages/Watch.jsx`, `lib/useMyList.js`

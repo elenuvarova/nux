@@ -10,6 +10,10 @@
   --ink-700: #1f1c19;
   --ink-600: #25211c;
   --ink-500: #332e27;
+  /* channel-only variants for rgb(... / alpha) scrims, so components reference
+     the ink tokens instead of re-typing the raw triplet */
+  --ink-950-rgb: 7 6 6;
+  --ink-900-rgb: 13 12 11;
 
   /* ── Primitives: paper (warm off-white text ladder) ─────────── */
   --paper-100: #f2efe9;
@@ -189,6 +193,10 @@
   --type-display-m: 600 28px/1.12 var(--font-display);
   --type-headline: 600 24px/1.2 var(--font-display);
   --track-display: -0.015em;
+
+  /* small Fraunces label (lesson numbers, genre-card captions) — fills the gap
+     between --type-headline (24px) and the functional Inter sizes */
+  --type-display-s: 600 16px/1.2 var(--font-display);
 
   /* Brand wordmark — Fraunces with its OWN positive tracking (distinct from the
      negative display track). md for chrome/auth, lg for the welcome hero, sm for
