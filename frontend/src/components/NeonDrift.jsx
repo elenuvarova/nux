@@ -39,6 +39,26 @@ const readHandle = () => {
   }
 };
 
+// Ids of guest score rows this browser submitted while signed out. If the player
+// later signs in, the game "claims" these into their account (see the claim
+// effect below) so the same person never shows up twice on the board.
+const GUEST_IDS_KEY = 'nux_neondrift_guest_scores';
+const readGuestIds = () => {
+  try {
+    const v = JSON.parse(localStorage.getItem(GUEST_IDS_KEY) || '[]');
+    return Array.isArray(v) ? v.filter((x) => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+};
+const writeGuestIds = (ids) => {
+  try {
+    localStorage.setItem(GUEST_IDS_KEY, JSON.stringify(ids));
+  } catch {
+    /* private mode — claim just won't carry across sessions */
+  }
+};
+
 // the game's own synthwave palette (deliberately off the warm-ink system)
 const C = {
   skyTop: '#13072b',
@@ -110,6 +130,8 @@ export default function NeonDrift({ onClose }) {
         } catch {
           /* private mode — handle just won't persist */
         }
+        // remember this guest run so it can be claimed if the player signs in
+        if (res.id) writeGuestIds([...readGuestIds(), res.id]);
       }
       setSubmitState('done');
       await loadBoard();
@@ -117,6 +139,22 @@ export default function NeonDrift({ onClose }) {
       setSubmitState('error');
     }
   }, [handle, user, score, loadBoard]);
+
+  // When a signed-in player has guest runs left over from before they logged in,
+  // fold them into their account and drop the guest rows — so one person is
+  // never listed twice. Runs when the game opens (or the user changes) with
+  // pending ids; failures are left for a later retry.
+  useEffect(() => {
+    if (!user) return;
+    const ids = readGuestIds();
+    if (ids.length === 0) return;
+    api
+      .post('/scores/claim', { game: GAME, ids })
+      .then(() => writeGuestIds([]))
+      .catch(() => {
+        /* not fatal — ids stay for the next attempt */
+      });
+  }, [user]);
 
   const reduceMotion =
     typeof window !== 'undefined' &&
