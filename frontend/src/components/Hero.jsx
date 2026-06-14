@@ -104,12 +104,20 @@ export default function Hero() {
             aria-pressed={userPaused}
             aria-label={userPaused ? 'Resume featured slideshow' : 'Pause featured slideshow'}
           >
-            {/* Always the pause glyph — the play triangle read as a second
-                "Play" CTA beside the hero's. Paused state shows via --paused. */}
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-              <rect x="2.5" y="1.8" width="3.2" height="10.4" rx="0.8" />
-              <rect x="8.3" y="1.8" width="3.2" height="10.4" rx="0.8" />
-            </svg>
+            {/* Glyph follows the media convention so a click is unmistakable:
+                paused → play triangle (resume), playing → pause bars. Kept at the
+                same 16px size + bottom-row placement so it never reads as the
+                hero's primary "Play" CTA (a full amber pill with text label). */}
+            {userPaused ? (
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+                <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+                <rect x="2.5" y="1.8" width="3.2" height="10.4" rx="0.8" />
+                <rect x="8.3" y="1.8" width="3.2" height="10.4" rx="0.8" />
+              </svg>
+            )}
           </button>
           {HERO_ROTATION.map((s, n) => (
             <button
