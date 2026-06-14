@@ -179,12 +179,30 @@
   text-align: center;
 }
 
-.fd-cast-card img {
+.fd-cast-card img,
+.fd-cast-avatar {
   width: 96px;
   height: 96px;
   border-radius: var(--radius-full);
   object-fit: cover;
   box-shadow: var(--shadow-glass-edge);
+}
+
+/* Unify photos from 1945–2022, colour and B&W, into one warm-mono look so the
+   cast row reads as a single editorial style across every film. */
+.fd-cast-card img {
+  filter: grayscale(1) sepia(0.16) contrast(1.03) brightness(1.02);
+  background: var(--surface-raised);
+}
+
+/* Initials fallback when a cast member has no photo */
+.fd-cast-avatar {
+  display: grid;
+  place-items: center;
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  font: var(--type-headline);
+  letter-spacing: var(--track-display, normal);
 }
 
 @media (max-width: 768px) {

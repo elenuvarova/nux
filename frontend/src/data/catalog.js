@@ -5,6 +5,16 @@
 const poster = (f) => `/assets/posters/${f}`;
 const still = (f) => `/assets/stills/${f}`;
 const genreImg = (f) => `/assets/genres/${f}`;
+const castImg = (f) => `/assets/cast/${f}`;
+
+// name → asset slug (must match scripts/fetch-cast.mjs)
+const slug = (name) =>
+  name
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
 export const FILMS = [
   {
@@ -45,6 +55,17 @@ export const FILMS = [
     director: 'David Lean',
     synopsis:
       'A married woman and a doctor meet by chance in a railway station tearoom — and fall, impossibly, in love. Noël Coward and David Lean turn restraint itself into heartbreak.',
+    rating: 8.0,
+    certificate: 'PG',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Celia Johnson', role: 'Laura Jesson' },
+      { name: 'Trevor Howard', role: 'Dr Alec Harvey' },
+      { name: 'Stanley Holloway', role: 'Albert Godby' },
+      { name: 'Joyce Carey', role: 'Myrtle Bagot' },
+      { name: 'Cyril Raymond', role: 'Fred Jesson' },
+    ],
   },
   {
     id: 'black-narcissus',
@@ -59,6 +80,18 @@ export const FILMS = [
     director: 'Powell & Pressburger',
     synopsis:
       'A convent of nuns sets up a school in an abandoned palace high in the Himalayas, where the wind, the altitude and memory begin to undo them. Technicolor delirium from Powell & Pressburger.',
+    rating: 7.8,
+    certificate: 'PG',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Deborah Kerr', role: 'Sister Clodagh' },
+      { name: 'David Farrar', role: 'Mr Dean' },
+      { name: 'Kathleen Byron', role: 'Sister Ruth' },
+      { name: 'Sabu', role: 'The Young General' },
+      { name: 'Jean Simmons', role: 'Kanchi' },
+      { name: 'Flora Robson', role: 'Sister Philippa' },
+    ],
   },
   {
     id: 'the-red-shoes',
@@ -73,6 +106,17 @@ export const FILMS = [
     director: 'Powell & Pressburger',
     synopsis:
       'A young ballerina is torn between the impresario who demands everything for art and the composer she loves. The dance film all dance films answer to.',
+    rating: 8.1,
+    certificate: 'U',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Moira Shearer', role: 'Victoria Page' },
+      { name: 'Anton Walbrook', role: 'Boris Lermontov' },
+      { name: 'Marius Goring', role: 'Julian Craster' },
+      { name: 'Robert Helpmann', role: 'Ivan Boleslawsky' },
+      { name: 'Léonide Massine', role: 'Grischa Ljubov' },
+    ],
   },
   {
     id: 'peeping-tom',
@@ -86,6 +130,17 @@ export const FILMS = [
     director: 'Michael Powell',
     synopsis:
       'A shy focus-puller films his victims as they die, hunting the perfect image of fear. The film that scandalised Britain in 1960 — and was rediscovered as a masterpiece.',
+    rating: 7.6,
+    certificate: '15',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Karlheinz Böhm', role: 'Mark Lewis' },
+      { name: 'Anna Massey', role: 'Helen Stephens' },
+      { name: 'Moira Shearer', role: 'Vivian' },
+      { name: 'Maxine Audley', role: 'Mrs Stephens' },
+      { name: 'Brenda Bruce', role: 'Dora' },
+    ],
   },
   {
     id: 'lawrence-of-arabia',
@@ -102,6 +157,17 @@ export const FILMS = [
     director: 'David Lean',
     synopsis:
       "David Lean's monumental account of T. E. Lawrence — archaeologist, soldier, enigma — and the desert war that made and unmade him.",
+    certificate: 'PG',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: "Peter O'Toole", role: 'T. E. Lawrence' },
+      { name: 'Alec Guinness', role: 'Prince Faisal' },
+      { name: 'Anthony Quinn', role: 'Auda abu Tayi' },
+      { name: 'Jack Hawkins', role: 'General Allenby' },
+      { name: 'Omar Sharif', role: 'Sherif Ali' },
+      { name: 'Claude Rains', role: 'Mr Dryden' },
+    ],
   },
   {
     id: 'billy-liar',
@@ -115,6 +181,17 @@ export const FILMS = [
     director: 'John Schlesinger',
     synopsis:
       'An undertaker\'s clerk in a northern town lies his way through life and daydreams of escape to London. A bittersweet landmark of the British New Wave.',
+    rating: 7.3,
+    certificate: 'PG',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Tom Courtenay', role: 'Billy Fisher' },
+      { name: 'Julie Christie', role: 'Liz' },
+      { name: 'Wilfred Pickles', role: 'Geoffrey Fisher' },
+      { name: 'Mona Washbourne', role: 'Alice Fisher' },
+      { name: 'Rodney Bewes', role: 'Arthur Crabtree' },
+    ],
   },
   {
     id: 'if',
@@ -128,6 +205,17 @@ export const FILMS = [
     director: 'Lindsay Anderson',
     synopsis:
       'At an English boarding school ruled by tradition and cruelty, three boys drift from rebellion into insurrection. Lindsay Anderson\'s Palme d\'Or-winning provocation.',
+    rating: 7.5,
+    certificate: '15',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Malcolm McDowell', role: 'Mick Travis' },
+      { name: 'David Wood', role: 'Johnny' },
+      { name: 'Richard Warwick', role: 'Wallace' },
+      { name: 'Christine Noonan', role: 'The Girl' },
+      { name: 'Robert Swann', role: 'Rowntree' },
+    ],
   },
   {
     id: 'dont-look-now',
@@ -141,6 +229,16 @@ export const FILMS = [
     director: 'Nicolas Roeg',
     synopsis:
       'A grieving couple moves to wintry Venice after their daughter\'s death, where a red coat keeps flickering at the edge of sight. Roeg\'s shattering mosaic of grief and premonition.',
+    rating: 7.2,
+    certificate: '15',
+    country: 'UK, Italy',
+    language: 'English',
+    cast: [
+      { name: 'Julie Christie', role: 'Laura Baxter' },
+      { name: 'Donald Sutherland', role: 'John Baxter' },
+      { name: 'Hilary Mason', role: 'Heather' },
+      { name: 'Clelia Matania', role: 'Wendy' },
+    ],
   },
   {
     id: 'the-wicker-man',
@@ -154,6 +252,17 @@ export const FILMS = [
     director: 'Robin Hardy',
     synopsis:
       'A devout policeman searches a remote Scottish island for a missing girl, and finds a community that worships older gods. The benchmark of folk horror.',
+    rating: 7.5,
+    certificate: '15',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Edward Woodward', role: 'Sergeant Howie' },
+      { name: 'Christopher Lee', role: 'Lord Summerisle' },
+      { name: 'Britt Ekland', role: 'Willow' },
+      { name: 'Diane Cilento', role: 'Miss Rose' },
+      { name: 'Ingrid Pitt', role: 'Librarian' },
+    ],
   },
   {
     id: 'withnail-and-i',
@@ -167,6 +276,16 @@ export const FILMS = [
     director: 'Bruce Robinson',
     synopsis:
       'Two unemployed actors flee 1969 Camden for a disastrous holiday in the Lake District. The most quotable film in British cinema.',
+    rating: 8.0,
+    certificate: '15',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Richard E. Grant', role: 'Withnail' },
+      { name: 'Paul McGann', role: 'Marwood' },
+      { name: 'Richard Griffiths', role: 'Uncle Monty' },
+      { name: 'Ralph Brown', role: 'Danny' },
+    ],
   },
   {
     id: 'naked',
@@ -180,6 +299,16 @@ export const FILMS = [
     director: 'Mike Leigh',
     synopsis:
       'Johnny talks his way through a long London night — brilliant, cruel, and burning down to the end of himself. Mike Leigh at his darkest; Thewlis at his best.',
+    rating: 7.7,
+    certificate: '18',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'David Thewlis', role: 'Johnny' },
+      { name: 'Lesley Sharp', role: 'Louise' },
+      { name: 'Katrin Cartlidge', role: 'Sophie' },
+      { name: 'Greg Cruttwell', role: 'Jeremy' },
+    ],
   },
   {
     id: 'sexy-beast',
@@ -193,6 +322,16 @@ export const FILMS = [
     director: 'Jonathan Glazer',
     synopsis:
       'A retired safecracker sunning himself in Spain is visited by the one man who won\'t take no for an answer. Ben Kingsley as cinema\'s most terrifying houseguest.',
+    rating: 7.3,
+    certificate: '18',
+    country: 'UK, Spain',
+    language: 'English',
+    cast: [
+      { name: 'Ray Winstone', role: 'Gal Dove' },
+      { name: 'Ben Kingsley', role: 'Don Logan' },
+      { name: 'Ian McShane', role: 'Teddy Bass' },
+      { name: 'Amanda Redman', role: 'DeeDee' },
+    ],
   },
   {
     id: 'billy-elliot',
@@ -206,6 +345,16 @@ export const FILMS = [
     director: 'Stephen Daldry',
     synopsis:
       'During the miners\' strike, a boy from a Durham pit village trades boxing gloves for ballet shoes — against everything his family knows.',
+    rating: 7.7,
+    certificate: '15',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Jamie Bell', role: 'Billy Elliot' },
+      { name: 'Julie Walters', role: 'Mrs Wilkinson' },
+      { name: 'Gary Lewis', role: 'Jackie Elliot' },
+      { name: 'Jamie Draven', role: 'Tony Elliot' },
+    ],
   },
   {
     id: 'under-the-skin',
@@ -219,6 +368,16 @@ export const FILMS = [
     director: 'Jonathan Glazer',
     synopsis:
       'Something wearing a woman\'s body drives a van through Glasgow, watching, luring, learning. Glazer\'s hypnotic alien gaze turned on us.',
+    rating: 6.3,
+    certificate: '15',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Scarlett Johansson', role: 'The Female' },
+      { name: 'Jeremy McWilliams', role: 'The Motorcyclist' },
+      { name: 'Adam Pearson', role: 'The Deformed Man' },
+      { name: 'Lynsey Taylor Mackay', role: 'Older Sister' },
+    ],
   },
   {
     id: '45-years',
@@ -232,6 +391,16 @@ export const FILMS = [
     director: 'Andrew Haigh',
     synopsis:
       'A week before their 45th anniversary, a letter arrives and a marriage quietly begins to subside. Rampling and Courtenay, devastating in miniature.',
+    rating: 7.1,
+    certificate: '15',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Charlotte Rampling', role: 'Kate Mercer' },
+      { name: 'Tom Courtenay', role: 'Geoff Mercer' },
+      { name: 'Geraldine James', role: 'Lena' },
+      { name: 'Dolly Wells', role: 'Charlotte' },
+    ],
   },
   {
     id: 'the-souvenir',
@@ -245,6 +414,16 @@ export const FILMS = [
     director: 'Joanna Hogg',
     synopsis:
       'A film student in 1980s London falls into a consuming relationship with a charming, untrustworthy older man. Joanna Hogg\'s exacting memory-piece.',
+    rating: 6.6,
+    certificate: '15',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Honor Swinton Byrne', role: 'Julie' },
+      { name: 'Tom Burke', role: 'Anthony' },
+      { name: 'Tilda Swinton', role: 'Rosalind' },
+      { name: 'Richard Ayoade', role: 'Patrick' },
+    ],
   },
   {
     id: 'saint-maud',
@@ -258,6 +437,16 @@ export const FILMS = [
     director: 'Rose Glass',
     synopsis:
       'A devout hospice nurse becomes convinced God has a mission for her dying patient\'s soul. Rose Glass\'s razor-wire debut about faith curdling into obsession.',
+    rating: 6.7,
+    certificate: '15',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Morfydd Clark', role: 'Maud' },
+      { name: 'Jennifer Ehle', role: 'Amanda' },
+      { name: 'Lily Frazer', role: 'Carol' },
+      { name: 'Turlough Convery', role: 'Joy' },
+    ],
   },
   {
     id: 'aftersun',
@@ -271,6 +460,16 @@ export const FILMS = [
     director: 'Charlotte Wells',
     synopsis:
       'A woman replays camcorder tapes of a Turkish package holiday with her young father, looking for the sadness she missed at eleven. Quietly devastating.',
+    rating: 7.6,
+    certificate: '12A',
+    country: 'UK, USA',
+    language: 'English',
+    cast: [
+      { name: 'Paul Mescal', role: 'Calum' },
+      { name: 'Frankie Corio', role: 'Sophie' },
+      { name: 'Celia Rowlson-Hall', role: 'Adult Sophie' },
+      { name: 'Sally Messham', role: 'Belinda' },
+    ],
   },
   {
     id: 'touching-the-void',
@@ -284,6 +483,16 @@ export const FILMS = [
     director: 'Kevin Macdonald',
     synopsis:
       'Two climbers, one rope, an impossible decision in the Peruvian Andes — and the crawl back that shouldn\'t have been survivable. Docudrama at its most gripping.',
+    rating: 8.0,
+    certificate: '15',
+    country: 'UK',
+    language: 'English',
+    cast: [
+      { name: 'Joe Simpson', role: 'Himself' },
+      { name: 'Simon Yates', role: 'Himself' },
+      { name: 'Brendan Mackey', role: 'Joe Simpson (dramatisation)' },
+      { name: 'Nicholas Aaron', role: 'Simon Yates (dramatisation)' },
+    ],
   },
   {
     id: 'senna',
@@ -297,8 +506,45 @@ export const FILMS = [
     director: 'Asif Kapadia',
     synopsis:
       'Ayrton Senna\'s decade in Formula One — faith, genius, politics and the weekend at Imola — told entirely through archive footage.',
+    rating: 8.5,
+    certificate: '12A',
+    country: 'UK',
+    language: 'English, Portuguese',
+    cast: [
+      { name: 'Ayrton Senna', role: 'Himself' },
+      { name: 'Alain Prost', role: 'Himself' },
+      { name: 'Frank Williams', role: 'Himself' },
+      { name: 'Ron Dennis', role: 'Himself' },
+    ],
   },
 ];
+
+// Headshots sourced from Wikimedia by scripts/fetch-cast.mjs. Cast members
+// not in this set render an initials monogram instead; a global CSS filter
+// gives every avatar the same warm-mono treatment regardless of era/source.
+const CAST_PHOTOS = new Set([
+  'trevor-howard', 'stanley-holloway', 'deborah-kerr', 'david-farrar', 'kathleen-byron',
+  'sabu', 'jean-simmons', 'flora-robson', 'moira-shearer', 'anton-walbrook', 'marius-goring',
+  'leonide-massine', 'karlheinz-bohm', 'anna-massey', 'peter-o-toole', 'alec-guinness',
+  'anthony-quinn', 'jack-hawkins', 'omar-sharif', 'claude-rains', 'tom-courtenay',
+  'julie-christie', 'rodney-bewes', 'malcolm-mcdowell', 'donald-sutherland', 'clelia-matania',
+  'edward-woodward', 'christopher-lee', 'britt-ekland', 'diane-cilento', 'richard-e-grant',
+  'paul-mcgann', 'richard-griffiths', 'ralph-brown', 'david-thewlis', 'lesley-sharp',
+  'katrin-cartlidge', 'greg-cruttwell', 'ray-winstone', 'ben-kingsley', 'ian-mcshane',
+  'amanda-redman', 'jamie-bell', 'julie-walters', 'gary-lewis', 'scarlett-johansson',
+  'jeremy-mcwilliams', 'adam-pearson', 'charlotte-rampling', 'dolly-wells', 'honor-swinton-byrne',
+  'tom-burke', 'tilda-swinton', 'richard-ayoade', 'morfydd-clark', 'jennifer-ehle', 'paul-mescal',
+  'celia-rowlson-hall', 'joe-simpson', 'ayrton-senna', 'alain-prost', 'frank-williams', 'ron-dennis',
+]);
+
+for (const f of FILMS) {
+  if (!f.cast) continue;
+  for (const p of f.cast) {
+    if (!p.photo && CAST_PHOTOS.has(slug(p.name))) {
+      p.photo = castImg(`cast-${slug(p.name)}.jpg`);
+    }
+  }
+}
 
 // O(1) lookup — byId is called once per card on every Browse/Home render, so a
 // linear scan over ~25 films added up across a grid

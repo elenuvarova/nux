@@ -16,6 +16,17 @@ function jsonLd(obj) {
     .replace(/[\u2028\u2029]/g, (c) => '\\u' + c.charCodeAt(0).toString(16));
 }
 
+/* First letters of the first two words of a name — used for the avatar
+   fallback when a cast member has no photo (we only have stills for a few). */
+function initials(name) {
+  return name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();
+}
+
 /* Resolve a root-relative asset path to an absolute URL for structured data. */
 function absoluteUrl(url) {
   if (!url) return url;
@@ -138,7 +149,13 @@ export default function FilmDetail() {
             <div className="fd-cast">
               {film.cast.map((person) => (
                 <div className="fd-cast-card" key={person.name}>
-                  <img src={person.photo} alt={person.name} loading="lazy" />
+                  {person.photo ? (
+                    <img src={person.photo} alt={person.name} loading="lazy" />
+                  ) : (
+                    <span className="fd-cast-avatar" aria-hidden="true">
+                      {initials(person.name)}
+                    </span>
+                  )}
                   <p className="poster-card-title">{person.name}</p>
                   <p className="metadata">{person.role}</p>
                 </div>
