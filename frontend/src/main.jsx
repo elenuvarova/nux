@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import Clarity from '@microsoft/clarity';
+Clarity.init('x7st844dqx');
 import { BrowserRouter } from 'react-router-dom';
 import './styles/fonts.css';
 import './styles/tokens.css';
