@@ -1,0 +1,264 @@
+/* NUX design tokens — generated from the Figma variable set (Hi-Fi mode).
+   Source of truth: Figma file UPtAtDiB37eSssdOGZ8nrq → collections
+   Primitives / Wireframe (semantic, Hi-Fi mode) / Spacing & Radius. */
+
+:root {
+  /* ── Primitives: ink (warm near-black surface ladder) ───────── */
+  --ink-950: #070606;
+  --ink-900: #0d0c0b;
+  --ink-800: #161412;
+  --ink-700: #1f1c19;
+  --ink-600: #25211c;
+  --ink-500: #332e27;
+  /* channel-only variants for rgb(... / alpha) scrims, so components reference
+     the ink tokens instead of re-typing the raw triplet */
+  --ink-950-rgb: 7 6 6;
+  --ink-900-rgb: 13 12 11;
+
+  /* ── Primitives: paper (warm off-white text ladder) ─────────── */
+  --paper-100: #f2efe9;
+  --paper-300: #b0a99e;
+  /* nudged from #8a8275 → clears 4.5:1 AA even on the ink-700 overlay and
+     ink-600 hover surfaces, so 12.5px metadata in tertiary never fails */
+  --paper-500: #9a9183;
+  --paper-700: #5c564c;
+  --paper-invert: #f2ede3;
+
+  /* ── Primitives: amber (rationed accent — "ink, not foil") ──── */
+  --amber-300: #edba62;
+  --amber-400: #e0a848;
+  --amber-500: #c8922a;
+  /* amber used as light, not as a fill: the hero projector glow and the
+     poster cursor sheen. Named so the accent stays inside the system. */
+  --amber-glow: rgb(200 146 42 / 0.16); /* = --amber-500 @ 16% */
+  --amber-sheen: rgb(237 186 98 / 0.28); /* = --amber-300 @ 28% */
+
+  /* ── Primitives: status + hairlines ─────────────────────────── */
+  --status-danger: #b3554d;
+  --status-success: #5f8b66;
+  /* lighter red for small TEXT on dark surfaces — #b3554d is only 4.0:1,
+     this clears 4.5:1 AA for the 12.5px error copy */
+  --status-danger-text: #e08178;
+  /* darker red surface so paper text on it clears AA (offline banner) */
+  --status-danger-strong: #7a322c;
+  --white-a07: rgb(255 255 255 / 0.07);
+  --white-a08: rgb(255 255 255 / 0.08);
+  --white-a14: rgb(255 255 255 / 0.14);
+  --white-a18: rgb(255 255 255 / 0.18);
+  /* field/input boundaries — clears the 3:1 non-text contrast (WCAG 1.4.11)
+     that the a18 hairline missed; ≈3.5:1 over the ink surfaces */
+  --white-a40: rgb(255 255 255 / 0.4);
+
+  /* ── Semantic: surfaces ─────────────────────────────────────── */
+  --surface-page: var(--ink-900);
+  --surface-raised: var(--ink-800);
+  --surface-sunken: var(--ink-950);
+  --surface-muted: var(--ink-600);
+  --surface-neutral: var(--ink-500);
+  --surface-inverse: var(--paper-100);
+  --surface-hover: var(--ink-600);
+  --surface-pressed: var(--ink-500);
+  --surface-overlay: var(--ink-700);
+  --surface-scrim: rgb(13 12 11 / 0.42);
+  --surface-scrim-hover: rgb(13 12 11 / 0.58);
+  --surface-scrim-pressed: rgb(13 12 11 / 0.72);
+
+  /* ── Semantic: glass chrome (iOS 26-selective material) ─────── */
+  /* Two alphas only: the floating chrome (nav/tabbar/recent) and the
+     opaque-feeling overlays (toast/menu/auth card). The page-color base
+     keeps the blur warm. Consume via the .glass utility in global.css. */
+  --glass-bg: rgb(13 12 11 / 0.72);
+  --glass-bg-strong: rgb(13 12 11 / 0.92);
+  --blur-chrome: 20px;
+  /* tighter on-artwork blur (poster badges, the play affordance, card labels) —
+     distinct from the 20px chrome blur so the two don't drift apart */
+  --blur-art: 8px;
+  --shadow-glass-edge: inset 0 0 0 1px var(--white-a08);
+
+  /* ── Semantic: hero scrim (poster/backdrop → page-color falloff) ─ */
+  /* cinema dim — the flat ::before layer that knocks the artwork back
+     before the falloff gradient reads over it (Hero + FilmDetail share it) */
+  --scrim-cinema-dim: rgb(13 12 11 / 0.3);
+  /* The full recipe shared by every full-bleed hero: cinema dim is a
+     separate ::before layer; this is the bottom + left + top falloff. */
+  --scrim-hero:
+    linear-gradient(
+      to top,
+      var(--ink-900) 0%,
+      rgb(13 12 11 / 0.78) 14%,
+      rgb(13 12 11 / 0.45) 32%,
+      rgb(13 12 11 / 0.18) 55%,
+      transparent 100%
+    ),
+    linear-gradient(to right, rgb(13 12 11 / 0.82) 0%, transparent 60%),
+    linear-gradient(to bottom, rgb(13 12 11 / 0.6) 0%, transparent 20%);
+  /* narrow/mobile hero: drop the left horizontal scrim, deepen the bottom */
+  --scrim-hero-narrow:
+    linear-gradient(
+      to top,
+      var(--ink-900) 0%,
+      rgb(13 12 11 / 0.78) 18%,
+      rgb(13 12 11 / 0.45) 40%,
+      rgb(13 12 11 / 0.18) 62%,
+      transparent 100%
+    ),
+    linear-gradient(to bottom, rgb(13 12 11 / 0.6) 0%, transparent 20%);
+  /* soft single-pass scrim for the shorter category heroes (collection,
+     genre) — image stays brighter, headings still legible at the base */
+  --scrim-hero-soft:
+    linear-gradient(to top, var(--ink-900), rgb(13 12 11 / 0.48) 52%, rgb(13 12 11 / 0.32));
+
+  /* ── Semantic: text ─────────────────────────────────────────── */
+  --text-primary: var(--paper-100);
+  --text-secondary: var(--paper-300);
+  --text-tertiary: var(--paper-500);
+  /* disabled controls ONLY (2.69:1 — exempt from WCAG contrast per 1.4.3).
+     Never use this for merely-secondary readable text. */
+  --text-disabled: var(--paper-700);
+  --text-inverse: var(--ink-900);
+
+  /* ── Semantic: borders ──────────────────────────────────────── */
+  --border-subtle: var(--white-a08);
+  --border-default: var(--white-a14);
+  --border-strong: var(--white-a18);
+  --border-input: var(--white-a40); /* text-field boundaries (3:1 non-text contrast) */
+  --border-focus: var(--amber-500);
+  --border-danger: var(--status-danger);
+
+  /* ── Semantic: actions ──────────────────────────────────────── */
+  --action-primary: var(--amber-500);
+  --action-primary-hover: var(--amber-400);
+  --action-primary-pressed: var(--amber-300);
+  --action-primary-text: var(--ink-900);
+  --action-secondary: transparent;
+  --action-secondary-border: var(--white-a14);
+
+  /* ── Semantic: icons ────────────────────────────────────────── */
+  --icon-primary: var(--paper-100);
+  --icon-secondary: var(--paper-300);
+  --icon-tertiary: var(--paper-500);
+  --icon-inverse: var(--ink-900);
+  --accent-progress: var(--amber-500);
+
+  /* ── Spacing (8pt grid) ─────────────────────────────────────── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-30: 120px;
+  /* tiny uppercase chip/badge padding (poster + hero badges) */
+  --pad-badge: 3px 6px;
+
+  /* fixed nav height — page top-padding anchors to this, not a magic 64.
+     Drops to 56px under 768px (see media query at end of file). */
+  --nav-h: 64px;
+  /* space the floating mobile tab bar needs cleared below content. One source
+     for body padding, the Curator FAB and toast offsets (was 84/84/96 by hand). */
+  --tabbar-clearance: 84px;
+
+  /* repeated content measures (max-width of reading/list columns) */
+  --measure-sm: 640px; /* settings / lessons / details column */
+  --measure-md: 720px; /* downloads / film details */
+  --measure-lg: 880px; /* collection editorial column */
+  --measure-prose: 680px; /* Info / legal reading column */
+
+  /* ── Radius ─────────────────────────────────────────────────── */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+  /* poster artwork specifically (2:3 / 16:9 stills) gets a tighter 6px;
+     every other thumbnail/card surface uses --radius-sm (8px). */
+  --radius-poster: 6px;
+
+  /* ── Typography ─────────────────────────────────────────────── */
+  /* Fraunces = anything that names content or a theme.
+     Inter    = anything functional (UI chrome, metadata, buttons).
+     Newsreader = long-form editorial body. */
+  --font-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  --font-ui: 'Inter Variable', 'Inter', -apple-system, system-ui, sans-serif;
+  --font-essay: 'Newsreader Variable', 'Newsreader', Georgia, serif;
+
+  /* Display ramp (Fraunces SemiBold 600, tight leading, −1.5% tracking) */
+  --type-display-xl: 600 80px/1.04 var(--font-display);
+  --type-display-l: 600 40px/1.08 var(--font-display);
+  --type-display-m: 600 28px/1.12 var(--font-display);
+  --type-headline: 600 24px/1.2 var(--font-display);
+  --track-display: -0.015em;
+
+  /* small Fraunces label (lesson numbers, genre-card captions) — fills the gap
+     between --type-headline (24px) and the functional Inter sizes */
+  --type-display-s: 600 16px/1.2 var(--font-display);
+
+  /* Brand wordmark — Fraunces with its OWN positive tracking (distinct from the
+     negative display track). md for chrome/auth, lg for the welcome hero, sm for
+     the footer — so the logo is never hand-set four different ways again. */
+  --type-wordmark: 600 24px/1 var(--font-display);
+  --type-wordmark-lg: 600 28px/1 var(--font-display);
+  --type-wordmark-sm: 600 18px/1 var(--font-display);
+  --track-wordmark: 0.02em;
+
+  /* Functional ramp (Inter) */
+  --type-page-title: 600 34px/1.18 var(--font-ui);
+  --type-title: 600 17px/1.3 var(--font-ui);
+  --type-body: 400 16px/1.5 var(--font-ui);
+  --type-card-title: 500 15px/1.35 var(--font-ui);
+  --type-metadata: 400 12.5px/1.4 var(--font-ui);
+  --type-button: 600 15px/1 var(--font-ui);
+  --type-eyebrow: 700 11px/1 var(--font-ui);
+  --track-eyebrow: 0.14em;
+
+  /* small UI chrome — nav links, chips, list-row values, captions, inputs */
+  --type-label: 500 14px/1 var(--font-ui); /* nav links, chips, feature pills */
+  --type-caption: 400 13px/1 var(--font-ui); /* nav search, see-all, sign-in */
+  --type-input: 400 15px/1 var(--font-ui); /* list-row labels, search inputs */
+  --type-row: 400 14px/1 var(--font-ui); /* compact menu/detail rows */
+  --type-badge: 700 9px/1 var(--font-ui); /* corner poster badge */
+  --track-badge: 0.1em;
+  --type-tab: 500 10.5px/1 var(--font-ui); /* tab-bar item label */
+
+  /* Editorial body */
+  --type-essay: 400 17px/1.65 var(--font-essay);
+
+  /* ── Elevation & effects ────────────────────────────────────── */
+  --shadow-card-hover: 0 12px 40px rgb(0 0 0 / 0.55);
+  --shadow-overlay: 0 24px 80px rgb(0 0 0 / 0.6);
+  --focus-ring: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--border-focus);
+
+  /* one tactile press-scale for every interactive primitive (btn/chip/icon/tab) */
+  --press-scale: 0.97;
+  /* the single disabled-control opacity (was a repeated 0.4 literal) */
+  --opacity-disabled: 0.4;
+  /* one card-hover lift across rails / grid / collection (was 1.02 vs 1.03) */
+  --hover-lift: 1.03;
+  /* springier lift for round media controls (player big-play, game close) */
+  --hover-lift-control: 1.06;
+
+  /* ── Motion ─────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-slow: 300ms;
+  --dur-morph: 420ms;
+  --dur-crossfade: 240ms;
+  --dur-toast: 260ms;
+  --dur-reveal: 600ms;
+}
+
+/* nav shrinks to 56px on mobile; page top-padding follows automatically */
+@media (max-width: 768px) {
+  :root {
+    --nav-h: 56px;
+  }
+}

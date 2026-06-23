@@ -14,6 +14,7 @@ build/
 *.jpg
 !design/**
 !frontend/public/**
+!landing/public/**
 .playwright-mcp/
 *.sqlite
 /tmp/
