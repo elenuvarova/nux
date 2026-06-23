@@ -1423,6 +1423,13 @@ export const GENRE_MATCH = {
   musical: [],
 };
 
+// Genres the demo catalog can actually fill (≥3 titles) — the onboarding taste
+// picker offers only these, so every pick yields a real "Because you like…" rail.
+export const STOCKED_GENRES = GENRES.filter((g) => {
+  const labels = GENRE_MATCH[g.id] || [];
+  return labels.length > 0 && FILMS.filter((f) => labels.includes(f.genre)).length >= 3;
+});
+
 // ── Fictional non-film content (generated key art) ────────────────
 export const EXTRAS = {
   game: {

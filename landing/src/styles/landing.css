@@ -43,7 +43,7 @@ a { color: inherit; text-decoration: none; }
 .section-title.center { text-align: center; }
 
 /* ---- layout ---- */
-.page { position: relative; overflow-x: hidden; }
+.page { position: relative; overflow-x: hidden; --rail-gap: var(--rail-gap); /* one knob for the poster-rail / CTA gaps */ }
 .section { max-width: 1240px; margin: 0 auto; padding: var(--space-20, 80px) var(--space-10, 40px); }
 
 /* ---- nav ---- */
@@ -78,7 +78,7 @@ a { color: inherit; text-decoration: none; }
   line-height: 1.04; letter-spacing: -.015em; margin: 0 0 20px; text-shadow: 0 2px 40px rgb(var(--ink-950-rgb) / .6); max-width: 16ch; }
 .hero-sub { font-size: clamp(15px, 1.4vw, 18px); line-height: 1.5; color: var(--text-secondary, #b0a99e);
   max-width: 56ch; margin: 0 0 30px; }
-.cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.cta-row { display: flex; gap: var(--rail-gap); flex-wrap: wrap; }
 .hero-hint { margin: 22px 0 0; font-size: 12px; letter-spacing: .04em; color: var(--text-tertiary, #9a9183); opacity: .8; }
 @media (hover: none) { .hint-cursor { display: none; } } /* touch devices have no cursor */
 
@@ -97,7 +97,7 @@ a { color: inherit; text-decoration: none; }
 .curator-from { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-tertiary); margin: 0 0 6px; }
 .curator-reply { margin: 0 0 var(--space-8, 32px); color: var(--text-secondary); line-height: 1.55; }
 .curator-reply em { color: var(--text-primary); font-style: italic; }
-.curator-results { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.curator-results { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--rail-gap); }
 .result { margin: 0; }
 .result img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: var(--radius-poster, 6px); }
 .result figcaption { margin-top: 8px; font-size: 13px; color: var(--text-secondary); }
@@ -107,7 +107,7 @@ a { color: inherit; text-decoration: none; }
 /* ---- catalogue rails ---- */
 .rail { margin-bottom: var(--space-10, 40px); }
 .rail-label { font-family: var(--font-display); font-weight: 600; font-size: 22px; margin: 0 0 16px; }
-.rail-row { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+.rail-row { display: flex; gap: var(--rail-gap); overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
 .rail-row::-webkit-scrollbar { display: none; }
 .card { flex: 0 0 184px; margin: 0; }
 .card img { width: 184px; height: 262px; object-fit: cover; border-radius: var(--radius-poster, 6px); }

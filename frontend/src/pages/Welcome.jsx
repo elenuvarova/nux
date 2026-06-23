@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import usePageTitle from '../lib/usePageTitle.js';
-import { GENRES, EXTRAS } from '../data/catalog.js';
+import { STOCKED_GENRES, EXTRAS } from '../data/catalog.js';
 import './Welcome.css';
 
 export default function Welcome() {
@@ -80,7 +80,7 @@ export default function Welcome() {
       </h1>
       <p className="welcome-sub">Select all that apply — we'll use this to personalise your feed.</p>
       <div className="welcome-grid" role="group" aria-label="Genres">
-        {GENRES.map((g) => (
+        {STOCKED_GENRES.map((g) => (
           <button
             key={g.id}
             type="button"

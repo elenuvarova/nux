@@ -3,12 +3,14 @@ import { PosterCard } from '../components/Rail.jsx';
 import { SkeletonGrid } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useMyList } from '../lib/useMyList.js';
+import { useAuth } from '../lib/useAuth.jsx';
 import { byId } from '../data/catalog.js';
 import './Browse.css';
 
 export default function MyList() {
   usePageTitle('My List');
   const { list, ready } = useMyList();
+  const { user } = useAuth();
   const films = list.map(byId).filter(Boolean);
 
   return (
@@ -22,11 +24,18 @@ export default function MyList() {
         {!ready ? (
           <SkeletonGrid count={12} />
         ) : films.length > 0 ? (
-          <div className="browse-grid">
-            {films.map((f) => (
-              <PosterCard key={f.id} filmId={f.id} />
-            ))}
-          </div>
+          <>
+            <div className="browse-grid">
+              {films.map((f) => (
+                <PosterCard key={f.id} filmId={f.id} />
+              ))}
+            </div>
+            {!user && (
+              <p className="browse-empty-sub" style={{ marginTop: 'var(--space-8)', textAlign: 'center' }}>
+                Saved on this device — <Link to="/signin">sign in</Link> to keep your list anywhere.
+              </p>
+            )}
+          </>
         ) : (
           <div className="browse-empty">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true" style={{ color: 'var(--icon-tertiary)' }}>

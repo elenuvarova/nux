@@ -1,4 +1,5 @@
 import { NavLink, Link } from 'react-router-dom';
+import { useAuth } from '../lib/useAuth.jsx';
 import './TabBar.css';
 
 const tabs = [
@@ -46,10 +47,16 @@ const tabs = [
 ];
 
 export default function TabBar() {
+  const { user } = useAuth();
+  // Anonymous users get "Sign in" instead of a Profile tab that bounces to a
+  // confusing "Welcome back" screen — mirrors the desktop nav.
+  const items = tabs.map((t) =>
+    t.to === '/profile' && !user ? { ...t, to: '/signin', label: 'Sign in' } : t
+  );
   return (
     <nav className="tabbar-wrap" aria-label="Bottom navigation">
       <div className="tabbar">
-        {tabs.map((t) => (
+        {items.map((t) => (
           <NavLink key={t.to} to={t.to} end={t.end} className="tabbar-item">
             {t.icon}
             <span>{t.label}</span>
