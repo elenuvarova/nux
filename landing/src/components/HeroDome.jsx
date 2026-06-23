@@ -1,15 +1,16 @@
 import { useEffect, useRef } from 'react';
 import { DOME, poster } from '../data/films.js';
 
-// Flat, depth-layered poster WALL. Every poster faces the camera (no rotation =
-// no skew/crookedness), floating at varied depths so the field parallaxes as it
+// Gently convex poster wall on a shallow CYLINDER: posters spread evenly across the
+// grid and curve in depth by column — centre toward the camera, edges back — yet
+// every poster faces the camera (no rotation = no skew). The field parallaxes as it
 // drifts and leans toward the cursor. Drag to pan. Reduced-motion → static;
 // pauses when scrolled off-screen.
 const CFG = {
   COLS: 7, ROWS: 5,
-  COL_W: 236, ROW_H: 300,        // grid spacing
+  COL_W: 236, ROW_H: 300,        // grid spacing (even)
   POSTER_W: 158, POSTER_H: 226,  // ~2:3
-  DEPTH: 300,                    // max |translateZ| (depth spread)
+  CURVE: 240,                    // cylinder depth — centre forward, edges back (reduced)
   PARALLAX_X: 64, PARALLAX_Y: 40,// cursor → field pan
   TILT: 3,                       // cursor → field tilt (deg) — tiny, stays flat
   DRIFT: 26,                     // ambient horizontal sway (px)
@@ -24,16 +25,16 @@ export default function HeroDome({ children }) {
     const hero = heroRef.current, field = fieldRef.current;
     if (!hero || !field) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const rand = (i) => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
 
     field.replaceChildren();
+    const halfW = ((CFG.COLS - 1) / 2) * CFG.COL_W;
     let k = 0;
     for (let r = 0; r < CFG.ROWS; r++) {
       for (let c = 0; c < CFG.COLS; c++) {
-        const stagger = (r % 2) * (CFG.COL_W / 2);
-        const x = (c - (CFG.COLS - 1) / 2) * CFG.COL_W + stagger + (rand(k) - 0.5) * 36;
-        const y = (r - (CFG.ROWS - 1) / 2) * CFG.ROW_H + (rand(k + 99) - 0.5) * 36;
-        const z = (rand(k + 7) - 0.5) * 2 * CFG.DEPTH;
+        const x = (c - (CFG.COLS - 1) / 2) * CFG.COL_W; // even columns
+        const y = (r - (CFG.ROWS - 1) / 2) * CFG.ROW_H; // even rows
+        const cx = x / halfW;                           // -1..1 across the cylinder
+        const z = CFG.CURVE * (1 - 1.6 * cx * cx);      // cylinder: centre forward, edges back
         const t = document.createElement('div');
         t.className = 'pw-poster';
         const img = document.createElement('img');
@@ -43,7 +44,7 @@ export default function HeroDome({ children }) {
         t.style.width = CFG.POSTER_W + 'px';
         t.style.height = CFG.POSTER_H + 'px';
         t.style.transform = `translate3d(${(x - CFG.POSTER_W / 2).toFixed(1)}px, ${(y - CFG.POSTER_H / 2).toFixed(1)}px, ${z.toFixed(1)}px)`;
-        const depthN = (z + CFG.DEPTH) / (2 * CFG.DEPTH); // 0 far → 1 near
+        const depthN = (z + 0.6 * CFG.CURVE) / (1.6 * CFG.CURVE); // 0 far → 1 near
         t.style.filter = `brightness(${(0.5 + 0.4 * depthN).toFixed(2)})`;
         t.style.opacity = (0.5 + 0.5 * depthN).toFixed(2);
         t.style.zIndex = String(1000 + Math.round(z));
