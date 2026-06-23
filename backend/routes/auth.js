@@ -19,7 +19,7 @@ import { ah } from "../lib/asyncHandler.js";
 const router = Router();
 const emailRe = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
-const APP_URL = process.env.APP_URL || (process.env.NODE_ENV === "production" ? "https://nux.ontwrpn.com" : "http://localhost:5173");
+const APP_URL = process.env.APP_URL || (process.env.NODE_ENV === "production" ? "https://app.nux.ontwrpn.com" : "http://localhost:5173");
 
 const NAME_MAX = 80;
 const AVATAR_MAX = 500;

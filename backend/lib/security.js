@@ -10,7 +10,7 @@ const isProd = process.env.NODE_ENV === "production";
 
 function allowedOrigins() {
   if (isProd) {
-    const app = process.env.APP_URL || "https://nux.ontwrpn.com";
+    const app = process.env.APP_URL || "https://app.nux.ontwrpn.com";
     return [app.replace(/\/$/, "")];
   }
   return ["http://localhost:5173", "http://localhost:5174"];

@@ -50,11 +50,11 @@ export default function Welcome() {
         <div className="welcome-content">
           <p className="welcome-wordmark">NUX</p>
           <h1 className="welcome-title" tabIndex={-1}>
-            Cinema for
+            Cinema for{" "}
             <br />
             Curious Minds
           </h1>
-          <p className="welcome-sub">Films, documentaries, games and courses — curated by editors who care.</p>
+          <p className="welcome-sub">Films and documentaries — curated by editors who care.</p>
           <button type="button" className="btn btn-primary welcome-cta" onClick={() => setStep(1)}>
             Get started
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

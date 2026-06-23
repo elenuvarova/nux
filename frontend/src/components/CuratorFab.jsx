@@ -12,6 +12,8 @@ export default function CuratorFab() {
       data-tour="curator"
       onClick={openCurator}
       aria-label="Ask the Curator"
+      aria-haspopup="dialog"
+      aria-expanded={open}
       hidden={open}
     >
       <span aria-hidden="true">✦</span>

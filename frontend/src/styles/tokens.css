@@ -14,6 +14,7 @@
      the ink tokens instead of re-typing the raw triplet */
   --ink-950-rgb: 7 6 6;
   --ink-900-rgb: 13 12 11;
+  --amber-500-rgb: 200 146 42;
 
   /* ── Primitives: paper (warm off-white text ladder) ─────────── */
   --paper-100: #f2efe9;

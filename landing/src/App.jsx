@@ -42,13 +42,13 @@ export default function App() {
             <a className="btn btn-primary btn-lg" href={`${APP}/welcome`}><PlayIcon /> Start watching</a>
             <a className="btn btn-secondary btn-lg" href="#catalogue">Browse the catalogue</a>
           </div>
-          <p className="hero-hint">drag to spin · move your cursor to look around</p>
+          <p className="hero-hint">drag to spin<span className="hint-cursor"> · move your cursor to look around</span></p>
         </div>
       </HeroDome>
 
       {/* Proof strip */}
       <section className="proof">
-        <p>Around 120 films. No algorithm. Every one put there on purpose.</p>
+        <p>Around 50 films. No algorithm. Every one put there on purpose.</p>
       </section>
 
       {/* Curator demo */}

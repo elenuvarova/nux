@@ -25,7 +25,7 @@ export default function Genre() {
   if (!genre || !GENRE_MATCH[id]) return <NotFound message="That genre doesn't exist yet." />;
 
   const labels = GENRE_MATCH[id];
-  const BLURB_FALLBACK = BLURB[id] || `A ${genre.label.toLowerCase()} collection, coming to NUX soon.`;
+  const BLURB_FALLBACK = BLURB[id] || `${/^[aeiou]/i.test(genre.label) ? "An" : "A"} ${genre.label.toLowerCase()} collection, coming to NUX soon.`;
   const films = FILMS.filter((f) => labels.includes(f.genre));
 
   return (

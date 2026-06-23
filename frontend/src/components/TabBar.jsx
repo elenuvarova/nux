@@ -47,7 +47,7 @@ const tabs = [
 
 export default function TabBar() {
   return (
-    <nav className="tabbar-wrap" aria-label="Primary">
+    <nav className="tabbar-wrap" aria-label="Bottom navigation">
       <div className="tabbar">
         {tabs.map((t) => (
           <NavLink key={t.to} to={t.to} end={t.end} className="tabbar-item">

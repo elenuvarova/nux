@@ -97,6 +97,8 @@ export default function CuratorOverlay() {
 
   useEffect(() => {
     if (!open) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden"; // lock background scroll while dialog open (aria-modal)
     const onKey = (e) => {
       if (e.key === "Escape") {
         closeCurator();
@@ -119,7 +121,10 @@ export default function CuratorOverlay() {
       }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
   }, [open, closeCurator]);
 
   useEffect(() => {
