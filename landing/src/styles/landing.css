@@ -57,7 +57,7 @@ a { color: inherit; text-decoration: none; }
 .hero { position: relative; height: 100svh; min-height: 620px; max-height: 920px; overflow: hidden;
   cursor: grab; background: var(--surface-sunken, #070606); touch-action: pan-y; }
 .hero.dragging { cursor: grabbing; }
-.dome-scene { position: absolute; inset: 0; perspective: 1400px; perspective-origin: 50% 42%; z-index: 1; }
+.dome-scene { position: absolute; inset: 0; perspective: 2800px; perspective-origin: 50% 42%; z-index: 1; }
 .dome-stage { position: absolute; left: 50%; top: 46%; width: 0; height: 0; transform-style: preserve-3d;
   transform: rotateX(-6deg); will-change: transform; }
 .dome-ring { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }

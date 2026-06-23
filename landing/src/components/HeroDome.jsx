@@ -5,7 +5,7 @@ import { DOME, poster } from '../data/films.js';
 const CFG = {
   RADIUS: 680,
   PER_RING: 15,
-  RINGS: [{ y: -250, tilt: 16, off: 0 }, { y: 0, tilt: 0, off: 6 }, { y: 250, tilt: -16, off: 11 }],
+  RINGS: [{ y: -250, tilt: 7, off: 0 }, { y: 0, tilt: 0, off: 6 }, { y: 250, tilt: -7, off: 11 }],
   IDLE_VEL: 0.05,   // auto-drift speed (deg/frame)
   RESPIN: 0.02,     // ease back to idle drift after inertia decays
   FRICTION: 0.96,   // drag-release inertia decay
