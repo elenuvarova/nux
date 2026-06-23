@@ -50,7 +50,12 @@ export async function destroySession(req, res) {
 export async function currentUser(req) {
   const token = req.cookies?.[COOKIE];
   if (!token) return null;
-  const session = await Session.findOne({ where: { token }, include: User });
+  // Whitelist columns so hashedPassword never rides along on the hottest path
+  // (every authed /api request resolves the user this way).
+  const session = await Session.findOne({
+    where: { token },
+    include: [{ model: User, attributes: ["id", "email", "name", "avatarUrl"] }],
+  });
   if (!session) return null;
   if (session.expiresAt < new Date()) {
     await session.destroy();

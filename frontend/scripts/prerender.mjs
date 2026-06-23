@@ -38,7 +38,7 @@ if (!assetTags) {
   process.exit(0);
 }
 
-function compose({ title, description, url, image, preload, jsonLds = [] }) {
+function compose({ title, description, url, image, preload, preloadSrcset, jsonLds = [] }) {
   const t = title ? `${esc(title)} — NUX` : 'NUX — Cinema for Curious Minds';
   const d = esc(description || DEFAULT_DESC);
   const img = esc(abs(image));
@@ -56,7 +56,7 @@ function compose({ title, description, url, image, preload, jsonLds = [] }) {
     '<meta name="mobile-web-app-capable" content="yes" />',
     '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />',
     '<meta name="apple-mobile-web-app-title" content="NUX" />',
-    preload ? `<link rel="preload" as="image" href="${esc(abs(preload))}" fetchpriority="high" />` : '',
+    preload ? `<link rel="preload" as="image" href="${esc(abs(preload))}"${preloadSrcset ? ` imagesrcset="${esc(preloadSrcset)}" imagesizes="100vw"` : ''} fetchpriority="high" />` : '',
     '<meta property="og:type" content="website" />',
     '<meta property="og:site_name" content="NUX" />',
     `<meta property="og:title" content="${t}" />`,
@@ -127,6 +127,8 @@ safe('/', () =>
         'NUX is an editorial streaming platform for films, documentaries, games and courses — curated by editors who care. A design-system showcase built on real British cinema.',
       url: `${ORIGIN}/`,
       preload: '/assets/stills/still-lawrence-of-arabia-2.jpg',
+      preloadSrcset:
+        '/assets/stills/still-lawrence-of-arabia-2-660.jpg 660w, /assets/stills/still-lawrence-of-arabia-2.jpg 1600w',
       jsonLds: [website, organization],
     })
   )
