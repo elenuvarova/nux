@@ -24,4 +24,34 @@ export const TRAILERS = {
   'aftersun': { yt: 'G9jOaggGPKQ', label: 'Aftersun | Official Trailer HD | A24' }, // A24
   'touching-the-void': { yt: 'jtnqVZEktyg', label: 'Touching the Void Official Trailer #1 - Nicholas Aaron Movie (2003) HD' }, // Rotten Tomatoes Classic Trailers
   'senna': { yt: 'QOQLeqRcgKc', label: 'Senna - Official UK Trailer' }, // Universal Pictures UK
+  'a-matter-of-life-and-death': { yt: 'S0veuSLLWZ0', label: 'A Matter of Life and Death - official trailer - 4K restoration' }, // Park Circus
+  'the-fallen-idol': { yt: 'AsA7TI70ARY', label: 'THE FALLEN IDOL - Official Trailer - 70th Anniversary Restoration' }, // StudioCanal UK
+  'kind-hearts-and-coronets': { yt: 'OvpkDv_f0dE', label: 'KIND HEARTS & CORONETS | 4K Restoration | Official Trailer' }, // StudioCanal
+  'the-lavender-hill-mob': { yt: 'IW78cjH1pGw', label: 'THE LAVENDER HILL MOB | Official Trailer | STUDIOCANAL' }, // STUDIOCANAL
+  'the-ladykillers': { yt: 'PGTLtOPVXlo', label: 'THE LADYKILLERS (1955) | 4K Restoration | Official Trailer' }, // Studiocanal Cinema Club
+  'richard-iii': { yt: '6vLUkFNx48I', label: 'Richard III - 1955 - Trailer - 4K' }, // archive
+  'saturday-night-and-sunday-morning': { yt: 'EPF4yIv76I0', label: '1960 Saturday Night And Sunday Morning Official Trailer' }, // Woodfall
+  'the-innocents': { yt: 'N4F9gL0XecY', label: 'The Innocents (1961) Trailer HD | Deborah Kerr' }, // Film Trailer Channel
+  'this-sporting-life': { yt: 'c_50t3Tra-4', label: '1963 This Sporting Life Official Trailer' }, // Independent Artists
+  'the-servant': { yt: 'kdI5b_iIN88', label: 'THE SERVANT | Official Trailer - Dirk Bogarde | STUDIOCANAL' }, // STUDIOCANAL
+  'zulu': { yt: '6WuoiR0I8Es', label: 'Zulu (1964) Original Trailer [FHD]' }, // archive
+  'kes': { yt: 'JTZwKbJgoDk', label: 'KES - Masters of Cinema Trailer' }, // Eureka/MoC
+  'performance': { yt: 'mggYe5E5laU', label: 'Performance - Theatrical Trailer' }, // Warner Bros. Rewind
+  'walkabout': { yt: 'Fdqwbs8uKwQ', label: 'WALKABOUT Trailer (1971) - The Criterion Collection' }, // Criterion
+  'the-devils': { yt: 'eCF2S3vchE4', label: 'The Devils (1971) - trailer' }, // BFI
+  'get-carter': { yt: 'kV4XrUDBlfM', label: 'Get Carter (1971) Official Trailer - Michael Caine' }, // archive
+  'the-long-good-friday': { yt: 'BC7e1eXr0SQ', label: 'THE LONG GOOD FRIDAY Official Trailer (1980)' }, // archive
+  'the-draughtsmans-contract': { yt: 'CmCMumlxfX0', label: 'The Draughtsman\'s Contract - 4K restoration trailer | BFI' }, // BFI
+  'mona-lisa': { yt: 'KMDvh1iq3Nc', label: 'Mona Lisa (1986) - Original Trailer' }, // HandMade Films
+  'distant-voices-still-lives': { yt: 'IdlslMb3KJY', label: 'Distant Voices, Still Lives trailer - 4K restoration | BFI' }, // BFI
+  'ratcatcher': { yt: 'CHZ_MS2-iM0', label: 'Ratcatcher: 4K Restoration | Official Trailer | Park Circus' }, // Park Circus
+  'this-is-england': { yt: '1IKPdRdOkMg', label: 'This is England: Official Trailer (2006)' }, // Warp Films
+  'red-road': { yt: 'kCSKOQqIR0w', label: 'Red Road | Official UK Trailer' }, // Verve Pictures
+  'we-need-to-talk-about-kevin': { yt: 'bV7Y5cylhNc', label: 'We Need To Talk About Kevin - Official US Trailer' }, // Oscilloscope
+  'weekend': { yt: '2IFbcWG1F9o', label: 'Weekend - Official Trailer | IFC Films' }, // IFC Films
+  'the-selfish-giant': { yt: '7tEgcpTbvJ8', label: 'The Selfish Giant trailer | Curzon' }, // Curzon
+  'amy': { yt: '_2yCIwmNuLE', label: 'Amy | Official Trailer HD | A24' }, // A24
+  'i-daniel-blake': { yt: 'ahWgxw9E_h4', label: 'I, DANIEL BLAKE - OFFICIAL UK TRAILER [HD]' }, // eOne UK
+  'gods-own-country': { yt: 'kQV_pJyGAIg', label: 'God\'s Own Country | UK Trailer' }, // Picturehouse
+  'bait': { yt: 'eVlPl0SXFiE', label: 'New trailer for Bait - In cinemas 30 August | BFI' }, // BFI
 };

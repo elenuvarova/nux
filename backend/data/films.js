@@ -168,6 +168,254 @@ export const FILMS = [
     "genre": "Documentary",
     "director": "Asif Kapadia",
     "synopsis": "Ayrton Senna's decade in Formula One — faith, genius, politics and the weekend at Imola — told entirely through archive footage."
+  },
+  {
+    "id": "a-matter-of-life-and-death",
+    "title": "A Matter of Life and Death",
+    "year": 1946,
+    "genre": "Fantasy",
+    "director": "Powell & Pressburger",
+    "synopsis": "A burning RAF pilot bails out without a parachute, survives by a clerical error in heaven, and must argue for his life — and his new love — before a celestial court. Powell & Pressburger flip Technico"
+  },
+  {
+    "id": "the-fallen-idol",
+    "title": "The Fallen Idol",
+    "year": 1948,
+    "genre": "Thriller",
+    "director": "Carol Reed",
+    "synopsis": "A diplomat's lonely young son worships the embassy butler — and then thinks he's seen him kill. Carol Reed and Graham Greene turn a child's misreading of the adult world into an exquisitely tense thri"
+  },
+  {
+    "id": "a-canterbury-tale",
+    "title": "A Canterbury Tale",
+    "year": 1944,
+    "genre": "Drama",
+    "director": "Powell & Pressburger",
+    "synopsis": "A landgirl, a GI and a British sergeant chase a phantom \"glue man\" through wartime Kent in Powell & Pressburger's strangest, most pantheistic film — a mystery that dissolves into a hymn to English lan"
+  },
+  {
+    "id": "kind-hearts-and-coronets",
+    "title": "Kind Hearts and Coronets",
+    "year": 1949,
+    "genre": "Comedy",
+    "director": "Robert Hamer",
+    "synopsis": "A disinherited draper's son murders his way through the eight relatives between him and a dukedom — all of them played by Alec Guinness. The wittiest, most elegantly amoral comedy Ealing ever made, na"
+  },
+  {
+    "id": "the-lavender-hill-mob",
+    "title": "The Lavender Hill Mob",
+    "year": 1951,
+    "genre": "Comedy",
+    "director": "Charles Crichton",
+    "synopsis": "Alec Guinness plays a timid bank clerk who has spent twenty grey years guarding gold he will never own — then quietly decides to steal all of it. The most genteelly subversive of the Ealing comedies, "
+  },
+  {
+    "id": "the-ladykillers",
+    "title": "The Ladykillers",
+    "year": 1955,
+    "genre": "Comedy",
+    "director": "Alexander Mackendrick",
+    "synopsis": "A gang of crooks rents a room from a tiny, oblivious old widow and is slowly undone by her gentility. The last great Ealing comedy, and the cruellest — a pitch-black fable about a postwar England too "
+  },
+  {
+    "id": "richard-iii",
+    "title": "Richard III",
+    "year": 1955,
+    "genre": "History",
+    "director": "Laurence Olivier",
+    "synopsis": "Olivier directs himself as Shakespeare's hunchbacked schemer, confiding every murder to the camera with a black, delighted wink. The most purely entertaining of the great Shakespeare films, in sumptuo"
+  },
+  {
+    "id": "saturday-night-and-sunday-morning",
+    "title": "Saturday Night and Sunday Morning",
+    "year": 1960,
+    "genre": "Drama",
+    "director": "Karel Reisz",
+    "synopsis": "Albert Finney's Nottingham lathe-operator drinks, brawls and beds another man's wife on his wages, determined not to let the bastards grind him down. The film that detonated the British New Wave — ang"
+  },
+  {
+    "id": "the-innocents",
+    "title": "The Innocents",
+    "year": 1961,
+    "genre": "Horror",
+    "director": "Jack Clayton",
+    "synopsis": "Deborah Kerr's governess arrives to mind two angelic children and becomes convinced the dead are walking — though the film never lets us decide whether the ghosts are real or hers. The best British gh"
+  },
+  {
+    "id": "this-sporting-life",
+    "title": "This Sporting Life",
+    "year": 1963,
+    "genre": "Drama",
+    "director": "Lindsay Anderson",
+    "synopsis": "Richard Harris is a Yorkshire miner turned brutal rugby-league star who can flatten any man on the pitch but can't reach the widow he loves. The rawest, most anguished of the kitchen-sink dramas."
+  },
+  {
+    "id": "the-servant",
+    "title": "The Servant",
+    "year": 1963,
+    "genre": "Drama",
+    "director": "Joseph Losey",
+    "synopsis": "Dirk Bogarde's manservant moves into a young aristocrat's townhouse and, with Pinter's poison-velvet dialogue, inverts master and servant until the whole class order curdles. Losey's chilliest film."
+  },
+  {
+    "id": "zulu",
+    "title": "Zulu",
+    "year": 1964,
+    "genre": "History",
+    "director": "Cy Endfield",
+    "synopsis": "January 1879: a hundred-odd British soldiers hold a mission station at Rorke's Drift against four thousand Zulu warriors. Endfield stages the siege with overwhelming scale and a surprising lack of jin"
+  },
+  {
+    "id": "kes",
+    "title": "Kes",
+    "year": 1969,
+    "genre": "Drama",
+    "director": "Ken Loach",
+    "synopsis": "A bullied Barnsley schoolboy, written off by everyone, finds the one thing that's his alone: a kestrel he trains from the nest. Loach's tender, unsparing landmark of British realism — and the kindest "
+  },
+  {
+    "id": "performance",
+    "title": "Performance",
+    "year": 1970,
+    "genre": "Crime",
+    "director": "Donald Cammell & Nicolas Roeg",
+    "synopsis": "A gangster and a faded rock star (James Fox and Mick Jagger) dissolve into one another in a Notting Hill basement. The film that broke the British crime picture open and let the sixties bleed out — Ro"
+  },
+  {
+    "id": "walkabout",
+    "title": "Walkabout",
+    "year": 1971,
+    "genre": "Drama",
+    "director": "Nicolas Roeg",
+    "synopsis": "Two abandoned schoolchildren and an Aboriginal boy cross an outback that Roeg shoots as both Eden and abattoir. A hypnotic essay on the impossible distance between cultures, and one of the most beauti"
+  },
+  {
+    "id": "the-devils",
+    "title": "The Devils",
+    "year": 1971,
+    "genre": "Horror",
+    "director": "Ken Russell",
+    "synopsis": "Ken Russell's still-mutilated masterpiece torches the line between the sacred and the obscene as a 17th-century priest burns for politics dressed as witchcraft. Oliver Reed has never been more magnifi"
+  },
+  {
+    "id": "get-carter",
+    "title": "Get Carter",
+    "year": 1971,
+    "genre": "Crime",
+    "director": "Mike Hodges",
+    "synopsis": "A London enforcer rides north to bury his brother and won't accept it was an accident. Hodges shoots Newcastle in cold daylight and Michael Caine plays Jack Carter as a beautifully tailored shark — th"
+  },
+  {
+    "id": "the-long-good-friday",
+    "title": "The Long Good Friday",
+    "year": 1980,
+    "genre": "Crime",
+    "director": "John Mackenzie",
+    "synopsis": "A London crime boss with dreams of going legit watches his empire detonate over one Easter weekend — and never sees who's really pulling it apart. Bob Hoskins is volcanic, and the final shot is one of"
+  },
+  {
+    "id": "the-draughtsmans-contract",
+    "title": "The Draughtsman's Contract",
+    "year": 1982,
+    "genre": "Mystery",
+    "director": "Peter Greenaway",
+    "synopsis": "Greenaway's wickedly formal country-house puzzle, where every drawing is evidence and every line of dialogue a trap, scored by Michael Nyman's clockwork menace. The most ravishing film ever made about"
+  },
+  {
+    "id": "mona-lisa",
+    "title": "Mona Lisa",
+    "year": 1986,
+    "genre": "Crime",
+    "director": "Neil Jordan",
+    "synopsis": "Bob Hoskins, never better, drives a high-class call girl through a neon-rotted London he can't read, falling for a woman who is using him. Neil Jordan's heartbroken neo-noir — tender and merciless at "
+  },
+  {
+    "id": "distant-voices-still-lives",
+    "title": "Distant Voices, Still Lives",
+    "year": 1988,
+    "genre": "Drama",
+    "director": "Terence Davies",
+    "synopsis": "Terence Davies remembers his Liverpool childhood not as a story but as a hymn-book — a violent father, a steadfast mother, and a working-class family who sing through everything. One of the most beaut"
+  },
+  {
+    "id": "ratcatcher",
+    "title": "Ratcatcher",
+    "year": 1999,
+    "genre": "Drama",
+    "director": "Lynne Ramsay",
+    "synopsis": "Lynne Ramsay's astonishing debut sets a guilt-haunted boy adrift in a rubbish-strewn Glasgow during the 1973 bin strike, where squalor and tenderness share the same frame. Spare, lyrical and almost un"
+  },
+  {
+    "id": "this-is-england",
+    "title": "This Is England",
+    "year": 2006,
+    "genre": "Drama",
+    "director": "Shane Meadows",
+    "synopsis": "Summer 1983: a grieving twelve-year-old falls in with a gentle skinhead crew, then watches the subculture curdle as a charismatic ex-con drags it toward National Front violence. Meadows turns his own "
+  },
+  {
+    "id": "red-road",
+    "title": "Red Road",
+    "year": 2006,
+    "genre": "Thriller",
+    "director": "Andrea Arnold",
+    "synopsis": "A Glasgow CCTV operator spots a face on her monitors she had hoped never to see again, and lets surveillance curdle into pursuit. Andrea Arnold's ferocious debut turns the panopticon of the city into "
+  },
+  {
+    "id": "we-need-to-talk-about-kevin",
+    "title": "We Need to Talk About Kevin",
+    "year": 2011,
+    "genre": "Thriller",
+    "director": "Lynne Ramsay",
+    "synopsis": "Tilda Swinton burns slow and cold as a mother sifting the wreckage of her son's atrocity for the moment it all went wrong. Ramsay films guilt as a colour — relentless arterial red — in a fractured, ne"
+  },
+  {
+    "id": "weekend",
+    "title": "Weekend",
+    "year": 2011,
+    "genre": "Romance",
+    "director": "Andrew Haigh",
+    "synopsis": "Andrew Haigh compresses a whole love affair into 48 hours: two men meet on a Friday night in Nottingham and talk, drink and confess their way toward a Sunday goodbye neither quite wants. Tender, exact"
+  },
+  {
+    "id": "the-selfish-giant",
+    "title": "The Selfish Giant",
+    "year": 2013,
+    "genre": "Drama",
+    "director": "Clio Barnard",
+    "synopsis": "In a frayed corner of Bradford, two excluded schoolboys go scavenging scrap and copper for a small-time dealer, chasing money and a fragile sense of worth toward a reckoning neither can outrun. Tender"
+  },
+  {
+    "id": "amy",
+    "title": "Amy",
+    "year": 2015,
+    "genre": "Documentary",
+    "director": "Asif Kapadia",
+    "synopsis": "Asif Kapadia assembles a damning portrait almost entirely from archive — home video, voicemails, paparazzi footage — letting Amy Winehouse's own voice indict the industry and intimates that fed on her"
+  },
+  {
+    "id": "i-daniel-blake",
+    "title": "I, Daniel Blake",
+    "year": 2016,
+    "genre": "Drama",
+    "director": "Ken Loach",
+    "synopsis": "A widowed Newcastle joiner, ruled fit to work by a system that has just told his heart otherwise, is ground between a benefits bureaucracy and his own stubborn decency. Loach's Palme d'Or winner — pla"
+  },
+  {
+    "id": "gods-own-country",
+    "title": "God's Own Country",
+    "year": 2017,
+    "genre": "Romance",
+    "director": "Francis Lee",
+    "synopsis": "On a hard, wind-scoured Yorkshire hill farm, a young man numbs himself with drink and joyless sex until a Romanian migrant worker arrives for lambing season. Francis Lee's astonishing debut is a love "
+  },
+  {
+    "id": "bait",
+    "title": "Bait",
+    "year": 2019,
+    "genre": "Drama",
+    "director": "Mark Jenkin",
+    "synopsis": "Shot on a hand-cranked Bolex and hand-processed onto 16mm monochrome, Mark Jenkin's debut watches a Cornish cove fisherman lose his harbour to second-homers and the tourist trade. It looks like a reli"
   }
 ];
 
