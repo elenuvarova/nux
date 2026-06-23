@@ -9,4 +9,4 @@ Disallow: /signup
 Disallow: /forgot
 Disallow: /reset
 
-Sitemap: https://nux.ontwrpn.com/sitemap.xml
+Sitemap: https://app.nux.ontwrpn.com/sitemap.xml

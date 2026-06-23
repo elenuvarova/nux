@@ -2,7 +2,7 @@ import { useState } from 'react';
 import HeroDome from './components/HeroDome.jsx';
 import { CURATOR, RAILS, COLLECTIONS, poster } from './data/films.js';
 
-const APP = 'https://nux.ontwrpn.com';
+const APP = 'https://app.nux.ontwrpn.com';
 
 function PlayIcon() {
   return (

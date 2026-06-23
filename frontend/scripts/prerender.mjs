@@ -14,7 +14,7 @@ import { FILMS, COLLECTIONS, GENRES, GENRE_MATCH, byId } from '../src/data/catal
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DIST = join(__dirname, '..', 'dist');
-const ORIGIN = 'https://nux.ontwrpn.com';
+const ORIGIN = 'https://app.nux.ontwrpn.com';
 const DEFAULT_DESC =
   'An editorial streaming platform for films, documentaries, games and courses — curated by editors who care.';
 
