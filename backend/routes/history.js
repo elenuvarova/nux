@@ -18,6 +18,7 @@ router.get(
       order: [["updatedAt", "DESC"]],
       limit: 12,
     });
+    res.set("Cache-Control", "no-store"); // per-user data — never cache (SW/proxy)
     res.json({
       history: rows.map((r) => ({ id: r.filmId, frac: r.frac, at: r.updatedAt.getTime() })),
     });

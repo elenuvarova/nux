@@ -9,6 +9,7 @@ import './styles/global.css';
 import App from './App.jsx';
 import { AuthProvider } from './lib/useAuth.jsx';
 import { CuratorProvider } from './lib/useCurator.jsx';
+import { registerSW } from 'virtual:pwa-register';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -21,3 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
+// Register the service worker (offline app-shell + media/data caching). autoUpdate
+// keeps the SW fresh on each deploy; immediate so it controls the page on first load.
+registerSW({ immediate: true });

@@ -9,6 +9,12 @@
       content="NUX is an editorial streaming platform for films, documentaries, games and courses — curated by editors who care. A design-system showcase built on real British cinema."
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- PWA: manifest + theme-color are injected by vite-plugin-pwa; iOS needs these by hand -->
+    <link rel="apple-touch-icon" href="/icon-180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="NUX" />
     <!-- LCP: the home hero backdrop is referenced from JS — preload it so the
          request starts with the HTML, not after the bundle executes -->
     <link rel="preload" as="image" href="/assets/stills/still-lawrence-of-arabia-2.jpg" fetchpriority="high" />

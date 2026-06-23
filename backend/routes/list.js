@@ -20,6 +20,7 @@ router.get(
       order: [["createdAt", "DESC"]],
       limit: LIST_LIMIT,
     });
+    res.set("Cache-Control", "no-store"); // per-user data — never cache (SW/proxy)
     res.json({ list: items.map((i) => i.filmId) });
   })
 );
