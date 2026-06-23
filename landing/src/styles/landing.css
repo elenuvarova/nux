@@ -57,9 +57,10 @@ a { color: inherit; text-decoration: none; }
 .hero { position: relative; height: 100svh; min-height: 620px; max-height: 920px; overflow: hidden;
   cursor: grab; background: var(--surface-sunken, #070606); touch-action: pan-y; }
 .hero.dragging { cursor: grabbing; }
-.pw-scene { position: absolute; inset: 0; perspective: 1700px; perspective-origin: 50% 46%; z-index: 1; }
+.pw-scene { position: absolute; inset: 0; perspective: 1500px; perspective-origin: 50% 46%; z-index: 1; }
 .pw-field { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; will-change: transform; }
-.pw-poster { position: absolute; left: 0; top: 0; border-radius: var(--radius-poster, 6px); overflow: hidden;
+.pw-ring { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+.pw-poster { position: absolute; left: 0; top: 0; border-radius: var(--radius-poster, 6px); overflow: hidden; backface-visibility: hidden;
   box-shadow: 0 24px 60px rgb(var(--ink-950-rgb) / .6); outline: 1px solid var(--white-a07); will-change: transform; }
 .pw-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .hero-scrim { position: absolute; inset: 0; z-index: 2; pointer-events: none;

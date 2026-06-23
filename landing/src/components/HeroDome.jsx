@@ -1,20 +1,21 @@
 import { useEffect, useRef } from 'react';
 import { DOME, poster } from '../data/films.js';
 
-// Gently convex poster wall on a shallow CYLINDER: posters spread evenly across the
-// grid and curve in depth by column — centre toward the camera, edges back — yet
-// every poster faces the camera (no rotation = no skew). The field parallaxes as it
-// drifts and leans toward the cursor. Drag to pan. Reduced-motion → static;
-// pauses when scrolled off-screen.
+// A clean, EVEN cylinder of posters. Rings are stacked vertically and kept LEVEL
+// (no X-tilt → none of the compound skew the old dome had); within each ring the
+// posters are spaced at equal angles and oriented tangent to the cylinder, so the
+// curve actually reads as a cylinder. Auto-spins gently; drag to spin; the cursor
+// parallax-tilts it. Reduced-motion → static; pauses when scrolled off-screen.
 const CFG = {
-  COLS: 7, ROWS: 5,
-  COL_W: 236, ROW_H: 300,        // grid spacing (even)
-  POSTER_W: 158, POSTER_H: 226,  // ~2:3
-  CURVE: 240,                    // cylinder depth — centre forward, edges back (reduced)
-  PARALLAX_X: 64, PARALLAX_Y: 40,// cursor → field pan
-  TILT: 3,                       // cursor → field tilt (deg) — tiny, stays flat
-  DRIFT: 26,                     // ambient horizontal sway (px)
-  EASE: 0.06,
+  RADIUS: 560,                          // cylinder radius (larger = gentler front curve)
+  PER_RING: 13,                         // posters per ring, evenly spaced
+  RING_Y: [-345, -115, 115, 345],       // four level rings
+  POSTER_W: 150, POSTER_H: 214,
+  IDLE: 0.02,                           // gentle auto-spin (deg/frame)
+  FRICTION: 0.95,                       // drag-release inertia decay
+  DRAG_GAIN: 0.2,                       // px dragged → deg spun
+  TILT: 4,                              // cursor → parallax tilt (deg)
+  EASE: 0.07,
 };
 
 export default function HeroDome({ children }) {
@@ -27,14 +28,14 @@ export default function HeroDome({ children }) {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     field.replaceChildren();
-    const halfW = ((CFG.COLS - 1) / 2) * CFG.COL_W;
+    const tiles = [];
     let k = 0;
-    for (let r = 0; r < CFG.ROWS; r++) {
-      for (let c = 0; c < CFG.COLS; c++) {
-        const x = (c - (CFG.COLS - 1) / 2) * CFG.COL_W; // even columns
-        const y = (r - (CFG.ROWS - 1) / 2) * CFG.ROW_H; // even rows
-        const cx = x / halfW;                           // -1..1 across the cylinder
-        const z = CFG.CURVE * (1 - 1.6 * cx * cx);      // cylinder: centre forward, edges back
+    CFG.RING_Y.forEach((ry, ri) => {
+      const ring = document.createElement('div');
+      ring.className = 'pw-ring';
+      ring.style.transform = `translateY(${ry}px)`;
+      for (let i = 0; i < CFG.PER_RING; i++) {
+        const ang = i * (360 / CFG.PER_RING) + ri * (360 / CFG.PER_RING / 2); // offset alternate rings
         const t = document.createElement('div');
         t.className = 'pw-poster';
         const img = document.createElement('img');
@@ -43,31 +44,29 @@ export default function HeroDome({ children }) {
         t.appendChild(img);
         t.style.width = CFG.POSTER_W + 'px';
         t.style.height = CFG.POSTER_H + 'px';
-        t.style.transform = `translate3d(${(x - CFG.POSTER_W / 2).toFixed(1)}px, ${(y - CFG.POSTER_H / 2).toFixed(1)}px, ${z.toFixed(1)}px)`;
-        const depthN = (z + 0.6 * CFG.CURVE) / (1.6 * CFG.CURVE); // 0 far → 1 near
-        t.style.filter = `brightness(${(0.5 + 0.4 * depthN).toFixed(2)})`;
-        t.style.opacity = (0.5 + 0.5 * depthN).toFixed(2);
-        t.style.zIndex = String(1000 + Math.round(z));
-        field.appendChild(t); k++;
+        t.style.marginLeft = (-CFG.POSTER_W / 2) + 'px';
+        t.style.marginTop = (-CFG.POSTER_H / 2) + 'px';
+        t.dataset.ang = ang;
+        t.style.transform = `rotateY(${ang}deg) translateZ(${CFG.RADIUS}px)`;
+        ring.appendChild(t); tiles.push(t); k++;
       }
-    }
+      field.appendChild(ring);
+    });
 
-    let panX = 0, panY = 0, tPanX = 0, tPanY = 0, tiltX = 0, tiltY = 0, tTiltX = 0, tTiltY = 0;
-    let dragging = false, lastX = 0, dragX = 0, raf = 0, visible = true;
-    const t0 = performance.now();
+    let spin = 0, vel = reduce ? 0 : CFG.IDLE, tiltX = 0, tTiltX = 0, yaw = 0, tYaw = 0;
+    let dragging = false, lastX = 0, raf = 0, visible = true;
 
-    const onDown = (e) => { dragging = true; hero.classList.add('dragging'); lastX = e.clientX; try { hero.setPointerCapture(e.pointerId); } catch (_) {} };
+    const onDown = (e) => { dragging = true; hero.classList.add('dragging'); lastX = e.clientX; vel = 0; try { hero.setPointerCapture(e.pointerId); } catch (_) {} };
     const onUp = (e) => { dragging = false; hero.classList.remove('dragging'); if (e && e.pointerId != null) { try { hero.releasePointerCapture(e.pointerId); } catch (_) {} } };
     const onMove = (e) => {
       if (!visible || reduce) return;
       const r = hero.getBoundingClientRect();
       const nx = (e.clientX - r.left) / r.width * 2 - 1;
       const ny = (e.clientY - r.top) / r.height * 2 - 1;
-      tPanX = -nx * CFG.PARALLAX_X; tPanY = -ny * CFG.PARALLAX_Y;
-      tTiltY = nx * CFG.TILT; tTiltX = -ny * CFG.TILT;
-      if (dragging) { dragX += (e.clientX - lastX); lastX = e.clientX; }
+      tTiltX = -ny * CFG.TILT; tYaw = nx * CFG.TILT;
+      if (dragging) { spin += (e.clientX - lastX) * CFG.DRAG_GAIN; vel = (e.clientX - lastX) * CFG.DRAG_GAIN; lastX = e.clientX; }
     };
-    const onLeave = () => { tPanX = 0; tPanY = 0; tTiltX = 0; tTiltY = 0; };
+    const onLeave = () => { tTiltX = 0; tYaw = 0; };
 
     hero.addEventListener('pointerdown', onDown);
     window.addEventListener('pointerup', onUp);
@@ -77,14 +76,18 @@ export default function HeroDome({ children }) {
     const io = new IntersectionObserver(([en]) => { visible = en.isIntersecting; }, { threshold: 0 });
     io.observe(hero);
 
-    const frame = (now) => {
+    const frame = () => {
       if (visible) {
-        const drift = reduce ? 0 : Math.sin((now - t0) / 6500) * CFG.DRIFT;
-        panX += (tPanX + dragX - panX) * CFG.EASE;
-        panY += (tPanY - panY) * CFG.EASE;
+        if (!dragging) { spin += vel; vel *= CFG.FRICTION; if (Math.abs(vel) < CFG.IDLE && !reduce) vel += (CFG.IDLE - vel) * 0.04; }
         tiltX += (tTiltX - tiltX) * CFG.EASE;
-        tiltY += (tTiltY - tiltY) * CFG.EASE;
-        field.style.transform = `translate3d(${(panX + drift).toFixed(2)}px, ${panY.toFixed(2)}px, 0) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg)`;
+        yaw += (tYaw - yaw) * CFG.EASE;
+        field.style.transform = `rotateX(${tiltX.toFixed(2)}deg) rotateY(${(spin + yaw).toFixed(2)}deg)`;
+        for (const t of tiles) {
+          const a = ((parseFloat(t.dataset.ang) + spin + yaw) % 360 + 360) % 360;
+          const fn = Math.cos(a * Math.PI / 180) * 0.5 + 0.5; // 1 front → 0 back
+          t.style.filter = `brightness(${(0.35 + 0.6 * fn).toFixed(2)})`;
+          t.style.opacity = (0.16 + 0.84 * fn).toFixed(2);
+        }
       }
       raf = requestAnimationFrame(frame);
     };
