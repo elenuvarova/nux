@@ -42,7 +42,7 @@ export default function App() {
             <a className="btn btn-primary btn-lg" href={`${APP}/welcome`}><PlayIcon /> Start watching</a>
             <a className="btn btn-secondary btn-lg" href="#catalogue">Browse the catalogue</a>
           </div>
-          <p className="hero-hint">drag to spin<span className="hint-cursor"> · move your cursor to look around</span></p>
+          <p className="hero-hint">drag to explore<span className="hint-cursor"> · move your cursor to look around</span></p>
         </div>
       </HeroDome>
 
