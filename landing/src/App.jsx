@@ -88,15 +88,6 @@ export default function App() {
           </div>
         </HeroDome>
 
-        {/* Director marquee */}
-        <div className="marquee" aria-hidden="true">
-          <div className="marquee-track">
-            {[...DIRECTORS, ...DIRECTORS].map((d, i) => (
-              <span className="marquee-item" key={i}>{d}<i>✳</i></span>
-            ))}
-          </div>
-        </div>
-
         {/* N°01 — the library: poster wall as proof */}
         <section className="proof" aria-labelledby="proof-h">
           <div className="wall" aria-hidden="true">
@@ -163,7 +154,7 @@ export default function App() {
 
         {/* N°03½ — the editors' room (single-film spotlight, replaces the type-index) */}
         <section className="section fotw" aria-labelledby="fotw-h">
-          <Slate n="03½" label="The editors' room" />
+          <Slate n="04" label="The editors' room" />
           <h2 id="fotw-h" className="section-title">We'd rather show you one film properly than fifty in a hurry</h2>
           <a className="fotw-card" href={`${APP}/film/${FOTW.slug}`}>
             <div className="fotw-art" style={{ backgroundImage: `url(${FOTW.still})` }} aria-hidden="true" />
@@ -178,7 +169,7 @@ export default function App() {
 
         {/* N°04 — collections */}
         <section className="section collections" aria-labelledby="coll-h">
-          <Slate n="04" label="Collections" />
+          <Slate n="05" label="Collections" />
           <h2 id="coll-h" className="section-title">Every rail has a point of view</h2>
           <div className="coll-stack">
             {COLLECTIONS.map((c, i) => (
@@ -195,9 +186,18 @@ export default function App() {
           </div>
         </section>
 
-        {/* N°05 — how it works */}
+        {/* Director marquee — transitional band of names between sections */}
+        <div className="marquee" aria-hidden="true">
+          <div className="marquee-track">
+            {[...DIRECTORS, ...DIRECTORS].map((d, i) => (
+              <span className="marquee-item" key={i}>{d}<i>✳</i></span>
+            ))}
+          </div>
+        </div>
+
+        {/* N°06 — how it works */}
         <section className="section how" aria-labelledby="how-h">
-          <Slate n="05" label="How it works" />
+          <Slate n="06" label="How it works" />
           <h2 id="how-h" className="section-title">From a mood to a film, in three moves</h2>
           <ol className="moves">
             <li className="move">
@@ -217,7 +217,7 @@ export default function App() {
 
         {/* N°06 — membership */}
         <section className="section pricing" aria-labelledby="price-h">
-          <Slate n="06" label="Membership" center />
+          <Slate n="07" label="Membership" center />
           <h2 id="price-h" className="section-title center">Anyone can browse.<br />Members get the editors</h2>
           <div className="plans">
             <div className="plan plan-free">
@@ -258,7 +258,7 @@ export default function App() {
 
         {/* Final CTA */}
         <section className="final-cta">
-          <Slate n="07" label="Now showing" center />
+          <Slate n="08" label="Now showing" center />
           <h2 className="final-line">The lights are down.<br />Put something good on</h2>
           <a className="btn btn-primary btn-lg" href={`${APP}/welcome`}><PlayIcon /> Start watching</a>
         </section>
