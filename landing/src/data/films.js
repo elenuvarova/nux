@@ -92,6 +92,18 @@ export const INDEX = [
   { slug: 'aftersun', title: 'Aftersun', director: 'Charlotte Wells', year: 2022, runtime: '1h 42m' },
 ];
 
+// The editors' room — one film, properly. Single-film spotlight (replaces the type-index).
+export const FOTW = {
+  slug: 'kes',
+  title: 'Kes',
+  director: 'Ken Loach',
+  year: 1969,
+  runtime: '1h 50m',
+  still: '/assets/stills/still-kes.jpg',
+  note:
+    "A Barnsley boy written off by everyone trains a kestrel from the nest — and finds the one thing that's his alone. Loach leaves the grain in: the cold playground, the brother who's all fist, the one teacher who finally looks up. Watch it when you want tenderness that hasn't been sanded smooth.",
+};
+
 // Themed collections — curation with a point of view. Still = the slug shown.
 export const COLLECTIONS = [
   { title: 'The Angry Young Men', standfirst: 'When British film clocked off, got working-class, and stayed furious.', count: 6, slug: 'saturday-night-and-sunday-morning' },

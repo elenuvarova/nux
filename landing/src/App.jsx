@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import HeroDome from './components/HeroDome.jsx';
-import { DIRECTORS, WALL, CURATOR, RAILS, INDEX, COLLECTIONS, poster } from './data/films.js';
+import { DIRECTORS, WALL, CURATOR, RAILS, FOTW, COLLECTIONS, poster } from './data/films.js';
 import { useTilt } from './lib/useTilt.js';
 
 const APP = 'https://app.nux.ontwrpn.com';
@@ -137,20 +137,21 @@ export default function App() {
             </div>
           ))}
 
-          <p className="index-eyebrow">From the register — open any title in the app</p>
-          <ol className="index">
-            {INDEX.slice(0, 10).map((f, i) => (
-              <li key={f.slug}>
-                <a className="index-row" href={`${APP}/browse`} style={{ '--still': `url(${poster(f.slug)})` }}>
-                  <span className="ix-n">N°{String(i + 1).padStart(3, '0')}</span>
-                  <span className="ix-title">{f.title}</span>
-                  <span className="ix-dir">{f.director}</span>
-                  <span className="ix-year">{f.year}</span>
-                  <span className="ix-rt">{f.runtime}</span>
-                </a>
-              </li>
-            ))}
-          </ol>
+        </section>
+
+        {/* N°03½ — the editors' room (single-film spotlight, replaces the type-index) */}
+        <section className="section fotw" aria-labelledby="fotw-h">
+          <Slate n="03½" label="The editors' room" />
+          <h2 id="fotw-h" className="section-title">We'd rather show you one film properly than fifty in a hurry</h2>
+          <a className="fotw-card" href={`${APP}/film/${FOTW.slug}`}>
+            <div className="fotw-art" style={{ backgroundImage: `url(${FOTW.still})` }} aria-hidden="true" />
+            <div className="fotw-body">
+              <p className="fotw-meta">{FOTW.director} · {FOTW.year} · {FOTW.runtime}</p>
+              <h3 className="fotw-title">{FOTW.title}</h3>
+              <p className="fotw-note">{FOTW.note}</p>
+              <span className="fotw-cta">Watch it <span aria-hidden="true">→</span></span>
+            </div>
+          </a>
         </section>
 
         {/* N°04 — collections */}
