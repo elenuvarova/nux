@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import HeroDome from './components/HeroDome.jsx';
 import { DIRECTORS, WALL, CURATOR, RAILS, INDEX, COLLECTIONS, poster } from './data/films.js';
+import { useTilt } from './lib/useTilt.js';
 
 const APP = 'https://app.nux.ontwrpn.com';
 
@@ -10,6 +11,27 @@ const PlayIcon = () => (
 const Slate = ({ n, label, center }) => (
   <p className={center ? 'slate center' : 'slate'}><span className="slate-n">N°{n}</span><span className="slate-rule" /><span className="slate-label">{label}</span></p>
 );
+
+// Poster card — ported 1:1 from the app's PosterCard so covers match across both
+// surfaces: type/genre badge on the artwork, cursor tilt + warm sheen, a glass
+// play glyph on hover, amber-bloom shadow. The whole card links into the app.
+function RailCard({ f }) {
+  const tilt = useTilt();
+  return (
+    <a className="poster-card" href={`${APP}/welcome`}>
+      <div className="poster-card-art" ref={tilt.ref} onPointerMove={tilt.onPointerMove} onPointerLeave={tilt.onPointerLeave} onBlur={tilt.onBlur}>
+        <img src={poster(f.slug)} alt="" loading="lazy" width="200" height="300" />
+        <span className="poster-card-badge">{f.genre}</span>
+        <span className="poster-card-sheen" aria-hidden="true" />
+        <span className="poster-card-play" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor"><path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" /></svg>
+        </span>
+      </div>
+      <p className="poster-card-title">{f.title}</p>
+      <p className="poster-card-meta">{f.director} · {f.year} · {f.runtime}</p>
+    </a>
+  );
+}
 
 export default function App() {
   const [annual, setAnnual] = useState(true);
@@ -110,29 +132,22 @@ export default function App() {
             <div className="rail" key={rail.label}>
               <p className="rail-eyebrow">{rail.label}</p>
               <div className="rail-row">
-                {rail.films.map((f) => (
-                  <figure className="card" key={f.slug}>
-                    <div className="card-still"><img src={poster(f.slug)} alt="" loading="lazy" /></div>
-                    <figcaption>
-                      <h3 className="card-title">{f.title}</h3>
-                      <p className="card-meta">{f.director} · {f.year} · {f.runtime}</p>
-                      <span className="chip">{f.genre}</span>
-                    </figcaption>
-                  </figure>
-                ))}
+                {rail.films.map((f) => <RailCard f={f} key={f.slug} />)}
               </div>
             </div>
           ))}
 
-          <p className="index-eyebrow">The full index — hover to look</p>
+          <p className="index-eyebrow">From the register — open any title in the app</p>
           <ol className="index">
-            {INDEX.map((f, i) => (
-              <li className="index-row" key={f.slug} style={{ '--still': `url(${poster(f.slug)})` }}>
-                <span className="ix-n">N°{String(i + 1).padStart(3, '0')}</span>
-                <span className="ix-title">{f.title}</span>
-                <span className="ix-dir">{f.director}</span>
-                <span className="ix-year">{f.year}</span>
-                <span className="ix-rt">{f.runtime}</span>
+            {INDEX.slice(0, 10).map((f, i) => (
+              <li key={f.slug}>
+                <a className="index-row" href={`${APP}/browse`} style={{ '--still': `url(${poster(f.slug)})` }}>
+                  <span className="ix-n">N°{String(i + 1).padStart(3, '0')}</span>
+                  <span className="ix-title">{f.title}</span>
+                  <span className="ix-dir">{f.director}</span>
+                  <span className="ix-year">{f.year}</span>
+                  <span className="ix-rt">{f.runtime}</span>
+                </a>
               </li>
             ))}
           </ol>
