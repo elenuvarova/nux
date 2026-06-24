@@ -1,6 +1,7 @@
 // Curated film data for the landing. Slugs match /public/assets/posters/poster-<slug>.jpg.
 // Posters are the brand's strongest asset — the landing leads with them.
 export const poster = (slug) => `/assets/posters/poster-${slug}.jpg`;
+export const still = (slug) => `/assets/stills/still-${slug}.jpg`;
 
 // Hero — a curated wall of recognisable British cinema (poster cylinder).
 export const DOME = [

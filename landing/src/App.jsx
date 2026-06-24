@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import HeroDome from './components/HeroDome.jsx';
-import { DIRECTORS, WALL, CURATOR, RAILS, FOTW, COLLECTIONS, poster } from './data/films.js';
+import { DIRECTORS, WALL, CURATOR, RAILS, FOTW, COLLECTIONS, poster, still } from './data/films.js';
 import { useTilt } from './lib/useTilt.js';
 
 const APP = 'https://app.nux.ontwrpn.com';
@@ -96,7 +96,7 @@ export default function App() {
           <div className="proof-over">
             <Slate n="01" label="The library" center />
             <h2 id="proof-h" className="proof-line">Forty years of British cinema, every one put there on purpose</h2>
-            <p className="proof-stats"><b>~50</b> films<i>·</i><b>0</b> algorithms<i>·</i><b>0</b> ads, ever</p>
+            <p className="proof-stats"><b>~50</b> films<i>·</i><b>0</b> algorithms<i>·</i><b>0</b> ads,{' '}ever</p>
           </div>
         </section>
 
@@ -170,11 +170,11 @@ export default function App() {
         {/* N°04 — collections */}
         <section className="section collections" aria-labelledby="coll-h">
           <Slate n="05" label="Collections" />
-          <h2 id="coll-h" className="section-title">Every rail has a point of view</h2>
+          <h2 id="coll-h" className="section-title">Every rail has a point of{' '}view</h2>
           <div className="coll-stack">
             {COLLECTIONS.map((c, i) => (
               <a className={`coll-tile t${i + 1}`} href={`${APP}/browse`} key={c.title}>
-                <img className="coll-still" src={poster(c.slug)} alt="" loading="lazy" />
+                <img className="coll-still" src={still(c.slug)} alt="" loading="lazy" />
                 <div className="coll-text">
                   <span className="coll-n">{String(i + 1).padStart(2, '0')}</span>
                   <h3 className="coll-title">{c.title}</h3>
@@ -185,15 +185,6 @@ export default function App() {
             ))}
           </div>
         </section>
-
-        {/* Director marquee — transitional band of names between sections */}
-        <div className="marquee" aria-hidden="true">
-          <div className="marquee-track">
-            {[...DIRECTORS, ...DIRECTORS].map((d, i) => (
-              <span className="marquee-item" key={i}>{d}<i>✳</i></span>
-            ))}
-          </div>
-        </div>
 
         {/* N°06 — how it works */}
         <section className="section how" aria-labelledby="how-h">
@@ -262,6 +253,15 @@ export default function App() {
           <h2 className="final-line">The lights are down.<br />Put something good on</h2>
           <a className="btn btn-primary btn-lg" href={`${APP}/welcome`}><PlayIcon /> Start watching</a>
         </section>
+
+        {/* Director marquee — end-credits band of directors, just before the footer */}
+        <div className="marquee" aria-hidden="true">
+          <div className="marquee-track">
+            {[...DIRECTORS, ...DIRECTORS].map((d, i) => (
+              <span className="marquee-item" key={i}>{d}<i>✳</i></span>
+            ))}
+          </div>
+        </div>
       </main>
 
       <footer className="footer">
