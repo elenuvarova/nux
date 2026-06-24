@@ -1,16 +1,21 @@
 .toast-host {
   position: fixed;
-  left: 50%;
+  /* full-width centered track: a shrink-to-fit box pinned at left:50% only gets
+     half the viewport to lay out in, which forced the toast to wrap on phones. */
+  left: 0;
+  right: 0;
   bottom: var(--space-8);
-  transform: translateX(-50%);
   z-index: 300;
   display: grid;
+  justify-items: center;
   gap: var(--space-2);
+  padding: 0 var(--space-4);
   pointer-events: none;
 }
 
 .toast {
   pointer-events: auto;
+  max-width: 100%;
   display: flex;
   align-items: center;
   gap: var(--space-3);

@@ -1,6 +1,7 @@
 .welcome {
   position: relative;
   min-height: 100vh;
+  min-height: 100svh; /* fit the visible viewport on mobile — no overshoot/scroll under the toolbars */
   display: grid;
   place-items: center;
   padding: var(--space-8) var(--space-4);

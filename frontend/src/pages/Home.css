@@ -85,6 +85,12 @@
   .home-rails-note {
     padding: 0 var(--space-4);
   }
+
+  /* match the rail gutter on mobile — the desktop space-16 gutter left the lead
+     head indented far past the rails below it */
+  .home-lead {
+    padding: var(--space-12) var(--space-4) 0;
+  }
 }
 
 /* ── Editorial Pick — the curated module ─────────────────────── */

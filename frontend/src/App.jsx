@@ -76,7 +76,7 @@ export default function App() {
   const isBareRoute = ['/welcome', '/signin', '/signup', '/forgot', '/reset'].includes(pathname);
   const bare = isPlayer || isBareRoute;
   return (
-    <div className="grain">
+    <div className={bare ? 'grain grain--bare' : 'grain'}>
       <a href="#main" className="skip-link">
         Skip to content
       </a>
