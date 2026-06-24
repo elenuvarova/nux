@@ -5,6 +5,10 @@ import { useTilt } from './lib/useTilt.js';
 
 const APP = 'https://app.nux.ontwrpn.com';
 
+// Rail slugs mostly match app film ids; two use short forms (the app ids carry "the-").
+const APP_FILM_ID = { 'third-man': 'the-third-man', 'red-shoes': 'the-red-shoes' };
+const filmHref = (slug) => `${APP}/film/${APP_FILM_ID[slug] || slug}`;
+
 const PlayIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
 );
@@ -18,7 +22,7 @@ const Slate = ({ n, label, center }) => (
 function RailCard({ f }) {
   const tilt = useTilt();
   return (
-    <a className="poster-card" href={`${APP}/welcome`}>
+    <a className="poster-card" href={filmHref(f.slug)}>
       <div className="poster-card-art" ref={tilt.ref} onPointerMove={tilt.onPointerMove} onPointerLeave={tilt.onPointerLeave} onBlur={tilt.onBlur}>
         <img src={poster(f.slug)} alt="" loading="lazy" width="200" height="300" />
         <span className="poster-card-badge">{f.genre}</span>
@@ -30,6 +34,24 @@ function RailCard({ f }) {
       <p className="poster-card-title">{f.title}</p>
       <p className="poster-card-meta">{f.director} · {f.year} · {f.runtime}</p>
     </a>
+  );
+}
+
+// Footer newsletter — confirms on submit instead of silently swallowing it.
+function NewsletterForm() {
+  const [done, setDone] = useState(false);
+  return (
+    <form className="news-form" onSubmit={(e) => { e.preventDefault(); setDone(true); }}>
+      <label htmlFor="news">A short letter when we add something worth your evening.</label>
+      {done ? (
+        <p className="news-done" role="status">Thanks — you're on the list. Look out for the next letter.</p>
+      ) : (
+        <div className="news-row">
+          <input id="news" type="email" required placeholder="Email address" />
+          <button className="btn btn-secondary" type="submit">Subscribe</button>
+        </div>
+      )}
+    </form>
   );
 }
 
@@ -251,13 +273,7 @@ export default function App() {
             <a href="https://ontwrpn.com">Case study <span>→</span></a>
             <a href="mailto:eluvrv@gmail.com">Contact <span>→</span></a>
           </nav>
-          <form className="news-form" onSubmit={(e) => e.preventDefault()}>
-            <label htmlFor="news">A short letter when we add something worth your evening.</label>
-            <div className="news-row">
-              <input id="news" type="email" placeholder="Email address" />
-              <button className="btn btn-secondary" type="submit">Subscribe</button>
-            </div>
-          </form>
+          <NewsletterForm />
         </div>
         <p className="footer-mark" aria-hidden="true">NUX</p>
         <div className="footer-legal">
