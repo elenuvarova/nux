@@ -4,6 +4,20 @@
   padding-top: var(--space-12);
 }
 
+/* lead head under the hero — aligned to the rail gutter below it. The slate
+   and section-title carry their own spacing; this just sets the column. */
+.home-lead {
+  position: relative;
+  z-index: 1;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--space-16) var(--space-16) 0;
+}
+
+.home-lead .section-title {
+  margin-bottom: 0;
+}
+
 .home-hero-skeleton {
   position: relative;
   overflow: hidden;

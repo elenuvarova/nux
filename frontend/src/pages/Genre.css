@@ -39,6 +39,12 @@
   gap: var(--space-3);
 }
 
+/* slate sits in the headings grid — let its gap carry the spacing, not the
+   slate's own bottom margin (which would double up against the grid gap) */
+.genre-headings .slate {
+  margin-bottom: 0;
+}
+
 .genre-title {
   font: var(--type-display-xl);
   letter-spacing: var(--track-display);

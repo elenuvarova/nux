@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero.jsx';
+import Slate from '../components/Slate.jsx';
 import Reveal from '../components/Reveal.jsx';
 import { SkeletonRail } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
@@ -55,6 +56,10 @@ export default function Home() {
   return (
     <main>
       <Hero />
+      <Reveal as="header" className="home-lead">
+        <Slate n="—" label="Tonight" />
+        <h2 className="section-title">What we’re showing</h2>
+      </Reveal>
       <div className="home-rails">
         {personalRails.map((p) => (
           <Reveal key={p.gid}>

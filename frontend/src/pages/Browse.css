@@ -4,8 +4,15 @@
   padding: calc(var(--nav-h) + var(--space-12)) var(--space-16) 0;
 }
 
+/* shared by MyList (imports this file); Browse now leads with a slate + section-title */
 .page-title {
   font: var(--type-page-title);
+}
+
+/* lead head group — slate spaces itself to the title; the grid gap below
+   carries the title→search spacing, so the title drops its own bottom margin */
+.browse-title .section-title {
+  margin-bottom: 0;
 }
 
 .browse-head {
@@ -264,7 +271,7 @@
 
 .browse-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
   gap: var(--space-6) var(--space-5);
 }
 

@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { PosterCard } from '../components/Rail.jsx';
+import Slate from '../components/Slate.jsx';
 import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { GENRES, FILMS, GENRE_MATCH } from '../data/catalog.js';
@@ -33,7 +34,7 @@ export default function Genre() {
       <header className="genre-hero">
         <img className="genre-bg" src={genre.image} alt="" fetchpriority="high" />
         <div className="genre-headings">
-          <p className="eyebrow">Genre</p>
+          <Slate n="—" label="Genre" />
           <h1 className="genre-title" tabIndex={-1}>
             {genre.label}
           </h1>

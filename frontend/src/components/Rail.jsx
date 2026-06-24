@@ -50,7 +50,7 @@ export function PosterCard({ filmId }) {
     <Link to={`/film/${film.id}`} className="poster-card" viewTransition onClick={markHeroArt}>
       <div className="poster-card-art" ref={tilt.ref} onPointerMove={tilt.onPointerMove} onPointerLeave={tilt.onPointerLeave}>
         <img src={film.poster} alt={`${film.title}, ${film.type}`} loading="lazy" width="200" height="300" />
-        <span className="poster-card-badge">{film.type}</span>
+        <span className="poster-card-badge">{film.type === 'FILM' ? film.genre : film.type}</span>
         <span className="poster-card-sheen" aria-hidden="true" />
         <button type="button" className="poster-card-play" onClick={playNow} aria-label={`Play ${film.title}`}>
           <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
@@ -59,9 +59,7 @@ export function PosterCard({ filmId }) {
         </button>
       </div>
       <p className="poster-card-title">{film.title}</p>
-      <p className="metadata">
-        {film.year} · {film.genre}
-      </p>
+      <p className="poster-card-meta">{film.director} · {film.year} · {film.runtime}</p>
     </Link>
   );
 }
@@ -99,11 +97,8 @@ export default function Rail({ title, wide = false, seeAllTo = null, children })
         {/* only rails with a real destination show "See all" — the finite editorial
             rails are shown in full, so a link to the generic grid would mislead */}
         {seeAllTo && (
-          <Link to={seeAllTo} className="rail-seeall">
-            See all
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-              <path d="M4.5 2.5 8 6l-3.5 3.5" />
-            </svg>
+          <Link to={seeAllTo} className="rail-seeall link-arrow">
+            See all <span aria-hidden="true">→</span>
           </Link>
         )}
       </header>

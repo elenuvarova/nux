@@ -13,23 +13,13 @@
   margin-bottom: var(--space-5);
 }
 
-.rail-seeall {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font: var(--type-caption);
-  color: var(--text-tertiary);
-  transition: color var(--dur-base) var(--ease-out);
-}
-
-.rail-seeall:hover {
-  color: var(--text-secondary);
-}
+/* "See all" — the landing's .link-arrow look (text + an amber → that slides on
+   hover). .link-arrow (global.css) carries the styling; nothing rail-specific. */
 
 .rail-scroll {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 168px;
+  grid-auto-columns: 188px;
   gap: var(--space-5);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -235,6 +225,18 @@
 .poster-card-title {
   font: var(--type-card-title);
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* tracked-caps metadata — matches the landing's poster card (DIRECTOR · YEAR · RUNTIME) */
+.poster-card-meta {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

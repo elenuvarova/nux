@@ -1,6 +1,7 @@
 import { useMemo, useRef, useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { PosterCard } from '../components/Rail.jsx';
+import Slate from '../components/Slate.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useCurator } from '../lib/useCurator.jsx';
 import { FILMS, GENRES, EXTRAS } from '../data/catalog.js';
@@ -106,9 +107,12 @@ export default function Browse() {
   return (
     <main className="browse">
       <header className="browse-head">
-        <h1 className="page-title" tabIndex={-1}>
-          Browse
-        </h1>
+        <div className="browse-title">
+          <Slate n="—" label="The catalogue" />
+          <h1 className="section-title" tabIndex={-1}>
+            Browse
+          </h1>
+        </div>
         <div className="browse-search-row">
         <div
           className="browse-search"
