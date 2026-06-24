@@ -83,7 +83,7 @@ export default function App() {
             <ul className="picks">
               {CURATOR.picks.map((p) => (
                 <li className="pick" key={p.slug}>
-                  <div className="pick-still"><img src={poster(p.slug)} alt={p.title} loading="lazy" /></div>
+                  <div className="pick-still"><img src={poster(p.slug)} alt="" loading="lazy" /></div>
                   <div className="pick-body">
                     <p className="pick-eyebrow">► Reason</p>
                     <h3 className="pick-title">{p.title}</h3>
@@ -112,7 +112,7 @@ export default function App() {
               <div className="rail-row">
                 {rail.films.map((f) => (
                   <figure className="card" key={f.slug}>
-                    <div className="card-still"><img src={poster(f.slug)} alt={f.title} loading="lazy" /></div>
+                    <div className="card-still"><img src={poster(f.slug)} alt="" loading="lazy" /></div>
                     <figcaption>
                       <h3 className="card-title">{f.title}</h3>
                       <p className="card-meta">{f.director} · {f.year} · {f.runtime}</p>
@@ -144,7 +144,7 @@ export default function App() {
           <h2 id="coll-h" className="section-title">Every rail has a point of view</h2>
           <div className="coll-stack">
             {COLLECTIONS.map((c, i) => (
-              <article className={`coll-tile t${i + 1}`} key={c.title}>
+              <a className={`coll-tile t${i + 1}`} href={`${APP}/browse`} key={c.title}>
                 <img className="coll-still" src={poster(c.slug)} alt="" loading="lazy" />
                 <div className="coll-text">
                   <span className="coll-n">{String(i + 1).padStart(2, '0')}</span>
@@ -152,7 +152,7 @@ export default function App() {
                   <p className="coll-standfirst">{c.standfirst}</p>
                   <p className="coll-count">{c.count} films <span>→</span></p>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
         </section>
@@ -191,8 +191,8 @@ export default function App() {
             <div className="plan plan-member">
               <p className="plan-name">NUX Membership</p>
               <div className="toggle" role="group" aria-label="Billing period">
-                <button className={!annual ? 'on' : ''} onClick={() => setAnnual(false)} aria-pressed={!annual}>Monthly</button>
-                <button className={annual ? 'on' : ''} onClick={() => setAnnual(true)} aria-pressed={annual}>Annual <span className="save">Save 44%</span></button>
+                <button type="button" className={!annual ? 'on' : ''} onClick={() => setAnnual(false)} aria-pressed={!annual}>Monthly</button>
+                <button type="button" className={annual ? 'on' : ''} onClick={() => setAnnual(true)} aria-pressed={annual}>Annual <span className="save">Save 44%</span></button>
               </div>
               <p className="plan-price">{annual ? <>£4.99<span className="per"> a month</span></> : <>£8.99<span className="per"> a month</span></>}</p>
               <p className="plan-note">{annual ? 'Billed annually at £59.88.' : 'Billed monthly.'} Everything in Browse, plus:</p>
@@ -238,7 +238,7 @@ export default function App() {
           <form className="news-form" onSubmit={(e) => e.preventDefault()}>
             <label htmlFor="news">A short letter when we add something worth your evening.</label>
             <div className="news-row">
-              <input id="news" type="email" placeholder="Email address" aria-label="Email address" />
+              <input id="news" type="email" placeholder="Email address" />
               <button className="btn btn-secondary" type="submit">Subscribe</button>
             </div>
           </form>
