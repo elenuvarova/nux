@@ -53,7 +53,9 @@ a { color: inherit; text-decoration: none; }
 .section-title.center { text-align: center; max-width: none; margin-inline: auto; }
 
 /* ---- layout ---- */
-.page { position: relative; overflow-x: hidden; }
+/* overflow-x: clip (not hidden) — clips horizontal spill WITHOUT becoming a
+   scroll container, so view() scroll-driven timelines resolve to the document. */
+.page { position: relative; overflow-x: clip; }
 .section { max-width: 1240px; margin: 0 auto; padding: clamp(80px, 11vw, 132px) var(--space-10, 40px); }
 /* chapter rule between consecutive DARK sections — the raised Curator/Collections
    separate by background, but fotw (after catalogue) and pricing (after how) follow
@@ -72,7 +74,7 @@ a { color: inherit; text-decoration: none; }
 .nav-link:hover { color: var(--text-primary); }
 
 /* ---- hero (poster cylinder) ---- */
-.hero { position: relative; height: 100svh; min-height: 620px; max-height: 920px; overflow: hidden;
+.hero { position: relative; height: 100svh; min-height: 620px; max-height: 920px; overflow: clip;
   cursor: grab; background: var(--surface-sunken, #070606); touch-action: pan-y; }
 .hero.dragging { cursor: grabbing; }
 .pw-scene { position: absolute; inset: 0; perspective: 1500px; perspective-origin: 50% 46%; z-index: 1; }
@@ -103,7 +105,7 @@ a { color: inherit; text-decoration: none; }
 .marquee-item i { color: var(--amber-500); font-size: 9px; padding: 0 26px; font-style: normal; opacity: .8; }
 
 /* ---- N°01 proof: poster wall ---- */
-.proof { position: relative; overflow: hidden; background: var(--surface-sunken, #070606); }
+.proof { position: relative; overflow: clip; background: var(--surface-sunken, #070606); }
 .wall { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; justify-content: center; align-content: center;
   min-height: clamp(440px, 60vh, 620px); opacity: .22; filter: grayscale(.35); }
 .wall img { width: clamp(70px, 6.4vw, 128px); aspect-ratio: 2/3; object-fit: cover; border-radius: 3px; }
@@ -141,10 +143,11 @@ a { color: inherit; text-decoration: none; }
 .cat-head .section-title { margin: 0; }
 .rail { margin-bottom: var(--space-12, 48px); }
 .rail-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary); margin: 0 0 18px; }
-.rail-row { display: flex; gap: 18px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+.rail-row { display: flex; gap: 18px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px;
+  scroll-snap-type: x proximity; } /* gentle paging — proximity never traps the user mid-drag */
 .rail-row::-webkit-scrollbar { display: none; }
 /* poster card — ported from the app so covers match across both surfaces */
-.rail-row .poster-card { flex: 0 0 190px; }
+.rail-row .poster-card { flex: 0 0 190px; scroll-snap-align: start; }
 .poster-card { display: grid; gap: var(--space-2, 8px); }
 .poster-card-art { position: relative; aspect-ratio: 2 / 3; border-radius: var(--radius-poster, 6px); overflow: hidden;
   box-shadow: inset 0 0 0 1px var(--white-a07);
@@ -192,7 +195,7 @@ a { color: inherit; text-decoration: none; }
 .collections { background: var(--surface-raised, #161412); max-width: none; }
 .collections > .slate, .collections > .section-title, .coll-stack { max-width: 1240px; margin-inline: auto; }
 .coll-stack { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; }
-.coll-tile { position: relative; overflow: hidden; border-radius: var(--radius-md, 12px); isolation: isolate; }
+.coll-tile { position: relative; overflow: clip; border-radius: var(--radius-md, 12px); isolation: isolate; }
 .coll-tile.t1 { grid-column: span 4; } .coll-tile.t2 { grid-column: span 2; }
 .coll-tile.t3 { grid-column: span 2; } .coll-tile.t4 { grid-column: span 4; }
 .coll-still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .55s ease; z-index: 0; }
@@ -316,3 +319,57 @@ a { color: inherit; text-decoration: none; }
   * { scroll-behavior: auto !important; }
 }
 @keyframes marquee { to { transform: translateX(-50%); } }
+
+/* ---------- scroll-driven section polish ----------
+   Native CSS scroll-driven animations (animation-timeline) — no JS, run off the
+   main thread, and pass the strict CSP (script-src 'self'). Double-gated: older
+   engines that lack animation-timeline keep the static layout (@supports), and
+   everything is off under prefers-reduced-motion (this block is no-preference). */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+
+    /* N°01 — the dim poster wall drifts a touch for parallax depth */
+    .wall {
+      animation: wall-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes wall-drift {
+      from { transform: translateY(-30px); }
+      to   { transform: translateY(30px); }
+    }
+
+    /* N°04 — collection stills reveal from grey to warm colour as they enter
+       (American Documentary technique); holds full colour once in view */
+    .coll-still {
+      animation: coll-colour linear both;
+      animation-timeline: view();
+      animation-range: entry 15% entry 95%;
+    }
+    @keyframes coll-colour {
+      from { filter: grayscale(0.9) brightness(0.85); }
+      to   { filter: grayscale(0) brightness(1); }
+    }
+
+    /* N°05 — the ghosted numerals lag the scroll for an editorial parallax */
+    .move-n {
+      animation: move-n-drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+    @keyframes move-n-drift {
+      from { transform: translateY(-26px); }
+      to   { transform: translateY(26px); }
+    }
+
+    /* Hero copy recedes as the first chapter scrolls up to take over */
+    .hero-content {
+      animation: hero-recede linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+    @keyframes hero-recede {
+      to { opacity: 0; transform: translateY(-20px) scale(0.99); }
+    }
+  }
+}
