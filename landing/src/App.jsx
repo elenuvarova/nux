@@ -9,8 +9,12 @@ const APP = 'https://app.nux.ontwrpn.com';
 const APP_FILM_ID = { 'third-man': 'the-third-man', 'red-shoes': 'the-red-shoes' };
 const filmHref = (slug) => `${APP}/film/${APP_FILM_ID[slug] || slug}`;
 
+// Same play glyph as the app's primary "Play" button (rounded triangle) so the
+// CTA icon reads identically across the marketing site and the app.
 const PlayIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true" focusable="false">
+    <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
+  </svg>
 );
 const Slate = ({ n, label, center }) => (
   <p className={center ? 'slate center' : 'slate'}><span className="slate-n">N°{n}</span><span className="slate-rule" /><span className="slate-label">{label}</span></p>
@@ -96,7 +100,7 @@ export default function App() {
           <div className="proof-over">
             <Slate n="01" label="The library" center />
             <h2 id="proof-h" className="proof-line">Forty years of British cinema, every one put there on purpose</h2>
-            <p className="proof-stats"><b>~50</b> films<i>·</i><b>0</b> algorithms<i>·</i><b>0</b> ads,{' '}ever</p>
+            <p className="proof-stats"><span className="stat"><b>~50</b> films</span><i>·</i><span className="stat"><b>0</b> algorithms</span><i>·</i><span className="stat"><b>0</b> ads, ever</span></p>
           </div>
         </section>
 
