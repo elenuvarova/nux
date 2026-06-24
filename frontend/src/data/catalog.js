@@ -1742,7 +1742,7 @@ export const FILMS = [
     certificate: '15',
     type: 'FILM',
     poster: poster('poster-the-favourite.jpg'),
-    backdrop: still('still-the-favourite.jpg'),
+    backdrop: still('still-the-favourite.jpg?v=2'),
     synopsis:
       "In the court of an ailing Queen Anne, two cousins claw and scheme to become the woman the crown can't do without. Yorgos Lanthimos's wicked, fish-eyed costume drama, with three actresses off the leash.",
     director: 'Yorgos Lanthimos',
