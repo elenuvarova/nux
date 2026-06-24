@@ -56,7 +56,13 @@ export default function HeroDome({ children }) {
     let spin = 0, vel = reduce ? 0 : CFG.IDLE, tiltX = 0, tTiltX = 0, yaw = 0, tYaw = 0;
     let dragging = false, lastX = 0, raf = 0, visible = true;
 
-    const onDown = (e) => { dragging = true; hero.classList.add('dragging'); lastX = e.clientX; vel = 0; try { hero.setPointerCapture(e.pointerId); } catch (_) {} };
+    const onDown = (e) => {
+      // never hijack a press that lands on a link/button — the dome's pointer
+      // capture was swallowing the hero CTA clicks. Drag only on the dome itself.
+      if (e.target.closest('a, button, input, label, [role="button"]')) return;
+      dragging = true; hero.classList.add('dragging'); lastX = e.clientX; vel = 0;
+      try { hero.setPointerCapture(e.pointerId); } catch (_) {}
+    };
     const onUp = (e) => { dragging = false; hero.classList.remove('dragging'); if (e && e.pointerId != null) { try { hero.releasePointerCapture(e.pointerId); } catch (_) {} } };
     const onMove = (e) => {
       if (!visible || reduce) return;
