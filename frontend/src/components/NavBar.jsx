@@ -49,7 +49,7 @@ export default function NavBar() {
           </Link>
           {user ? (
             <Link to="/profile" className="nav-avatar" aria-label="Profile">
-              <img src="/assets/avatar-user.jpg" alt="" width="32" height="32" />
+              <img src="/assets/avatar-user.jpg?v=2" alt="" width="32" height="32" />
             </Link>
           ) : (
             <Link to="/signin" className="btn btn-secondary">

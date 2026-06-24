@@ -82,7 +82,7 @@ export default function Profile() {
           Profile
         </h1>
         <div className="profile-card profile-card--guest">
-          <img className="profile-avatar" src="/assets/avatar-user.jpg" alt="" />
+          <img className="profile-avatar" src="/assets/avatar-user.jpg?v=2" alt="" />
           <div>
             <p className="profile-name">You’re browsing as a guest</p>
             <p className="metadata">Sign in to sync your list across devices.</p>
@@ -106,7 +106,7 @@ export default function Profile() {
         Profile
       </h1>
       <div className="profile-card">
-        <img className="profile-avatar" src={user?.avatarUrl || '/assets/avatar-user.jpg'} alt="" />
+        <img className="profile-avatar" src={user?.avatarUrl || '/assets/avatar-user.jpg?v=2'} alt="" />
         <div>
           <p className="profile-name">{user?.name || 'Member'}</p>
           <p className="metadata">{user?.email ? `${user.email} · Premium` : 'Premium'}</p>
