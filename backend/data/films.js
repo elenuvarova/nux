@@ -416,6 +416,166 @@ export const FILMS = [
     "genre": "Drama",
     "director": "Mark Jenkin",
     "synopsis": "Shot on a hand-cranked Bolex and hand-processed onto 16mm monochrome, Mark Jenkin's debut watches a Cornish cove fisherman lose his harbour to second-homers and the tourist trade. It looks like a reli"
+  },
+  {
+    "id": "trainspotting",
+    "title": "Trainspotting",
+    "year": 1996,
+    "genre": "Crime",
+    "director": "Danny Boyle",
+    "synopsis": "Renton wants off heroin and out of Edinburgh, but Sick Boy, Spud and the psychotic Begbie keep dragging him back under. Danny Boyle's needle-sharp blast of a film — funny, horrifying, impossible to sh"
+  },
+  {
+    "id": "hunger",
+    "title": "Hunger",
+    "year": 2008,
+    "genre": "Drama",
+    "director": "Steve McQueen",
+    "synopsis": "Inside the Maze prison in 1981, IRA prisoner Bobby Sands turns his own body into the last weapon he has left. Steve McQueen's debut is brutal, near-wordless and unbearably still."
+  },
+  {
+    "id": "local-hero",
+    "title": "Local Hero",
+    "year": 1983,
+    "genre": "Comedy",
+    "director": "Bill Forsyth",
+    "synopsis": "An American oil man flies to a tiny Scottish village to buy the whole place — and slowly forgets why he ever wanted to leave. Bill Forsyth's gentlest comedy, full of northern lights and quiet ache."
+  },
+  {
+    "id": "a-taste-of-honey",
+    "title": "A Taste of Honey",
+    "year": 1961,
+    "genre": "Drama",
+    "director": "Tony Richardson",
+    "synopsis": "A Salford teenager, pregnant and on her own, sets up home with a gentle gay art student while her mother chases men. Tony Richardson's tender landmark of the British New Wave, shot in real back-street"
+  },
+  {
+    "id": "the-loneliness-of-the-long-distance-runner",
+    "title": "The Loneliness of the Long Distance Runner",
+    "year": 1962,
+    "genre": "Drama",
+    "director": "Tony Richardson",
+    "synopsis": "A borstal boy with a gift for running is groomed by the governor for a big race — and decides exactly what to do with his lead. Tom Courtenay's breakthrough, and one of the great two-fingered endings."
+  },
+  {
+    "id": "my-beautiful-laundrette",
+    "title": "My Beautiful Laundrette",
+    "year": 1985,
+    "genre": "Drama",
+    "director": "Stephen Frears",
+    "synopsis": "A young British-Pakistani man and his ex-skinhead lover do up a run-down London launderette while Thatcher's Britain seethes around them. Stephen Frears and Hanif Kureishi made something funny, frank "
+  },
+  {
+    "id": "secrets-and-lies",
+    "title": "Secrets & Lies",
+    "year": 1996,
+    "genre": "Drama",
+    "director": "Mike Leigh",
+    "synopsis": "A successful Black optician traces her birth mother and finds a frazzled white factory worker who never told a soul. Mike Leigh coaxes the year's most devastating performances out of an ordinary front"
+  },
+  {
+    "id": "repulsion",
+    "title": "Repulsion",
+    "year": 1965,
+    "genre": "Horror",
+    "director": "Roman Polanski",
+    "synopsis": "Left alone in her sister's South Kensington flat, a withdrawn young woman comes quietly, terrifyingly apart. Roman Polanski's first English film turns wallpaper, cracks and silence into pure dread."
+  },
+  {
+    "id": "the-elephant-man",
+    "title": "The Elephant Man",
+    "year": 1980,
+    "genre": "Drama",
+    "director": "David Lynch",
+    "synopsis": "In Victorian London a surgeon rescues Joseph Merrick from a freak show and discovers the gentle, cultured man underneath. David Lynch shot it in stately black and white — and broke a generation's hear"
+  },
+  {
+    "id": "quadrophenia",
+    "title": "Quadrophenia",
+    "year": 1979,
+    "genre": "Drama",
+    "director": "Franc Roddam",
+    "synopsis": "Jimmy trades a dead-end job for scooters, pills and the Mod tribe, then chases the dream to a Brighton seafront brawl. Franc Roddam's furious snapshot of belonging to something that can't hold you."
+  },
+  {
+    "id": "fish-tank",
+    "title": "Fish Tank",
+    "year": 2009,
+    "genre": "Drama",
+    "director": "Andrea Arnold",
+    "synopsis": "A volatile fifteen-year-old on an Essex estate dances alone in an empty flat until her mum's new boyfriend starts paying attention. Andrea Arnold films it raw and close, with Katie Jarvis a revelation"
+  },
+  {
+    "id": "tyrannosaur",
+    "title": "Tyrannosaur",
+    "year": 2011,
+    "genre": "Drama",
+    "director": "Paddy Considine",
+    "synopsis": "A man eaten alive by his own rage finds something like grace in a charity-shop volunteer hiding her own bruises. Paddy Considine's directorial debut is hard to watch and harder to forget."
+  },
+  {
+    "id": "kill-list",
+    "title": "Kill List",
+    "year": 2011,
+    "genre": "Horror",
+    "director": "Ben Wheatley",
+    "synopsis": "An ex-soldier takes one last contract-killing job with an old mate, and the work turns stranger and darker with every name. Ben Wheatley's dread-soaked thriller that detours somewhere you won't see co"
+  },
+  {
+    "id": "moon",
+    "title": "Moon",
+    "year": 2009,
+    "genre": "Sci-Fi",
+    "director": "Duncan Jones",
+    "synopsis": "Three years alone mining the far side of the Moon, with only a soft-spoken computer for company, Sam Bell makes a discovery that unravels everything. Duncan Jones's lo-fi marvel — practical models, bi"
+  },
+  {
+    "id": "pride",
+    "title": "Pride",
+    "year": 2014,
+    "genre": "Drama",
+    "director": "Matthew Warchus",
+    "synopsis": "In 1984 a band of London lesbians and gays start raising money for striking Welsh miners — two worlds with no idea what to make of each other. Matthew Warchus turns a true story into the warmest crowd"
+  },
+  {
+    "id": "control",
+    "title": "Control",
+    "year": 2007,
+    "genre": "Drama",
+    "director": "Anton Corbijn",
+    "synopsis": "The short, fraught life of Ian Curtis — Macclesfield, marriage, epilepsy, Joy Division — rendered in stark monochrome. Photographer Anton Corbijn's first feature, with Sam Riley uncannily right."
+  },
+  {
+    "id": "24-hour-party-people",
+    "title": "24 Hour Party People",
+    "year": 2002,
+    "genre": "Comedy",
+    "director": "Michael Winterbottom",
+    "synopsis": "Tony Wilson narrates the rise and ruin of Manchester's Factory Records and the Haçienda, from punk to acid house. Michael Winterbottom's gleefully unreliable history of great music and spectacular bad"
+  },
+  {
+    "id": "submarine",
+    "title": "Submarine",
+    "year": 2010,
+    "genre": "Comedy",
+    "director": "Richard Ayoade",
+    "synopsis": "A precocious Welsh fifteen-year-old schemes to lose his virginity and save his parents' marriage, narrating his own life as if it mattered enormously. Richard Ayoade's debut — deadpan, bookish and qui"
+  },
+  {
+    "id": "the-favourite",
+    "title": "The Favourite",
+    "year": 2018,
+    "genre": "History",
+    "director": "Yorgos Lanthimos",
+    "synopsis": "In the court of an ailing Queen Anne, two cousins claw and scheme to become the woman the crown can't do without. Yorgos Lanthimos's wicked, fish-eyed costume drama, with three actresses off the leash"
+  },
+  {
+    "id": "nil-by-mouth",
+    "title": "Nil by Mouth",
+    "year": 1997,
+    "genre": "Drama",
+    "director": "Gary Oldman",
+    "synopsis": "A South London family orbits Ray, a husband whose love and violence come from the same place. Gary Oldman wrote and directed this furious, autobiographical gut-punch — Kathy Burke and Ray Winstone are"
   }
 ];
 

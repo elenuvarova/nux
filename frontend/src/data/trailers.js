@@ -54,4 +54,24 @@ export const TRAILERS = {
   'i-daniel-blake': { yt: 'ahWgxw9E_h4', label: 'I, DANIEL BLAKE - OFFICIAL UK TRAILER [HD]' }, // eOne UK
   'gods-own-country': { yt: 'kQV_pJyGAIg', label: 'God\'s Own Country | UK Trailer' }, // Picturehouse
   'bait': { yt: 'eVlPl0SXFiE', label: 'New trailer for Bait - In cinemas 30 August | BFI' }, // BFI
+  'trainspotting': { yt: '8LuxOYIpu-I', label: 'Trainspotting | Official Trailer' },
+  'hunger': { yt: 'K9IiUbBV4zc', label: 'Hunger | Trailer' },
+  'local-hero': { yt: 'nufb3JysCgY', label: 'Local Hero | Trailer' },
+  'a-taste-of-honey': { yt: 'WqYXXVY8AsY', label: 'A Taste of Honey | Trailer' },
+  'the-loneliness-of-the-long-distance-runner': { yt: 'r6LOFFJt94Q', label: 'The Loneliness of the Long Distance Runner | Trailer' },
+  'my-beautiful-laundrette': { yt: 'e5JtE83ksg0', label: 'My Beautiful Laundrette | Trailer' },
+  'secrets-and-lies': { yt: 'ShV57ZotaRc', label: 'Secrets & Lies | Trailer' },
+  'repulsion': { yt: '1KO_GHrngqc', label: 'Repulsion | Trailer' },
+  'the-elephant-man': { yt: 'kxb_1457gGs', label: 'The Elephant Man | Trailer' },
+  'quadrophenia': { yt: 'Ecvzj2m5nww', label: 'Quadrophenia | Trailer' },
+  'fish-tank': { yt: 'Sk1SekrhKtU', label: 'Fish Tank | Trailer' },
+  'tyrannosaur': { yt: 'nG280k72MM8', label: 'Tyrannosaur | Trailer' },
+  'kill-list': { yt: 'aqkqF--v1tg', label: 'Kill List | Trailer' },
+  'moon': { yt: '6vcZutbuiys', label: 'Moon | Official Trailer' },
+  'pride': { yt: 'kZfFvsKDuUU', label: 'Pride | Official Trailer' },
+  'control': { yt: 'xUz6y6ANIgE', label: 'Control | Trailer' },
+  '24-hour-party-people': { yt: 'HFiyEegpKUM', label: '24 Hour Party People | Trailer' },
+  'submarine': { yt: 'mmlqXESOxb0', label: 'Submarine | Trailer' },
+  'the-favourite': { yt: 'SYb-wkehT1g', label: 'The Favourite | Official Trailer' },
+  'nil-by-mouth': { yt: '_BsPLaS0ksg', label: 'Nil by Mouth | Trailer' },
 };

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 const DEFAULT_DESC =
   'An editorial streaming platform for films, documentaries, games and courses — curated by editors who care.';
-const DEFAULT_IMAGE = '/og.jpg';
+const DEFAULT_IMAGE = '/og.jpg?v=2';
 
 /* Sets document.title, the meta description, the canonical link and the
    Open Graph / Twitter Card tags per route, so every view is distinguishable
