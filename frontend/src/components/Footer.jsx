@@ -11,6 +11,7 @@ export default function Footer() {
           <Link to="/p/help">Help</Link>
           <Link to="/p/privacy">Privacy</Link>
           <Link to="/p/terms">Terms</Link>
+          <a className="footer-ext" href="https://nux.ontwrpn.com">Marketing site ↗</a>
           <span className="footer-copy">© 2026 NUX</span>
         </nav>
       </div>
