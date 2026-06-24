@@ -192,15 +192,15 @@ export default function App() {
           <h2 id="how-h" className="section-title">From a mood to a film, in three moves</h2>
           <ol className="moves">
             <li className="move">
-              <span className="move-n">01</span>
+              <span className="move-n" aria-hidden="true">01</span>
               <div className="move-body"><h3>Tell us what moves you</h3><p>A few minutes, once. Your homepage opens with those films up top — no quiz, no cold start.</p></div>
             </li>
             <li className="move">
-              <span className="move-n">02</span>
+              <span className="move-n" aria-hidden="true">02</span>
               <div className="move-body"><h3>Get a programme, not a grid</h3><p>Themed rails and collections, put together by hand and changed most weeks — like a season at a rep cinema.</p></div>
             </li>
             <li className="move">
-              <span className="move-n">03</span>
+              <span className="move-n" aria-hidden="true">03</span>
               <div className="move-body"><h3>Ask the Curator anything</h3><p>Stuck for the evening? Describe a mood in plain English and get three films, with reasons — not two hundred results.</p></div>
             </li>
           </ol>
@@ -278,7 +278,7 @@ export default function App() {
         <p className="footer-mark" aria-hidden="true">NUX</p>
         <div className="footer-legal">
           <span>© 2026 NUX — a portfolio concept by Elena Uvarova.</span>
-          <span>Cinema for curious minds.</span>
+          <span>Cinema for Curious Minds.</span>
         </div>
       </footer>
     </div>

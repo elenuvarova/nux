@@ -157,7 +157,7 @@ export default function CuratorOverlay() {
         <header className="curator-head">
           <div className="curator-head-titles">
             <h2>The Curator</h2>
-            <p className="curator-tagline">Describe a mood — I'll pull real picks from the catalogue.</p>
+            <p className="curator-tagline">Describe a mood — I’ll pull real picks from the catalogue.</p>
           </div>
           <div className="curator-head-actions">
             {messages.length > 0 && (

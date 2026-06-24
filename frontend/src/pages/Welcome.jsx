@@ -78,7 +78,7 @@ export default function Welcome() {
       <h1 className="welcome-genres-title" tabIndex={-1}>
         What kinds of stories move you?
       </h1>
-      <p className="welcome-sub">Select all that apply — we'll use this to personalise your feed.</p>
+      <p className="welcome-sub">Select all that apply — we’ll use this to personalise your feed.</p>
       <div className="welcome-grid" role="group" aria-label="Genres">
         {STOCKED_GENRES.map((g) => (
           <button

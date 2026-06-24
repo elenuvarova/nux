@@ -427,15 +427,30 @@ export default function Watch() {
           <div className="player-facade player-facade--off">
             <img src={art} alt="" />
             <div className="player-missing">
-              <p className="display-m">Trailer unavailable</p>
-              <p>
-                {loadError
-                  ? "We couldn't load the player. Check your connection and try again."
-                  : "We couldn't license a trailer for this title yet."}
-              </p>
-              <Link to={`/film/${film.id}`} className="btn btn-secondary">
-                Back to film page
-              </Link>
+              {film.type === 'COURSE' ? (
+                <>
+                  <p className="display-m">Lessons in production</p>
+                  <p>
+                    The syllabus is real — the lesson films aren’t shot yet. See the
+                    full outline on the course page.
+                  </p>
+                  <Link to={`/title/${film.id}`} className="btn btn-secondary">
+                    Back to the course
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <p className="display-m">Trailer unavailable</p>
+                  <p>
+                    {loadError
+                      ? "We couldn't load the player. Check your connection and try again."
+                      : "We couldn't license a trailer for this title yet."}
+                  </p>
+                  <Link to={`/film/${film.id}`} className="btn btn-secondary">
+                    Back to film page
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )

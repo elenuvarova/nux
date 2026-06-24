@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
 import { api, onUnauthorized } from "./api.js";
 import { configureMyList } from "./useMyList.js";
 import { configureWatchHistory } from "./useWatchHistory.js";
@@ -62,8 +62,13 @@ export function AuthProvider({ children }) {
     return r.user;
   }, []);
 
+  const value = useMemo(
+    () => ({ user, ready, signup, login, logout, updateProfile }),
+    [user, ready, signup, login, logout, updateProfile]
+  );
+
   return (
-    <AuthContext.Provider value={{ user, ready, signup, login, logout, updateProfile }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

@@ -74,7 +74,6 @@ function compose({ title, description, url, image, preload, preloadSrcset, jsonL
     `<meta name="twitter:image" content="${img}" />`,
     `<link rel="canonical" href="${esc(url)}" />`,
     ...jsonLds.map(ld),
-    '<script src="https://t.contentsquare.net/uxa/ce2a4b85786d7.js" defer></script>',
     assetTags,
   ].filter(Boolean);
   return `<!DOCTYPE html>\n<html lang="en">\n  <head>\n    ${lines.join('\n    ')}\n  </head>\n  <body>\n    <div id="root"></div>\n  </body>\n</html>\n`;

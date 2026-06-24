@@ -1,6 +1,4 @@
-import '@fontsource-variable/fraunces';
-import '@fontsource-variable/inter';
-import '@fontsource-variable/newsreader';
+import './styles/fonts.css';
 import './styles/tokens.css';
 import './styles/landing.css';
 

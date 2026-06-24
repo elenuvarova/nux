@@ -1,0 +1,34 @@
+/* Self-hosted SUBSET fonts — replaces the @fontsource-variable full imports.
+   Mirrors the app's frontend/src/styles/fonts.css exactly so both surfaces ship
+   the same ~73KB font payload instead of the landing's old ~312KB of full
+   @fontsource ranges (latin-ext/cyrillic/greek/vietnamese the site never renders).
+   - Inter stays VARIABLE (the UI uses 400/500/600/700).
+   - Fraunces is instanced to its only weight, 600 (display/headings/wordmark).
+   - Newsreader is instanced to its only weight, 400 (editorial body).
+   Decorative glyphs not in the subset (✳ U+2733, ► U+25BA) are absent from the
+   full fonts too, so they already fall back to a system font — no regression.
+   font-weight: 100 900 lets the static instances satisfy any weight request. */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../fonts/inter-subset.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Fraunces Variable';
+  font-style: normal;
+  font-weight: 100 900; /* static 600 instance — matches any requested weight */
+  font-display: swap;
+  src: url('../fonts/fraunces-subset.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Newsreader Variable';
+  font-style: normal;
+  font-weight: 100 900; /* static 400 instance */
+  font-display: swap;
+  src: url('../fonts/newsreader-subset.woff2') format('woff2');
+}

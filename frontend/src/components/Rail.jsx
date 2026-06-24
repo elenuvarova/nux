@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { byId } from '../data/catalog.js';
 import { useTilt } from '../lib/useTilt.js';
@@ -32,7 +33,7 @@ function minutesLabel(min) {
   return `${min}m left`;
 }
 
-export function PosterCard({ filmId }) {
+export const PosterCard = memo(function PosterCard({ filmId }) {
   const film = byId(filmId);
   const tilt = useTilt();
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ export function PosterCard({ filmId }) {
       <p className="poster-card-meta">{film.director} · {film.year} · {film.runtime}</p>
     </Link>
   );
-}
+});
 
 export function ContinueCard({ item }) {
   const film = byId(item.filmId);

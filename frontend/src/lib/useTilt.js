@@ -6,14 +6,24 @@ import { useRef, useCallback, useEffect } from 'react';
 export function useTilt({ max = 7 } = {}) {
   const ref = useRef(null);
   const raf = useRef(0);
+  const reduce = useRef(false);
 
   // cancel any queued frame if the element unmounts mid-tilt (e.g. a fast
   // filter change in Browse) so the callback never runs against a detached node
-  useEffect(() => () => cancelAnimationFrame(raf.current), []);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    reduce.current = mq.matches;
+    const on = () => (reduce.current = mq.matches);
+    mq.addEventListener('change', on);
+    return () => {
+      mq.removeEventListener('change', on);
+      cancelAnimationFrame(raf.current);
+    };
+  }, []);
 
   const onPointerMove = useCallback(
     (e) => {
-      if (e.pointerType !== 'mouse') return;
+      if (e.pointerType !== 'mouse' || reduce.current) return;
       const el = ref.current;
       if (!el) return;
       cancelAnimationFrame(raf.current);

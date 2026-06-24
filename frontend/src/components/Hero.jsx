@@ -40,7 +40,6 @@ export default function Hero() {
     <section
       className="hero"
       data-tour="hero"
-      aria-roledescription="carousel"
       aria-label={`Featured: ${film.title}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

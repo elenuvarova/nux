@@ -68,31 +68,6 @@ export const RAILS = [
   },
 ];
 
-// Full type-index — the catalogue set as a register, hover reveals the still.
-export const INDEX = [
-  { slug: 'third-man', title: 'The Third Man', director: 'Carol Reed', year: 1949, runtime: '1h 44m' },
-  { slug: 'red-shoes', title: 'The Red Shoes', director: 'Powell & Pressburger', year: 1948, runtime: '2h 15m' },
-  { slug: 'peeping-tom', title: 'Peeping Tom', director: 'Michael Powell', year: 1960, runtime: '1h 41m' },
-  { slug: 'the-servant', title: 'The Servant', director: 'Joseph Losey', year: 1963, runtime: '1h 56m' },
-  { slug: 'kes', title: 'Kes', director: 'Ken Loach', year: 1969, runtime: '1h 50m' },
-  { slug: 'performance', title: 'Performance', director: 'Cammell & Roeg', year: 1970, runtime: '1h 45m' },
-  { slug: 'walkabout', title: 'Walkabout', director: 'Nicolas Roeg', year: 1971, runtime: '1h 40m' },
-  { slug: 'get-carter', title: 'Get Carter', director: 'Mike Hodges', year: 1971, runtime: '1h 52m' },
-  { slug: 'dont-look-now', title: 'Don’t Look Now', director: 'Nicolas Roeg', year: 1973, runtime: '1h 50m' },
-  { slug: 'wicker-man', title: 'The Wicker Man', director: 'Robin Hardy', year: 1973, runtime: '1h 28m' },
-  { slug: 'the-long-good-friday', title: 'The Long Good Friday', director: 'John Mackenzie', year: 1980, runtime: '1h 54m' },
-  { slug: 'mona-lisa', title: 'Mona Lisa', director: 'Neil Jordan', year: 1986, runtime: '1h 44m' },
-  { slug: 'withnail-and-i', title: 'Withnail and I', director: 'Bruce Robinson', year: 1987, runtime: '1h 47m' },
-  { slug: 'distant-voices-still-lives', title: 'Distant Voices, Still Lives', director: 'Terence Davies', year: 1988, runtime: '1h 25m' },
-  { slug: 'naked', title: 'Naked', director: 'Mike Leigh', year: 1993, runtime: '2h 12m' },
-  { slug: 'ratcatcher', title: 'Ratcatcher', director: 'Lynne Ramsay', year: 1999, runtime: '1h 34m' },
-  { slug: 'this-is-england', title: 'This Is England', director: 'Shane Meadows', year: 2006, runtime: '1h 42m' },
-  { slug: 'red-road', title: 'Red Road', director: 'Andrea Arnold', year: 2006, runtime: '1h 53m' },
-  { slug: 'under-the-skin', title: 'Under the Skin', director: 'Jonathan Glazer', year: 2013, runtime: '1h 48m' },
-  { slug: 'i-daniel-blake', title: 'I, Daniel Blake', director: 'Ken Loach', year: 2016, runtime: '1h 40m' },
-  { slug: 'aftersun', title: 'Aftersun', director: 'Charlotte Wells', year: 2022, runtime: '1h 42m' },
-];
-
 // The editors' room — one film, properly. Single-film spotlight (replaces the type-index).
 export const FOTW = {
   slug: 'kes',

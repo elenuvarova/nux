@@ -50,7 +50,7 @@ export default function AuthField({ label, id, type = 'text', value, onChange, e
           {hint}
         </span>
       )}
-      {caps && !error && <span className="auth-caps">Caps Lock is on</span>}
+      {caps && !error && <span className="auth-caps" role="status">Caps Lock is on</span>}
       {error && (
         <span id={`${id}-err`} className="auth-error" role="alert">
           {error}

@@ -4,7 +4,7 @@ import { PosterCard } from '../components/Rail.jsx';
 import Slate from '../components/Slate.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useCurator } from '../lib/useCurator.jsx';
-import { FILMS, GENRES, EXTRAS } from '../data/catalog.js';
+import { FILMS, STOCKED_GENRES, EXTRAS } from '../data/catalog.js';
 import './Browse.css';
 
 const CHIPS = ['All', 'Films', 'Documentaries', 'Games', 'Courses'];
@@ -196,7 +196,7 @@ export default function Browse() {
         <section className="browse-genres" aria-label="Browse by genre">
           <h2 className="headline">Genres</h2>
           <div className="genre-grid">
-            {GENRES.map((g) => (
+            {STOCKED_GENRES.map((g) => (
               <Link to={`/genre/${g.id}`} className="genre-card" key={g.id} aria-label={g.label}>
                 <img src={g.image} alt="" loading="lazy" />
                 <span>{g.label}</span>
