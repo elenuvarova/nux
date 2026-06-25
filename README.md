@@ -3,7 +3,7 @@
 An editorial streaming experience for British cinema — curation as the product, not an
 infinite algorithmic wall. Full-stack portfolio piece, designed end-to-end and shipped live.
 
-**Live:** <https://nux.ontwrpn.com>
+**Live:** app → <https://app.nux.ontwrpn.com> · marketing landing → <https://nux.ontwrpn.com>
 
 ## Stack
 
