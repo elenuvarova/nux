@@ -210,8 +210,20 @@
     padding: 0 var(--space-4) var(--space-10);
   }
 
+  /* three pills crammed on one 390px line read cramped and risked wrapping
+     under Dynamic Type. Play takes its own full-width row; My List + More Info
+     split the second — every affordance kept, all ≥44px-friendly tap targets */
   .hero-actions {
     flex-wrap: wrap;
+  }
+
+  .hero-actions .btn-primary {
+    flex: 1 0 100%;
+  }
+
+  .hero-actions .btn-secondary {
+    flex: 1 1 0;
+    justify-content: center;
   }
 
   .hero-title {

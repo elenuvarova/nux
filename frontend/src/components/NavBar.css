@@ -122,7 +122,17 @@
   color: var(--text-secondary);
 }
 
+/* avatar + disclosure caret — signals a menu lives here, not just a link */
 .nav-avatar {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: var(--radius-full);
+  padding: 2px 4px 2px 2px;
+  transition: background-color var(--dur-base) var(--ease-out);
+}
+
+.nav-avatar-img {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
@@ -132,7 +142,16 @@
 }
 
 .nav-avatar:hover {
+  background: var(--white-a07);
+}
+
+.nav-avatar:hover .nav-avatar-img {
   border-color: var(--border-strong);
+}
+
+.nav-avatar-caret {
+  color: var(--icon-secondary);
+  flex: none;
 }
 
 .nav-avatar img {

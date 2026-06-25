@@ -70,6 +70,9 @@
      keeps the blur warm. Consume via the .glass utility in global.css. */
   --glass-bg: rgb(13 12 11 / 0.72);
   --glass-bg-strong: rgb(13 12 11 / 0.92);
+  /* opaque chip plate — gives corner badges/tags a controlled backdrop so a
+     coloured label never dissolves into busy poster art (≈ #1E1B17 @ 80%) */
+  --surface-chip: rgb(30 27 23 / 0.8);
   --blur-chrome: 20px;
   /* tighter on-artwork blur (poster badges, the play affordance, card labels) —
      distinct from the 20px chrome blur so the two don't drift apart */

@@ -28,7 +28,21 @@ export default function Auth({ mode = 'signin' }) {
   const [formError, setFormError] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  const set = (k) => (e) => setValues((v) => ({ ...v, [k]: e.target.value }));
+  const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  // clear a field's error the moment the user starts correcting it — stale red
+  // text under a field they're actively fixing reads as broken
+  const set = (k) => (e) => {
+    const val = e.target.value;
+    setValues((v) => ({ ...v, [k]: val }));
+    if (errors[k]) setErrors((prev) => ({ ...prev, [k]: undefined }));
+  };
+  // live email-format check on blur, so a typo flags before the user reaches the
+  // submit button (don't nag an empty field they haven't filled yet)
+  const validateEmail = () => {
+    if (values.email && !EMAIL_RE.test(values.email)) {
+      setErrors((prev) => ({ ...prev, email: 'Enter a valid email.' }));
+    }
+  };
 
   const focusFirst = (next) => {
     const first = ['name', 'email', 'password'].find((k) => next[k]);
@@ -92,7 +106,7 @@ export default function Auth({ mode = 'signin' }) {
           {signup && (
             <AuthField label="Name" id="name" value={values.name} onChange={set('name')} error={errors.name} autoComplete="name" />
           )}
-          <AuthField label="Email" id="email" type="email" value={values.email} onChange={set('email')} error={errors.email} autoComplete="email" />
+          <AuthField label="Email" id="email" type="email" value={values.email} onChange={set('email')} onBlur={validateEmail} error={errors.email} autoComplete="email" />
           <AuthField
             label="Password"
             id="password"

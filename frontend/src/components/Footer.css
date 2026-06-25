@@ -45,8 +45,16 @@
     gap: var(--space-4);
   }
 
+  /* roomier, more legible tap targets — the desktop link row read as a cramped,
+     webby strip on a phone */
   .footer-links {
     flex-wrap: wrap;
     justify-content: center;
+    gap: var(--space-2) var(--space-5);
+    font-size: 14px;
+  }
+
+  .footer-links a {
+    padding: var(--space-2) var(--space-1);
   }
 }

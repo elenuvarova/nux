@@ -48,8 +48,13 @@ export default function NavBar() {
             <span>Search</span>
           </Link>
           {user ? (
-            <Link to="/profile" className="nav-avatar" aria-label="Profile">
-              <img src="/assets/avatar-user.jpg?v=2" alt="" width="32" height="32" />
+            <Link to="/profile" className="nav-avatar" aria-label="Account menu" aria-haspopup="menu">
+              <span className="nav-avatar-img">
+                <img src="/assets/avatar-user.jpg?v=2" alt="" width="32" height="32" />
+              </span>
+              <svg className="nav-avatar-caret" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M3 4.5 6 7.5l3-3" />
+              </svg>
             </Link>
           ) : (
             <Link to="/signin" className="btn btn-secondary">

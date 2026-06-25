@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // Shared auth input: password reveal toggle, caps-lock warning, hint, error.
-export default function AuthField({ label, id, type = 'text', value, onChange, error, autoComplete, hint }) {
+export default function AuthField({ label, id, type = 'text', value, onChange, onBlur, error, autoComplete, hint }) {
   const isPassword = type === 'password';
   const [shown, setShown] = useState(false);
   const [caps, setCaps] = useState(false);
@@ -18,7 +18,10 @@ export default function AuthField({ label, id, type = 'text', value, onChange, e
           onChange={onChange}
           autoComplete={autoComplete}
           onKeyUp={isPassword ? (e) => setCaps(e.getModifierState && e.getModifierState('CapsLock')) : undefined}
-          onBlur={isPassword ? () => setCaps(false) : undefined}
+          onBlur={(e) => {
+            if (isPassword) setCaps(false);
+            onBlur?.(e);
+          }}
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={error ? 'auth-input auth-input--err' : 'auth-input'}

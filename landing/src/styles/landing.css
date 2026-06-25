@@ -80,8 +80,12 @@ a { color: inherit; text-decoration: none; }
 .btn-secondary:hover { border-color: var(--border-strong, rgba(255,255,255,.18)); }
 .btn-lg { height: 52px; padding: 0 var(--space-7, 28px); font-size: 16px; }
 .btn-block { width: 100%; justify-content: center; }
-.link-arrow { display: inline-flex; align-items: center; gap: 9px; min-height: var(--space-6); color: var(--text-primary); font-size: 14px; font-weight: 500; letter-spacing: .01em; white-space: nowrap; }
-.link-arrow span { color: var(--amber-500); transition: transform var(--dur-base) var(--ease-out); }
+/* Secondary CTA — ghost/underline-style link in secondary ink. No amber: solid
+   amber is reserved for the one PRIMARY action per viewport (.btn-primary). The
+   arrow inherits the link's secondary colour and only animates on hover. */
+.link-arrow { display: inline-flex; align-items: center; gap: 9px; min-height: var(--space-6); color: var(--text-secondary); font-size: 14px; font-weight: 500; letter-spacing: .01em; white-space: nowrap; transition: color var(--dur-base) var(--ease-out); }
+.link-arrow span { transition: transform var(--dur-base) var(--ease-out); }
+.link-arrow:hover { color: var(--text-primary); }
 .link-arrow:hover span { transform: translateX(5px); }
 
 .wordmark { font-family: var(--font-display); font-weight: 600;
@@ -89,11 +93,14 @@ a { color: inherit; text-decoration: none; }
 .eyebrow { font: var(--type-eyebrow); letter-spacing: var(--track-eyebrow); text-transform: uppercase;
   color: var(--amber-500); margin: 0 0 var(--space-5); }
 
-/* slate — the running section-label system (N°0X — Label) */
+/* slate — the running section-label system (N°0X — Label). ONE locked rule, used
+   identically for every N°0x: the NUMBER carries the amber accent, the em-rule and
+   the LABEL are grey. Never let a whole label go amber. */
 .slate { display: flex; align-items: center; gap: var(--space-3); margin: 0 0 var(--space-6); font-family: var(--font-ui);
   font-size: 11px; font-weight: 600; letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--text-tertiary); }
-.slate-n { color: var(--amber-500); }
-.slate-rule { height: 1px; width: 26px; background: var(--border-default); }
+.slate-n { color: var(--amber-500); }              /* number — the only amber bit */
+.slate-rule { height: 1px; width: 26px; background: var(--border-default); } /* grey hairline */
+.slate-label { color: var(--text-tertiary); }      /* label — grey, never amber */
 .slate.center { justify-content: center; }
 
 .section-title { font-family: var(--font-display); font-weight: 600; font-size: var(--type-landing-section);
@@ -130,7 +137,11 @@ a { color: inherit; text-decoration: none; }
 .pw-ring { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
 .pw-poster { position: absolute; left: 0; top: 0; border-radius: var(--radius-poster); overflow: hidden; backface-visibility: hidden;
   box-shadow: var(--shadow-landing-poster); outline: 1px solid var(--white-a07); }
-.pw-poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* uniform ~14% darken baseline on every background poster so bright-white posters
+   (Richard III, The Devils) don't spike luminance and out-shout the headline. This
+   composes UNDER the JS front-to-back brightness curve (set on .pw-poster), so the
+   frontmost poster still reads brighter than the ones behind it (N-5). */
+.pw-poster img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.86); }
 .hero-scrim { position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background:
     linear-gradient(to top, rgb(var(--ink-900-rgb) / .94) 0%, rgb(var(--ink-900-rgb) / .6) 28%, rgb(var(--ink-900-rgb) / 0) 58%),
@@ -139,7 +150,7 @@ a { color: inherit; text-decoration: none; }
   background: radial-gradient(circle, rgb(var(--amber-500-rgb) / .15) 0%, rgb(var(--amber-500-rgb) / .05) 42%, rgb(var(--amber-500-rgb) / 0) 70%); }
 .hero-content { position: absolute; z-index: 4; left: 0; bottom: 0; max-width: 880px; padding: 0 var(--gutter) var(--pad-landing-hero-b); }
 .hero-title { font-family: var(--font-display); font-weight: 600; font-size: var(--type-landing-hero); line-height: 1.04; letter-spacing: -.015em;
-  margin: 0 0 var(--space-5); text-shadow: 0 2px 40px rgb(var(--ink-950-rgb) / .6); max-width: 16ch; }
+  margin: 0 0 var(--space-5); text-shadow: 0 2px 40px rgb(var(--ink-950-rgb) / .6); max-width: 16ch; text-wrap: balance; }
 .hero-sub { font-size: var(--type-landing-hero-sub); line-height: 1.5; color: var(--text-secondary); max-width: 56ch; margin: 0 0 var(--space-8); }
 .cta-row { display: flex; gap: var(--space-6); flex-wrap: wrap; align-items: center; }
 .hero-hint { margin: var(--space-6) 0 0; font-size: 12px; letter-spacing: .04em; color: var(--text-tertiary); }
@@ -236,12 +247,14 @@ a { color: inherit; text-decoration: none; }
    editorial body) + a short 0deg bottom lift. Shape differs from --scrim-hero
    (vertical/right/bottom), so we keep this shape and only tokenize the colors. */
 .fotw-card::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: linear-gradient(90deg, rgb(var(--ink-900-rgb) / .94) 0%, rgb(var(--ink-900-rgb) / .82) 36%, rgb(var(--ink-900-rgb) / .4) 68%, rgb(var(--ink-900-rgb) / .12) 100%),
+  background: linear-gradient(90deg, rgb(var(--ink-900-rgb) / .85) 0%, rgb(var(--ink-900-rgb) / .6) 45%, rgb(var(--ink-900-rgb) / 0) 70%),
     linear-gradient(0deg, rgb(var(--ink-900-rgb) / .72) 0%, transparent 52%); }
 .fotw-body { position: absolute; z-index: 2; left: clamp(20px, 4vw, 56px); bottom: clamp(20px, 3.5vw, 48px); max-width: 32ch; }
 .fotw-meta { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-tertiary); margin: 0 0 10px; }
 .fotw-title { font-family: var(--font-display); font-weight: 600; font-size: var(--type-landing-fotw-title); line-height: .98; margin: 0 0 14px; color: var(--text-primary); }
-.fotw-note { font-size: var(--type-landing-fotw-note); line-height: 1.55; color: var(--text-secondary); margin: 0 0 var(--space-5); }
+/* lifted to primary ink: this body sits over a bright graded region of the still,
+   where secondary grey drops below AA (M-14) */
+.fotw-note { font-size: var(--type-landing-fotw-note); line-height: 1.55; color: var(--text-primary); margin: 0 0 var(--space-5); }
 .fotw-cta { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
   color: var(--text-primary); border-bottom: 1px solid var(--amber-300); padding-bottom: 3px; }
 .fotw-cta span { color: var(--amber-300); transition: transform var(--dur-landing-cta) var(--ease-out); }
@@ -251,10 +264,16 @@ a { color: inherit; text-decoration: none; }
 .collections { background: var(--surface-raised); max-width: none; }
 .collections > .slate, .collections > .section-title, .coll-stack { max-width: calc(1240px - 2 * var(--gutter)); margin-inline: auto; }
 .coll-stack { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-5); }
-.coll-tile { position: relative; overflow: clip; border-radius: var(--radius-md); isolation: isolate; }
+/* uniform frame so the irregular wall reads as one designed grid despite span
+   variance: same radius on every tile + a 1px hairline (the landing's poster-frame
+   convention, --white-a08) over the clipped art (L-9) */
+.coll-tile { position: relative; overflow: clip; border-radius: var(--radius-md); isolation: isolate;
+  box-shadow: inset 0 0 0 1px var(--white-a08); }
 .coll-tile.t1 { grid-column: span 4; } .coll-tile.t2 { grid-column: span 2; }
 .coll-tile.t3 { grid-column: span 2; } .coll-tile.t4 { grid-column: span 4; }
-.coll-still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-landing-still) ease; z-index: 0; }
+/* consistent subtle warm grade unifies stills shot at different temperatures (L-9) */
+.coll-still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-landing-still) ease; z-index: 0;
+  filter: brightness(0.98) saturate(1.05); }
 .coll-tile:hover .coll-still, .coll-tile:focus-within .coll-still { transform: scale(1.05); }
 .coll-tile::before { content: ''; position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(to top, rgb(var(--ink-950-rgb) / .92) 0%, rgb(var(--ink-950-rgb) / .58) 42%, rgb(var(--ink-950-rgb) / .4) 100%); }
@@ -284,7 +303,9 @@ a { color: inherit; text-decoration: none; }
 .plan-member::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--amber-500); }
 .plan-name { font-size: 11px; letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--text-secondary); margin: 0 0 var(--space-4); }
 .plan-price { font-family: var(--font-display); font-weight: 600; font-size: var(--type-landing-price); line-height: 1; margin: 0 0 var(--space-3); color: var(--text-primary); }
-.plan-price .per { font-family: var(--font-ui); font-weight: 400; font-size: 15px; color: var(--text-secondary); }
+/* the "a month" rider rides the big numeral's baseline, so it reads low against
+   the cap-height; nudge it up so it sits against the upper third of the figure (N-6) */
+.plan-price .per { font-family: var(--font-ui); font-weight: 400; font-size: 15px; color: var(--text-secondary); vertical-align: 0.18em; }
 .plan-note { color: var(--text-secondary); font-size: 14px; margin: 0 0 var(--space-5); line-height: 1.5; }
 .toggle { display: flex; width: fit-content; gap: var(--space-1); background: var(--surface-muted); border-radius: var(--radius-full); padding: var(--space-1); margin: 0 auto var(--space-2); }
 .toggle button { background: transparent; border: 0; color: var(--text-secondary); font: inherit; font-size: 13px; padding: 6px 14px; border-radius: var(--radius-full); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
@@ -298,9 +319,16 @@ a { color: inherit; text-decoration: none; }
 .plan-reassure { text-align: center; font-size: 12px; color: var(--text-tertiary); margin: var(--space-3) 0 0; }
 
 /* ---- colophon (honesty) ---- */
-.colophon { max-width: 620px; margin: 0 auto; padding: var(--pad-landing-colophon) var(--gutter); text-align: center; }
+/* The colophon sits directly under pricing. Both pricing's bottom pad and this
+   top pad were full section gaps, leaving ~280px of dead black between them (M-13).
+   Halve pricing's bottom pad and set a single ~120px gap to the colophon so it
+   reads as the closing note to pricing, not a removed section. */
+.section.pricing { padding-bottom: calc(var(--pad-landing-section) / 2); }
+.colophon { max-width: 620px; margin: 0 auto; padding: var(--space-12) var(--gutter) var(--pad-landing-colophon); text-align: center; }
 .colophon-mark { color: var(--amber-500); font-size: 18px; margin: 0 0 var(--space-5); }
-.colophon-text { font-family: var(--font-display); font-style: italic; font-size: var(--type-landing-colophon); line-height: 1.6; color: var(--text-secondary); margin: 0; }
+/* Fraunces italic kept on purpose — same editor's-note texture as the curator note
+   and collection standfirsts; capped to ~60ch so the line never runs over-long (N-6). */
+.colophon-text { font-family: var(--font-display); font-style: italic; font-size: var(--type-landing-colophon); line-height: 1.6; color: var(--text-secondary); margin: 0 auto; max-width: 60ch; }
 
 /* ---- final CTA ---- */
 .final-cta { position: relative; overflow: hidden; text-align: center; padding: var(--pad-landing-final) var(--gutter); background: var(--surface-sunken); }
@@ -346,6 +374,14 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 620px) {
   .plans { flex-direction: column; }
   .plan-free { border-right: 0; border-bottom: 1px solid var(--border-default); }
+}
+/* phones (≤480): the two plans are stacked Free-above-Premium (from the 620 rule);
+   make the billing toggle a full-width, two-up control with ≥44px tall buttons so
+   it's a comfortable tap target, and give the active period a clear amber state. */
+@media (max-width: 480px) {
+  .toggle { width: 100%; }
+  .toggle button { flex: 1; justify-content: center; min-height: 44px; padding: 6px var(--space-3); }
+  .toggle button.on { box-shadow: inset 0 0 0 1.5px var(--amber-500); color: var(--amber-400); }
 }
 @media (max-width: 560px) {
   .section { padding: clamp(56px, 14vw, 72px) var(--gutter); }
@@ -415,8 +451,8 @@ a { color: inherit; text-decoration: none; }
       animation-range: entry 15% entry 95%;
     }
     @keyframes coll-colour {
-      from { filter: grayscale(0.9) brightness(0.85); }
-      to   { filter: grayscale(0) brightness(1); }
+      from { filter: grayscale(0.9) brightness(0.85) saturate(1.05); }
+      to   { filter: grayscale(0) brightness(0.98) saturate(1.05); } /* lands on the static warm grade (L-9) */
     }
 
     /* N°05 — the ghosted numerals lag the scroll for an editorial parallax */

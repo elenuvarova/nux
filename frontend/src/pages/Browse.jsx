@@ -109,6 +109,17 @@ export default function Browse() {
     ? 'Try a different title, genre or year.'
     : 'This shelf is empty for now.';
 
+  // Progressive disclosure: the full 72-title grid was one ~13k-px mobile scroll.
+  // Reveal a page at a time so the catalogue is scannable; reset whenever the
+  // filter set changes so a new search always starts at the top of a fresh page.
+  const PAGE = 24;
+  const [visible, setVisible] = useState(PAGE);
+  useEffect(() => {
+    setVisible(PAGE);
+  }, [chip, query]);
+  const shownFilms = films.slice(0, visible);
+  const hasMore = films.length > visible;
+
   return (
     <main className="browse">
       <header className="browse-head">
@@ -228,6 +239,7 @@ export default function Browse() {
             : `${count} ${count === 1 ? 'title' : 'titles'}`}
         </p>
         {count > 0 ? (
+          <>
           <div className="browse-grid">
             {extras.map((x) => (
               <Link to={`/title/${x.id}`} className="poster-card" key={x.id} viewTransition>
@@ -245,10 +257,21 @@ export default function Browse() {
                 <p className="metadata">{x.genre}</p>
               </Link>
             ))}
-            {films.map((f) => (
+            {shownFilms.map((f) => (
               <PosterCard key={f.id} filmId={f.id} />
             ))}
           </div>
+          {hasMore && (
+            <div className="browse-more">
+              <p className="browse-more-count">
+                Showing {extras.length + shownFilms.length} of {count}
+              </p>
+              <button type="button" className="btn btn-secondary" onClick={() => setVisible((v) => v + PAGE)}>
+                Load more
+              </button>
+            </div>
+          )}
+          </>
         ) : (
           <div className="browse-empty">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true" style={{ color: 'var(--icon-tertiary)' }}>

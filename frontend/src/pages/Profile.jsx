@@ -129,7 +129,7 @@ export default function Profile() {
               <button type="button" className="profile-row">
                 <span className="row-icon">{it.icon}</span>
                 {it.label}
-                <span className="metadata" style={{ marginLeft: 'auto' }}>Demo</span>
+                <span className="demo-tag" style={{ marginLeft: 'auto' }}>Demo</span>
               </button>
             )}
           </li>

@@ -65,7 +65,7 @@ export default function Settings() {
         <div className="settings-group">
           <button type="button" className="settings-row" aria-label="Manage devices, Demo">
             <span aria-hidden="true">Manage devices</span>
-            <span className="settings-value" aria-hidden="true"><span className="metadata">Demo</span></span>
+            <span className="settings-value" aria-hidden="true"><span className="demo-tag">Demo</span></span>
           </button>
           <Link to="/p/privacy" className="settings-row">
             Privacy

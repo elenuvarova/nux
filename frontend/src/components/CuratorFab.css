@@ -1,26 +1,32 @@
 .curator-fab {
   position: fixed;
   right: var(--space-5);
-  bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+  /* lifted off the page bottom so it never sits on the footer link row */
+  bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
   z-index: 100; /* chrome tier — matches NavBar/TabBar; hidden under the overlay (110) */
   display: flex;
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  border: 0;
+  /* neutral dark glass — the solid amber fill competed with the hero Play CTA
+     for the "primary action" signal. Amber now lives only in the ✦ glyph. */
+  border: 1px solid var(--white-a18);
   border-radius: var(--radius-full);
-  background: var(--action-primary);
-  color: var(--action-primary-text);
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(var(--blur-chrome));
+  backdrop-filter: blur(var(--blur-chrome));
+  color: var(--text-primary);
   font-weight: 600;
   cursor: pointer;
   box-shadow: var(--shadow-card-hover);
   transition:
-    background-color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out),
     transform var(--dur-fast) var(--ease-out);
 }
-.curator-fab:hover { background: var(--action-primary-hover); }
+.curator-fab:hover { border-color: var(--amber-500); }
 .curator-fab:active { transform: scale(var(--press-scale)); }
 .curator-fab[hidden] { display: none; } /* kept mounted for focus restore; hidden while the panel is up */
+.curator-fab-spark { color: var(--amber-500); }
 .curator-fab-label { font: var(--type-label); }
 /* keep clear of the mobile tab bar (present up to 768px) */
 @media (max-width: 768px) {

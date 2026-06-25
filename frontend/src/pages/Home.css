@@ -18,6 +18,13 @@
   margin-bottom: 0;
 }
 
+/* "What we're showing" sits at the same page-title tier as Browse / Genre /
+   Collection — set it in the Fraunces display face, not the lighter UI title */
+.home-lead .home-section-title {
+  font: var(--type-display-l);
+  letter-spacing: var(--track-display);
+}
+
 .home-hero-skeleton {
   position: relative;
   overflow: hidden;
@@ -136,6 +143,46 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* Essential-Ten promo: a fanned stack of three real covers — reads as
+   "a collection worth opening" instead of an abstract genre flare */
+.editorial-stack {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 10;
+  perspective: 900px;
+}
+
+.editorial-stack img {
+  width: 30%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: var(--surface-raised);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card-hover), inset 0 0 0 1px var(--white-a08);
+}
+
+.editorial-stack img:nth-child(1) {
+  transform: rotate(-7deg) translateX(20%);
+  z-index: 1;
+}
+
+.editorial-stack img:nth-child(2) {
+  transform: translateY(-4%) scale(1.12);
+  z-index: 3;
+}
+
+.editorial-stack img:nth-child(3) {
+  transform: rotate(7deg) translateX(-20%);
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-stack img {
+    transition: none;
+  }
 }
 
 @media (max-width: 900px) {
