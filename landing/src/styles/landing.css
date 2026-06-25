@@ -29,14 +29,14 @@
   --type-landing-footer-mark: clamp(64px, 16vw, 200px);
   --type-landing-mobile-display: clamp(34px, 9vw, 40px); /* hero/final ≤430px */
 
-  /* fluid section/region paddings (no token endpoints make these exact) */
+  /* ONE consistent side gutter for EVERY section/region — the single source of
+     truth for left/right inset, so no two sections drift (20px on phones,
+     scaling to 48px). Vertical section paddings stay bespoke below. */
+  --gutter: clamp(20px, 4vw, 48px);
   --pad-landing-section: clamp(80px, 11vw, 132px);
-  --pad-landing-section-x: clamp(20px, 4vw, 48px);
   --pad-landing-colophon: clamp(64px, 10vw, 120px);
   --pad-landing-final: clamp(96px, 15vw, 190px);
   --pad-landing-footer: clamp(48px, 6vw, 72px);
-  --pad-landing-footer-x: clamp(20px, 5vw, 80px);
-  --pad-landing-hero-x: clamp(20px, 5vw, 80px);
   --pad-landing-hero-b: clamp(40px, 7vw, 80px);
 
   /* landing-only motion / elevation the app ramp doesn't carry */
@@ -101,7 +101,7 @@ a { color: inherit; text-decoration: none; }
 /* overflow-x: clip (not hidden) — clips horizontal spill WITHOUT becoming a
    scroll container, so view() scroll-driven timelines resolve to the document. */
 .page { position: relative; overflow-x: clip; }
-.section { max-width: 1240px; margin: 0 auto; padding: var(--pad-landing-section) var(--space-10); }
+.section { max-width: 1240px; margin: 0 auto; padding: var(--pad-landing-section) var(--gutter); }
 /* chapter rule between consecutive DARK sections — the raised Curator/Collections
    separate by background, but fotw (after catalogue) and pricing (after how) follow
    dark sections, so they need a hairline to read as a new chapter */
@@ -109,7 +109,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---- nav ---- */
 .nav { position: absolute; top: 0; left: 0; right: 0; z-index: 10; display: flex; align-items: center;
-  justify-content: space-between; padding: var(--space-6) var(--pad-landing-section-x); }
+  justify-content: space-between; padding: var(--space-6) var(--gutter); }
 /* Scrim band so the wordmark + "Sign in" keep AA contrast over the bright,
    moving poster hero (posters can drift light behind the unfilled nav). */
 .nav::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 132px; pointer-events: none; z-index: -1;
@@ -134,7 +134,7 @@ a { color: inherit; text-decoration: none; }
     radial-gradient(125% 95% at 38% 55%, rgb(var(--ink-900-rgb) / .18) 0%, rgb(var(--ink-900-rgb) / .66) 55%, rgb(var(--ink-900-rgb) / .97) 100%); }
 .hero-glow { position: absolute; width: 900px; height: 900px; left: -160px; bottom: -340px; z-index: 2; pointer-events: none; mix-blend-mode: screen;
   background: radial-gradient(circle, rgb(var(--amber-500-rgb) / .15) 0%, rgb(var(--amber-500-rgb) / .05) 42%, rgb(var(--amber-500-rgb) / 0) 70%); }
-.hero-content { position: absolute; z-index: 4; left: 0; bottom: 0; max-width: 880px; padding: 0 var(--pad-landing-hero-x) var(--pad-landing-hero-b); }
+.hero-content { position: absolute; z-index: 4; left: 0; bottom: 0; max-width: 880px; padding: 0 var(--gutter) var(--pad-landing-hero-b); }
 .hero-title { font-family: var(--font-display); font-weight: 600; font-size: var(--type-landing-hero); line-height: 1.04; letter-spacing: -.015em;
   margin: 0 0 var(--space-5); text-shadow: 0 2px 40px rgb(var(--ink-950-rgb) / .6); max-width: 16ch; }
 .hero-sub { font-size: var(--type-landing-hero-sub); line-height: 1.5; color: var(--text-secondary); max-width: 56ch; margin: 0 0 var(--space-8); }
@@ -160,7 +160,7 @@ a { color: inherit; text-decoration: none; }
 .proof::after { content: ''; position: absolute; inset: 0; z-index: 1;
   background: radial-gradient(120% 85% at 50% 50%, rgb(var(--ink-900-rgb) / .5) 0%, rgb(var(--ink-900-rgb) / .82) 55%, rgb(var(--ink-900-rgb) / .96) 100%); }
 .proof-over { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: var(--space-10); }
+  text-align: center; padding: var(--space-10) var(--gutter); }
 .proof-line { font-family: var(--font-display); font-weight: 500; font-size: var(--type-landing-proof); line-height: 1.08; letter-spacing: -.02em;
   margin: 0 0 28px; max-width: 18ch; }
 .proof-stats { font-family: var(--font-display); font-size: var(--type-landing-proof-stat); color: var(--text-secondary); margin: 0;
@@ -171,7 +171,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---- N°02 Curator ---- */
 .curator { background: var(--surface-raised); max-width: none; }
-.curator > .slate, .curator-grid { max-width: 1240px; margin-inline: auto; }
+.curator > .slate, .curator-grid { max-width: calc(1240px - 2 * var(--gutter)); margin-inline: auto; }
 .curator-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(40px, 6vw, 100px); align-items: start; }
 .curator-prompt { font-family: var(--font-display); font-style: italic; font-size: var(--type-landing-curator-prompt); line-height: 1.3;
   color: var(--text-primary); margin: 0 0 var(--space-6); }
@@ -246,7 +246,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---- N°04 collections (irregular) ---- */
 .collections { background: var(--surface-raised); max-width: none; }
-.collections > .slate, .collections > .section-title, .coll-stack { max-width: 1240px; margin-inline: auto; }
+.collections > .slate, .collections > .section-title, .coll-stack { max-width: calc(1240px - 2 * var(--gutter)); margin-inline: auto; }
 .coll-stack { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-5); }
 .coll-tile { position: relative; overflow: clip; border-radius: var(--radius-md); isolation: isolate; }
 .coll-tile.t1 { grid-column: span 4; } .coll-tile.t2 { grid-column: span 2; }
@@ -275,7 +275,7 @@ a { color: inherit; text-decoration: none; }
 /* ---- N°06 pricing (editorial) ---- */
 .plans { display: flex; max-width: 860px; margin-inline: auto; border: 1px solid var(--border-default);
   border-radius: var(--radius-lg); overflow: hidden; flex-wrap: wrap; }
-.plan { flex: 1; min-width: 280px; padding: clamp(28px, 4vw, 40px); }
+.plan { flex: 1; min-width: 280px; padding: clamp(28px, 4vw, 40px); text-align: center; }
 .plan-free { border-right: 1px solid var(--border-default); }
 .plan-member { background: var(--surface-page); position: relative; }
 .plan-member::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--amber-500); }
@@ -287,18 +287,20 @@ a { color: inherit; text-decoration: none; }
 .toggle button { background: transparent; border: 0; color: var(--text-secondary); font: inherit; font-size: 13px; padding: 6px 14px; border-radius: var(--radius-full); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 .toggle button.on { background: var(--surface-raised); color: var(--text-primary); box-shadow: inset 0 0 0 1px var(--amber-500); }
 .save { font-size: 10px; font-weight: 700; letter-spacing: .04em; color: var(--amber-500); text-transform: uppercase; }
-.plan-feats { list-style: none; padding: 0; margin: 0 0 var(--space-6); display: grid; gap: 9px; }
+/* feature list stays a left-aligned checklist, but centred as a block so the
+   plan reads centered (price/name) without ragged-centre bullet lines */
+.plan-feats { list-style: none; padding: 0; margin: 0 auto var(--space-6); display: grid; gap: 9px; width: fit-content; max-width: 100%; text-align: left; }
 .plan-feats li { color: var(--text-secondary); font-size: 14px; padding-left: var(--space-5); position: relative; line-height: 1.4; }
 .plan-feats li::before { content: '·'; position: absolute; left: var(--space-1); color: var(--amber-500); }
 .plan-reassure { text-align: center; font-size: 12px; color: var(--text-tertiary); margin: var(--space-3) 0 0; }
 
 /* ---- colophon (honesty) ---- */
-.colophon { max-width: 620px; margin: 0 auto; padding: var(--pad-landing-colophon) var(--space-10); text-align: center; }
+.colophon { max-width: 620px; margin: 0 auto; padding: var(--pad-landing-colophon) var(--gutter); text-align: center; }
 .colophon-mark { color: var(--amber-500); font-size: 18px; margin: 0 0 var(--space-5); }
 .colophon-text { font-family: var(--font-display); font-style: italic; font-size: var(--type-landing-colophon); line-height: 1.6; color: var(--text-secondary); margin: 0; }
 
 /* ---- final CTA ---- */
-.final-cta { position: relative; overflow: hidden; text-align: center; padding: var(--pad-landing-final) var(--space-10); background: var(--surface-sunken); }
+.final-cta { position: relative; overflow: hidden; text-align: center; padding: var(--pad-landing-final) var(--gutter); background: var(--surface-sunken); }
 .final-cta::before { content: ''; position: absolute; inset: 0; pointer-events: none;
   background: radial-gradient(58% 58% at 50% 52%, var(--amber-glow) 0%, transparent 70%); }
 .final-cta > * { position: relative; z-index: 1; }
@@ -306,8 +308,8 @@ a { color: inherit; text-decoration: none; }
   margin: 0 auto 36px; max-width: 15ch; }
 
 /* ---- footer ---- */
-.footer { border-top: 1px solid var(--border-subtle); padding: var(--pad-landing-footer) var(--pad-landing-footer-x) 0; overflow: hidden; }
-.footer-top { display: flex; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; max-width: 1240px; margin: 0 auto clamp(36px, 5vw, 56px); }
+.footer { border-top: 1px solid var(--border-subtle); padding: var(--pad-landing-footer) var(--gutter) 0; overflow: hidden; }
+.footer-top { display: flex; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; max-width: calc(1240px - 2 * var(--gutter)); margin: 0 auto clamp(36px, 5vw, 56px); }
 .footer-index { display: flex; flex-direction: column; gap: 11px; }
 .footer-index a { color: var(--text-secondary); font-size: 15px; display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--space-6); }
 .footer-index a span { color: var(--amber-500); opacity: 0; transform: translateX(-4px); transition: opacity var(--dur-base) ease, transform var(--dur-base) ease; }
@@ -322,7 +324,7 @@ a { color: inherit; text-decoration: none; }
 .news-row input::placeholder { color: var(--text-tertiary); }
 .footer-mark { font-family: var(--font-display); font-weight: 600; font-size: var(--type-landing-footer-mark); line-height: .82; letter-spacing: -.02em;
   color: var(--text-primary); text-align: center; margin: clamp(36px, 5vw, 56px) 0; max-width: 100%; overflow: hidden; user-select: none; }
-.footer-legal { display: flex; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; max-width: 1240px; margin: 0 auto; padding: var(--space-6) 0;
+.footer-legal { display: flex; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; max-width: calc(1240px - 2 * var(--gutter)); margin: 0 auto; padding: var(--space-6) 0;
   border-top: 1px solid var(--border-subtle); color: var(--text-tertiary); font-size: 13px; }
 
 /* ---- responsive ---- */
@@ -343,10 +345,10 @@ a { color: inherit; text-decoration: none; }
   .plan-free { border-right: 0; border-bottom: 1px solid var(--border-default); }
 }
 @media (max-width: 560px) {
-  .section { padding: clamp(56px, 14vw, 72px) var(--pad-landing-footer-x); }
-  /* unify the mobile gutter with the hero/footer; shorten the tall poster wall
-     and give the centred proof text room so the stats stay on one row */
-  .proof-over { padding: var(--space-6); }
+  .section { padding: clamp(56px, 14vw, 72px) var(--gutter); }
+  /* tighter vertical rhythm on phones; shorten the tall poster wall and give the
+     centred proof text room so the stats stay on one row (gutter via --gutter) */
+  .proof-over { padding: var(--space-6) var(--gutter); }
   .proof-stats i { padding: 0 var(--space-2); }
   .wall { min-height: 0; max-height: 62svh; overflow: clip; align-content: flex-start; }
   .move { grid-template-columns: 1fr; gap: var(--space-2); }
@@ -357,7 +359,11 @@ a { color: inherit; text-decoration: none; }
   .hero-content { max-width: 100%; }
   .cta-row { flex-direction: column; align-items: stretch; }
   .cta-row .btn { justify-content: center; }
-  .footer-top { flex-direction: column; gap: 28px; }
+  /* column footer: kill the wrap (it sized children to the widest item's
+     preferred width, overflowing narrow phones) and pin children full-width so
+     the newsletter row shrinks its input instead of escaping the screen */
+  .footer-top { flex-direction: column; flex-wrap: nowrap; gap: 28px; }
+  .footer-index, .news-form { width: 100%; min-width: 0; }
 }
 @media (max-width: 430px) {
   .hero-title { font-size: var(--type-landing-mobile-display); }
