@@ -78,12 +78,38 @@ describe("rateLimit", () => {
     expect(RateLimit.findOrCreate).not.toHaveBeenCalled();
   });
 
-  it("fail-opens (calls next) if the store throws", async () => {
+  it("fail-OPENS (calls next) for a lower-stakes bucket if the store throws", async () => {
     RateLimit.findOrCreate.mockRejectedValue(new Error("db down"));
     const res = makeRes();
     const next = vi.fn();
-    await rateLimit("login", 5, 1000)({ ip: "1.2.3.4" }, res, next);
+    // curator/scores are non-auth: a DB blip must not take the feature offline
+    await rateLimit("curator", 20, 1000)({ ip: "1.2.3.4" }, res, next);
     expect(next).toHaveBeenCalledTimes(1);
     expect(res.statusCode).toBe(200);
+
+    next.mockClear();
+    const res2 = makeRes();
+    await rateLimit("scores", 20, 1000)({ ip: "1.2.3.4" }, res2, next);
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(res2.statusCode).toBe(200);
+  });
+
+  it("fail-CLOSES (503, no next) for every auth bucket if the store throws", async () => {
+    RateLimit.findOrCreate.mockRejectedValue(new Error("db down"));
+    // login / signup / forgot / reset all protect auth; login_acct is the
+    // per-account credential-stuffing bucket — all must refuse on a store error.
+    for (const bucket of ["login", "login_acct", "signup", "forgot", "reset"]) {
+      const res = makeRes();
+      const next = vi.fn();
+      // login_acct keys on the email, so pass a body it can read
+      await rateLimit(bucket, 5, 1000, (req) => req.body?.email || "x")(
+        { ip: "1.2.3.4", body: { email: "a@b.co" } },
+        res,
+        next
+      );
+      expect(res.statusCode, `${bucket} should fail closed`).toBe(503);
+      expect(res.body).toEqual({ error: "rate_limit_unavailable" });
+      expect(next, `${bucket} must not call next on a store error`).not.toHaveBeenCalled();
+    }
   });
 });

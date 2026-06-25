@@ -1,8 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
 import { Op } from "sequelize";
 import { sequelize, dbKind } from "./db.js";
 import { Session, PasswordReset, RateLimit } from "./models.js";
@@ -17,7 +15,6 @@ import { csrfOriginCheck } from "./lib/security.js";
 import { readCache, isStale, kickRegeneration } from "./lib/collectionsCache.js";
 
 const app = express();
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // NOT process.env.PORT — Coolify sets PORT=80 (the public ingress, owned by
 // nginx). The API listens on a fixed internal port that nginx proxies to.
 const PORT = process.env.BACKEND_PORT || 3001;
@@ -63,22 +60,16 @@ app.use("/api/curator", curatorRoutes);
 app.use("/api/collections", collectionsRoutes);
 app.use("/api/scores", scoresRoutes);
 
-// Global error handler — must be registered AFTER all routes (so it catches
-// errors funnelled through next() by the ah() wrapper) and BEFORE the prod
-// static catch-all (so API errors never fall through to the SPA).
+// Global error handler — must be registered AFTER all routes so it catches
+// errors funnelled through next() by the ah() wrapper. This process serves the
+// API only: in prod nginx is the sole SPA/static server and proxies /api here,
+// so there is deliberately no express.static / catch-all SPA route.
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   console.error("[error]", err?.stack || err?.message || err);
   if (res.headersSent) return next(err);
   res.status(err?.status || 500).json({ error: "internal" });
 });
-
-if (isProd) {
-  app.use(express.static(path.join(__dirname, "public")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-  });
-}
 
 // Periodically purge expired sessions and reset tokens so the tables don't
 // accumulate dead rows. unref() so it never holds the process open.
@@ -129,7 +120,10 @@ async function prewarmCollections() {
 }
 
 async function start() {
-  await sequelize.sync(); // create tables from the models if missing
+  // Creates MISSING tables from the models. NOT migration-grade: it never ALTERs
+  // an existing table (won't add/drop/retype a column), so before changing a
+  // column on a populated table, adopt a real migration tool — don't rely on sync.
+  await sequelize.sync();
   await ensureIndexes(); // add hot-path indexes to existing tables (idempotent)
   sweepExpired(); // clear rows that expired while we were down
   prewarmCollections(); // warm the collections cache before the first request

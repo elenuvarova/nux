@@ -3,31 +3,48 @@ import { Op } from "sequelize";
 import { ah } from "../lib/asyncHandler.js";
 import { rateLimit, currentUser, requireAuth } from "../lib/auth.js";
 import { askCurator } from "../lib/ai.js";
-import { buildSystemPrompt, validateFilmIds } from "../lib/curatorPrompt.js";
-import { ListItem, WatchProgress, CuratorMessage } from "../models.js";
+import { buildSystemPrompt, validateFilmPicks } from "../lib/curatorPrompt.js";
+import { ListItem, WatchProgress, CuratorMessage, RateLimit } from "../models.js";
 import { FILMS } from "../data/films.js";
 
 const router = Router();
 const MAX_MESSAGES = 12;
 const MAX_LEN = 500;
 const HISTORY_LIMIT = 100;
+const HOUR_MS = 60 * 60 * 1000;
 const titleById = new Map(FILMS.map((f) => [f.id, f.title]));
 
 // Process-wide ceiling on paid LLM calls — a backstop against guest cost-abuse /
-// IP rotation that the per-IP rate limit can't catch. In-memory (resets on
-// redeploy, acceptable at this scale); tune with CURATOR_HOURLY_CAP.
+// IP rotation that the per-IP rate limit can't catch. Backed by the SAME
+// rate_limits table as the per-IP limiter, keyed by the wall-clock hour, so the
+// count SURVIVES redeploys and is SHARED across instances (the old in-memory
+// counter reset on every Coolify deploy and never saw a second instance). Tune
+// with CURATOR_HOURLY_CAP. Reuses the per-hour row's resetAt so sweepExpired()
+// in server.js reaps stale budget rows like any other rate-limit row.
 const HOURLY_CAP = Number(process.env.CURATOR_HOURLY_CAP) || 400;
-let budgetWindowStart = Date.now();
-let budgetCount = 0;
-function underBudget() {
+
+// Consume one unit of this hour's global budget. Returns false ONLY when the
+// cap is provably exceeded; on a store error it returns true (fail OPEN) — the
+// per-IP rate limit is still in force, so a DB blip can't break the Curator,
+// and this cap is a coarse cost backstop, not a security control.
+async function underBudget() {
   const now = Date.now();
-  if (now - budgetWindowStart >= 60 * 60 * 1000) {
-    budgetWindowStart = now;
-    budgetCount = 0;
+  const hour = Math.floor(now / HOUR_MS);
+  const key = `curator_budget:${hour}`;
+  try {
+    const [row, created] = await RateLimit.findOrCreate({
+      where: { key },
+      // resetAt = end of THIS hour window, so the sweeper can reap it later
+      defaults: { count: 1, resetAt: new Date((hour + 1) * HOUR_MS) },
+    });
+    if (created) return true; // first call this hour
+    if (row.count >= HOURLY_CAP) return false; // cap hit for the hour
+    await row.increment("count"); // atomic at the DB level
+    return true;
+  } catch (err) {
+    console.error("[curator] budget check failed:", err?.message || err);
+    return true; // fail open — per-IP limit still applies
   }
-  if (budgetCount >= HOURLY_CAP) return false;
-  budgetCount += 1;
-  return true;
 }
 
 // Trim a user's stored conversation back to the newest HISTORY_LIMIT rows so
@@ -69,7 +86,7 @@ router.post(
     }
 
     // global cost ceiling — beyond the per-IP rate limit, cap total paid calls
-    if (!underBudget()) {
+    if (!(await underBudget())) {
       return res.status(503).json({ error: "curator_unavailable" });
     }
 
@@ -88,9 +105,11 @@ router.post(
 
     const system = buildSystemPrompt({ inList, continueWatching });
     try {
-      const { reply, filmIds } = await askCurator({ system, messages });
+      const { reply, films: rawFilms } = await askCurator({ system, messages });
       const cleanReply = String(reply || "").trim();
-      const films = validateFilmIds(filmIds);
+      // Hard allowlist by id (drops hallucinated ids) while preserving each
+      // pick's short reason; still capped at MAX_FILMS. Shape: [{ id, reason }].
+      const films = validateFilmPicks(rawFilms);
       // Persist this turn for signed-in users — best-effort, so a DB hiccup
       // never breaks the reply. Guests are never stored.
       if (user) {

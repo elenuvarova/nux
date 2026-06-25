@@ -152,21 +152,46 @@ export async function callModel({ system, messages, schema, validate }) {
   throw err;
 }
 
+// Per-pick reasons: each recommendation is { id, reason }. `reason` is a short,
+// grounded justification (the route caps + allowlists it). Gemini honours this
+// responseSchema; Groq relies on the prompt + json_object, so validate() guards
+// the shape for both and triggers failover on anything malformed.
 const FILM_SCHEMA = {
   type: "object",
-  properties: { reply: { type: "string" }, filmIds: { type: "array", items: { type: "string" } } },
-  required: ["reply", "filmIds"],
+  properties: {
+    reply: { type: "string" },
+    films: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: { id: { type: "string" }, reason: { type: "string" } },
+        required: ["id"],
+      },
+    },
+  },
+  required: ["reply", "films"],
 };
 
-// The chat Curator: { reply, filmIds }.
+// The chat Curator: { reply, films: [{ id, reason }] }. Back-compat: a model
+// (or a cached older response) that still returns `filmIds: [string]` is
+// normalised into the new shape with empty reasons, so neither provider's
+// output nor a stale client breaks the contract.
 export function askCurator({ system, messages }) {
   return callModel({
     system,
     messages,
     schema: FILM_SCHEMA,
     validate: (d) => {
-      if (typeof d.reply !== "string" || !Array.isArray(d.filmIds)) throw new Error("bad_shape");
-      return { reply: d.reply, filmIds: d.filmIds };
+      if (typeof d.reply !== "string") throw new Error("bad_shape");
+      let films;
+      if (Array.isArray(d.films)) {
+        films = d.films;
+      } else if (Array.isArray(d.filmIds)) {
+        films = d.filmIds.map((id) => ({ id })); // legacy id-only shape
+      } else {
+        throw new Error("bad_shape");
+      }
+      return { reply: d.reply, films };
     },
   });
 }
