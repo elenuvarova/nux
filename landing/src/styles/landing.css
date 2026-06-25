@@ -156,9 +156,9 @@ a { color: inherit; text-decoration: none; }
 .marquee:hover .marquee-track, .marquee:focus-within .marquee-track { animation-play-state: paused; }
 
 /* ---- N°01 proof: poster wall ---- */
-.proof { position: relative; overflow: clip; background: var(--surface-sunken); }
+.proof { position: relative; overflow: clip; background: var(--surface-sunken); min-height: 100svh; display: flex; flex-direction: column; }
 .wall { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-2); justify-content: center; align-content: center;
-  min-height: clamp(440px, 60vh, 620px); opacity: .22; filter: grayscale(.35); }
+  flex: 1; opacity: .22; filter: grayscale(.35); }
 .wall img { width: clamp(70px, 6.4vw, 128px); aspect-ratio: 2/3; object-fit: cover; border-radius: 3px; }
 .proof::after { content: ''; position: absolute; inset: 0; z-index: 1;
   background: radial-gradient(120% 85% at 50% 50%, rgb(var(--ink-900-rgb) / .5) 0%, rgb(var(--ink-900-rgb) / .82) 55%, rgb(var(--ink-900-rgb) / .96) 100%); }
@@ -353,7 +353,8 @@ a { color: inherit; text-decoration: none; }
      centred proof text room so the stats stay on one row (gutter via --gutter) */
   .proof-over { padding: var(--space-6) var(--gutter); }
   .proof-stats i { padding: 0 var(--space-2); }
-  .wall { min-height: 0; max-height: 62svh; overflow: clip; align-content: flex-start; }
+  .proof { min-height: auto; }
+  .wall { flex: none; min-height: 0; max-height: 62svh; overflow: clip; align-content: flex-start; }
   .move { grid-template-columns: 1fr; gap: var(--space-2); }
   .move-n { font-size: 72px; }
   .rail-row .poster-card { flex-basis: 150px; }
