@@ -150,7 +150,9 @@
 }
 
 .welcome-genre:hover,
-.welcome-genre--on:hover {
+.welcome-genre--on:hover,
+.welcome-genre:focus-within,
+.welcome-genre--on:focus-within {
   transform: scale(1.02);
 }
 

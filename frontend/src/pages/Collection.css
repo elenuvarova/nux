@@ -97,7 +97,8 @@
   transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
 }
 
-.collection-poster:hover {
+.collection-poster:hover,
+.collection-poster:focus-within {
   transform: scale(var(--hover-lift));
   box-shadow: var(--shadow-card-hover);
 }

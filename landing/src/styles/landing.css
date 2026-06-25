@@ -39,6 +39,9 @@
   --pad-landing-footer: clamp(48px, 6vw, 72px);
   --pad-landing-hero-b: clamp(40px, 7vw, 80px);
 
+  /* one 8pt step above --space-6 (24px), for the larger CTA's horizontal pad */
+  --space-7: 28px;
+
   /* landing-only motion / elevation the app ramp doesn't carry */
   --dur-landing-still: 550ms;  /* coll-still zoom (was .55s) */
   --dur-landing-cta: 250ms;    /* fotw-cta arrow (was .25s) */
@@ -68,14 +71,14 @@ a { color: inherit; text-decoration: none; }
 /* reuses the app's tokenized button recipe (global.css) so the two surfaces'
    buttons stay in lockstep — same type, press-scale, motion, and semantic hover */
 .btn { display: inline-flex; align-items: center; gap: var(--space-2, 8px); font: var(--type-button);
-  border: 0; border-radius: var(--radius-full, 999px); padding: 13px 24px; cursor: pointer; white-space: nowrap;
+  border: 0; border-radius: var(--radius-full, 999px); height: 44px; padding: 0 var(--space-6); cursor: pointer; white-space: nowrap;
   transition: transform var(--dur-fast) var(--ease-out), background var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out); }
 .btn:active { transform: scale(var(--press-scale)); }
 .btn-primary { background: var(--action-primary, #c8922a); color: var(--action-primary-text, #0d0c0b); }
 .btn-primary:hover { background: var(--action-primary-hover); }
 .btn-secondary { background: transparent; color: var(--text-primary, #f2efe9); border: 1px solid var(--border-default, rgba(255,255,255,.14)); }
 .btn-secondary:hover { border-color: var(--border-strong, rgba(255,255,255,.18)); }
-.btn-lg { padding: 15px 28px; font-size: 16px; }
+.btn-lg { height: 52px; padding: 0 var(--space-7, 28px); font-size: 16px; }
 .btn-block { width: 100%; justify-content: center; }
 .link-arrow { display: inline-flex; align-items: center; gap: 9px; min-height: var(--space-6); color: var(--text-primary); font-size: 14px; font-weight: 500; letter-spacing: .01em; white-space: nowrap; }
 .link-arrow span { color: var(--amber-500); transition: transform var(--dur-base) var(--ease-out); }
@@ -228,7 +231,7 @@ a { color: inherit; text-decoration: none; }
   overflow: hidden; isolation: isolate; box-shadow: inset 0 0 0 1px var(--white-a08); }
 .fotw-art { position: absolute; inset: 0; background-size: cover; background-position: 50% 32%;
   transform: scale(1.02); transition: transform var(--dur-reveal) var(--ease-out); }
-.fotw-card:hover .fotw-art { transform: scale(1.06); }
+.fotw-card:hover .fotw-art, .fotw-card:focus-within .fotw-art { transform: scale(1.06); }
 /* Landing-only scrim: a 90deg horizontal falloff (sized for the LEFT-aligned
    editorial body) + a short 0deg bottom lift. Shape differs from --scrim-hero
    (vertical/right/bottom), so we keep this shape and only tokenize the colors. */
@@ -242,7 +245,7 @@ a { color: inherit; text-decoration: none; }
 .fotw-cta { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
   color: var(--text-primary); border-bottom: 1px solid var(--amber-300); padding-bottom: 3px; }
 .fotw-cta span { color: var(--amber-300); transition: transform var(--dur-landing-cta) var(--ease-out); }
-.fotw-card:hover .fotw-cta span { transform: translateX(4px); }
+.fotw-card:hover .fotw-cta span, .fotw-card:focus-within .fotw-cta span { transform: translateX(4px); }
 
 /* ---- N°04 collections (irregular) ---- */
 .collections { background: var(--surface-raised); max-width: none; }
@@ -252,7 +255,7 @@ a { color: inherit; text-decoration: none; }
 .coll-tile.t1 { grid-column: span 4; } .coll-tile.t2 { grid-column: span 2; }
 .coll-tile.t3 { grid-column: span 2; } .coll-tile.t4 { grid-column: span 4; }
 .coll-still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-landing-still) ease; z-index: 0; }
-.coll-tile:hover .coll-still { transform: scale(1.05); }
+.coll-tile:hover .coll-still, .coll-tile:focus-within .coll-still { transform: scale(1.05); }
 .coll-tile::before { content: ''; position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(to top, rgb(var(--ink-950-rgb) / .92) 0%, rgb(var(--ink-950-rgb) / .58) 42%, rgb(var(--ink-950-rgb) / .4) 100%); }
 .coll-text { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: flex-end;

@@ -47,6 +47,12 @@ function RailCard({ f }) {
 // the confirmation is honest about that rather than faking a subscription.
 function NewsletterForm() {
   const [done, setDone] = useState(false);
+  const doneRef = useRef(null);
+  // The input + button unmount on submit, so move focus to the confirmation
+  // (otherwise it falls to <body> and keyboard users lose their place).
+  useEffect(() => {
+    if (done) doneRef.current?.focus();
+  }, [done]);
   return (
     <form
       className="news-form"
@@ -58,7 +64,7 @@ function NewsletterForm() {
     >
       <label htmlFor="news">A short letter when we add something worth your evening.</label>
       {done ? (
-        <p className="news-done" role="status">
+        <p className="news-done" role="status" tabIndex={-1} ref={doneRef}>
           This is the bit that would sign you up — NUX is a portfolio concept, so there’s no list to join yet.
           Thanks for the interest, though.
         </p>
@@ -252,7 +258,7 @@ export default function App() {
               <p className="plan-price">{annual ? <>£4.99<span className="per"> a month</span></> : <>£8.99<span className="per"> a month</span></>}</p>
               <p className="plan-note">{annual ? 'Billed annually at £59.88.' : 'Billed monthly.'} Everything in Browse, plus:</p>
               <ul className="plan-feats">
-                <li>The Curator — a mood in, a shortlist worth your night</li>
+                <li>The Curator — describe a mood, get a short list back</li>
                 <li>Editors’ Collections — a new programme most weeks</li>
                 <li>Every film, no ads, ever</li>
                 <li>Download in HD for the train · two screens at once</li>

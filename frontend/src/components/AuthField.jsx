@@ -5,7 +5,7 @@ export default function AuthField({ label, id, type = 'text', value, onChange, e
   const isPassword = type === 'password';
   const [shown, setShown] = useState(false);
   const [caps, setCaps] = useState(false);
-  const describedBy = [error ? `${id}-err` : null, hint ? `${id}-hint` : null].filter(Boolean).join(' ') || undefined;
+  const describedBy = [error ? `${id}-err` : null, hint && !error ? `${id}-hint` : null].filter(Boolean).join(' ') || undefined;
 
   return (
     <div className="auth-field">

@@ -247,12 +247,14 @@
   color: var(--paper-100);
 }
 
-.genre-card:hover {
+.genre-card:hover,
+.genre-card:focus-within {
   transform: scale(1.02);
   box-shadow: var(--shadow-card-hover);
 }
 
-.genre-card:hover img {
+.genre-card:hover img,
+.genre-card:focus-within img {
   transform: scale(1.05);
 }
 

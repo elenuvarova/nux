@@ -101,7 +101,7 @@ export default function TitleDetail() {
       </div>
 
       <section className="td-more">
-        <Rail title="More to explore">
+        <Rail title="More to Explore">
           {FILMS.slice(0, 8).map((f) => (
             <PosterCard key={f.id} filmId={f.id} />
           ))}
