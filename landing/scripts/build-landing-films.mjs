@@ -12,12 +12,23 @@
 //
 // Mirrors backend/scripts/build-films.mjs. Re-run with `npm run build:films`
 // (also runs automatically on predev + prebuild).
-import { writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { writeFileSync, existsSync } from 'node:fs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
-import { byId, COLLECTIONS as APP_COLLECTIONS } from '../../frontend/src/data/catalog.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
+
+// The app catalog is the source of truth, but the landing deploys STANDALONE (its
+// Docker image has no sibling frontend/ tree — the prod build context is landing/
+// only). When the catalog isn't present, skip and keep the committed films.js; the
+// generator only needs to run where the app source exists (local dev via predev,
+// or a manual build:films). A static import here would crash the standalone build.
+const CATALOG = join(here, '..', '..', 'frontend', 'src', 'data', 'catalog.js');
+if (!existsSync(CATALOG)) {
+  console.log('[build-landing-films] app catalog not present (standalone build) — keeping committed films.js');
+  process.exit(0);
+}
+const { byId, COLLECTIONS: APP_COLLECTIONS } = await import(pathToFileURL(CATALOG).href);
 
 // asset slug (local poster/still filename) -> real catalog id (deep-link target).
 // Most match 1:1; the app prefixes some titles with "the-".
