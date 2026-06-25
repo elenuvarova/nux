@@ -90,7 +90,7 @@ export default function Home() {
           </Reveal>
         ))}
         <Reveal>
-          <Rail title={trending.title}>
+          <Rail title={trending.title} seeAllTo="/browse">
             {trending.filmIds.map((id) => (
               <PosterCard key={id} filmId={id} />
             ))}
@@ -106,14 +106,14 @@ export default function Home() {
           </Reveal>
         )}
         <Reveal>
-          <Rail title={curated.title}>
+          <Rail title={curated.title} seeAllTo="/browse">
             {curated.filmIds.map((id) => (
               <PosterCard key={id} filmId={id} note={CURATED_NOTES[id]} />
             ))}
           </Rail>
         </Reveal>
         <Reveal>
-          <Rail title={fresh.title}>
+          <Rail title={fresh.title} seeAllTo="/browse">
             {fresh.filmIds.map((id) => (
               <PosterCard key={id} filmId={id} />
             ))}
