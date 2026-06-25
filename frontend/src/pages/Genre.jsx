@@ -7,7 +7,7 @@ import { GENRES, FILMS, GENRE_MATCH } from '../data/catalog.js';
 import './Genre.css';
 
 const BLURB = {
-  drama: 'Lives observed up close — the quiet films that earn a second watch.',
+  drama: 'Lives observed up close — the quiet films that earn a second watch.',
   thriller: 'Shadows, doubles and rain-wet streets. The genre NUX was built on.',
   documentary: 'True stories told like thrillers.',
   horror: 'Folk dread, faith curdled, and the dark at the edge of sight.',
@@ -15,7 +15,7 @@ const BLURB = {
   romance: 'Love as restraint, as ruin, as the thing left unsaid.',
   history: 'The widest screen cinema can offer.',
   crime: 'Heists, hard men and the one who won’t take no.',
-  'art-house': 'For the patient eye — form as feeling.',
+  'art-house': 'For the patient eye — form as feeling.',
   comedy: 'The most quotable corner of British cinema.',
 };
 
@@ -55,7 +55,7 @@ export default function Genre() {
         ) : (
           <div className="browse-empty">
             <p className="display-m">Coming soon</p>
-            <p className="browse-empty-sub">We’re curating this shelf — check back after the next release window.</p>
+            <p className="browse-empty-sub">We’re curating this shelf — check back after the next release window.</p>
             <Link to="/browse" className="btn btn-primary">
               Browse everything
             </Link>

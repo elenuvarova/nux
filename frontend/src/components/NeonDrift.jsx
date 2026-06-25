@@ -5,8 +5,8 @@ import { api } from '../lib/api';
 import './NeonDrift.css';
 
 /* ──────────────────────────────────────────────────────────────────────────
-   NEON DRIFT — a small, self-contained arcade game for the "Neon Drift" title.
-   The catalog bills it as a "reflex-driven roguelite — pilot a salvaged
+   NEON DRIFT — a small, self-contained arcade game for the "Neon Drift" title.
+   The catalog bills it as a "reflex-driven roguelite — pilot a salvaged
    starfighter through the neon ruins of a dead empire, synthwave score".
    So: a synthwave gate-dodger. Thread your ship through the gaps in the neon
    ruins; one clip and you're scrap. Speed ramps, the gaps tighten.
@@ -14,7 +14,7 @@ import './NeonDrift.css';
    Everything game-side is drawn on a single <canvas> and runs off one rAF loop
    with mutable refs (no per-frame React state). React state only drives the
    infrequent phase overlays (ready / crashed) so the DOM stays quiet.
-   The game owns its own neon palette on purpose — it's the title's *content*,
+   The game owns its own neon palette on purpose — it's the title's *content*,
    like a film's own colour grade, not NUX chrome.
    ────────────────────────────────────────────────────────────────────────── */
 
@@ -388,7 +388,7 @@ export default function NeonDrift({ onClose }) {
       aria-labelledby="ndg-dialog-title"
     >
       {/* sr-only: dialog name + persistent controls + a live score mirror */}
-      <p className="sr-only" id="ndg-dialog-title">Neon Drift — playable game</p>
+      <p className="sr-only" id="ndg-dialog-title">Neon Drift — playable game</p>
       <p className="sr-only">
         Steer your ship with the mouse or the up and down arrow keys to fly through the gaps.
         Press Escape to close.
@@ -399,7 +399,7 @@ export default function NeonDrift({ onClose }) {
         <canvas
           ref={canvasRef}
           className="ndg-canvas"
-          aria-label="Neon Drift game — steer with the mouse or arrow keys"
+          aria-label="Neon Drift game — steer with the mouse or arrow keys"
           onPointerMove={onPointer}
           onTouchMove={onPointer}
         />

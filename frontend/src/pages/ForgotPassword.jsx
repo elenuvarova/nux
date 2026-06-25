@@ -30,7 +30,7 @@ export default function ForgotPassword() {
       // ask the user to retry. Deliberate 4xx responses stay generic so we
       // never reveal whether the account exists.
       if (!err.status || err.status >= 500) {
-        setError('Something went wrong — please try again.');
+        setError('Something went wrong — please try again.');
       } else {
         setSent(true); // still show the generic confirmation
       }

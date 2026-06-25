@@ -436,7 +436,7 @@ export default function Watch() {
                 <>
                   <p className="display-m">Lessons in production</p>
                   <p>
-                    The syllabus is real — the lesson films aren’t shot yet. See the
+                    The syllabus is real — the lesson films aren’t shot yet. See the
                     full outline on the course page.
                   </p>
                   <Link to={`/title/${film.id}`} className="btn btn-secondary">

@@ -111,7 +111,7 @@ export default function HeroDome({ children }) {
   }, []);
 
   return (
-    <section className="hero" ref={heroRef} aria-label="NUX — British cinema, curated">
+    <section className="hero" ref={heroRef} aria-label="NUX — British cinema, curated">
       <div className="pw-scene" aria-hidden="true"><div className="pw-field" ref={fieldRef} /></div>
       <div className="hero-scrim" aria-hidden="true" />
       <div className="hero-glow" aria-hidden="true" />

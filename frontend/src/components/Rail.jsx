@@ -6,7 +6,7 @@ import './Rail.css';
 
 /* Mark the artwork inside `scope` as the shared element for the
    poster → hero View Transition morph. Clear stale marks AND the current
-   detail hero first — duplicate view-transition-names silently skip the
+   detail hero first — duplicate view-transition-names silently skip the
    whole transition (e.g. when navigating FilmDetail → FilmDetail). */
 function markHeroArtIn(scope) {
   document.querySelectorAll('[data-vt="hero-art"], .fd-art img, .fd-poster-frame img').forEach((el) => {

@@ -9,9 +9,9 @@ const PAGES = {
     body: [
       ['p', 'NUX is an editorial streaming platform for films, documentaries, games and courses, chosen by people rather than an algorithm. Instead of an infinite wall, the catalogue is organised by narrative theme: finite, human-curated collections with a point of view.'],
       ['h2', 'Why we exist'],
-      ['p', 'Choice fatigue is the default experience of modern streaming. NUX is built on the opposite belief — that the right film, surfaced with context and conviction, is worth more than ten thousand thumbnails.'],
+      ['p', 'Choice fatigue is the default experience of modern streaming. NUX is built on the opposite belief — that the right film, surfaced with context and conviction, is worth more than ten thousand thumbnails.'],
       ['h2', 'The catalogue'],
-      ['p', 'This showcase is built on British cinema — from The Third Man and Black Narcissus to Aftersun and Saint Maud — with real posters, stills and trailers. The genre artwork and fictional titles are original, generated in a single editorial style.'],
+      ['p', 'This showcase is built on British cinema — from The Third Man and Black Narcissus to Aftersun and Saint Maud — with real posters, stills and trailers. The genre artwork and fictional titles are original, generated in a single editorial style.'],
       ['p', 'NUX is a design-system project: every screen is built on one token set that flips between wireframe and hi-fi, and shipped as a responsive React app on a self-hosted server.'],
     ],
   },
@@ -20,7 +20,7 @@ const PAGES = {
     body: [
       ['p', 'This is a portfolio showcase, so playback streams real trailers rather than full films. Here’s how to get around.'],
       ['h2', 'Playing something'],
-      ['p', 'Press Play on any film, game or course to open the player. The player has speed control, captions, volume and fullscreen — press the gear for settings, or use the keyboard: Space to play/pause, ← → to seek, ↑ ↓ for volume, F for fullscreen.'],
+      ['p', 'Press Play on any film, game or course to open the player. The player has speed control, captions, volume and fullscreen — press the gear for settings, or use the keyboard: Space to play/pause, ← → to seek, ↑ ↓ for volume, F for fullscreen.'],
       ['h2', 'My List'],
       ['p', 'Select + on any title to save it. Your list lives in this browser and appears under My List.'],
       ['h2', 'Downloads & account'],

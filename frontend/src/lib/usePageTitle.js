@@ -1,21 +1,21 @@
 import { useEffect } from 'react';
 
 const DEFAULT_DESC =
-  'An editorial home for films, documentaries, games and courses — chosen by people, not an algorithm.';
+  'An editorial home for films, documentaries, games and courses — chosen by people, not an algorithm.';
 const DEFAULT_IMAGE = '/og.jpg?v=2';
 
 /* Sets document.title, the meta description, the canonical link and the
    Open Graph / Twitter Card tags per route, so every view is distinguishable
    in tabs, history, share cards and SEO.
 
-   options.image — a per-route share image (films pass film.backdrop). Relative
+   options.image — a per-route share image (films pass film.backdrop). Relative
    paths are resolved to an absolute URL against the current origin, as required
    by OG/Twitter. Falls back to the site default so a previous route's image
    never leaks into a route that has none. */
 export default function usePageTitle(title, description, options = {}) {
   const { image } = options;
   useEffect(() => {
-    const full = title ? `${title} — NUX` : 'NUX — Cinema for Curious Minds';
+    const full = title ? `${title} — NUX` : 'NUX — Cinema for Curious Minds';
     const desc = description || DEFAULT_DESC;
     const img = absolute(image || DEFAULT_IMAGE);
     const canonical = window.location.origin + window.location.pathname;

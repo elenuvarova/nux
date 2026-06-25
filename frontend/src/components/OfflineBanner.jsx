@@ -20,7 +20,7 @@ export default function OfflineBanner() {
       <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M2.5 6.5a9 9 0 0 1 13 0M5 9.5a5 5 0 0 1 8 0M9 12.8v.2M2 2l14 14" />
       </svg>
-      You’re offline — showing what’s already loaded. Downloads stay available.
+      You’re offline — showing what’s already loaded. Downloads stay available.
     </div>
   );
 }
