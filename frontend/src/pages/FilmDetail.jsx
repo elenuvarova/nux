@@ -49,7 +49,7 @@ export default function FilmDetail() {
   if (!film) {
     // a non-film title (game / course) deep-linked to /film — its template is /title
     if (anyTitleById(id)) return <Navigate to={`/title/${id}`} replace />;
-    return <NotFound message="We couldn't find that title in the catalog." />;
+    return <NotFound message="We couldn't find that title in the catalogue." />;
   }
 
   const saved = has(film.id);
@@ -152,7 +152,7 @@ export default function FilmDetail() {
               {film.cast.map((person) => (
                 <div className="fd-cast-card" key={person.name}>
                   {person.photo ? (
-                    <img src={person.photo} alt={person.name} loading="lazy" />
+                    <img src={person.photo} alt={person.name} loading="lazy" width="96" height="96" />
                   ) : (
                     <span className="fd-cast-avatar" aria-hidden="true">
                       {initials(person.name)}

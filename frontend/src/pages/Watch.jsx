@@ -389,7 +389,7 @@ export default function Watch() {
     return () => document.removeEventListener('pointerdown', onDown);
   }, [menu]);
 
-  if (!film) return <NotFound message="We couldn't find that title in the catalog." />;
+  if (!film) return <NotFound message="We couldn't find that title in the catalogue." />;
 
   const art = film.backdrop || film.poster;
   const progress = duration ? (current / duration) * 100 : 0;

@@ -27,7 +27,7 @@ export default function TitleDetail() {
 
   // a film's canonical home is /film/:id — redirect so the two routes never diverge
   if (byId(id)) return <Navigate to={`/film/${id}`} replace />;
-  if (!title) return <NotFound message="We couldn't find that title in the catalog." />;
+  if (!title) return <NotFound message="We couldn't find that title in the catalogue." />;
   const saved = has(title.id);
   const isCourse = title.type === 'COURSE';
   const isGame = title.type === 'GAME';

@@ -304,7 +304,7 @@ export default function App() {
         <p className="footer-mark" aria-hidden="true">NUX</p>
         <div className="footer-legal">
           <span>© 2026 NUX — a portfolio concept by Elena Uvarova.</span>
-          <span>Cinema for Curious Minds.</span>
+          <span>Cinema for Curious Minds</span>
         </div>
       </footer>
     </div>

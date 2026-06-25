@@ -16,7 +16,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const DIST = join(__dirname, '..', 'dist');
 const ORIGIN = 'https://app.nux.ontwrpn.com';
 const DEFAULT_DESC =
-  'An editorial streaming platform for films, documentaries, games and courses — curated by editors who care.';
+  'An editorial home for films, documentaries, games and courses — chosen by people, not an algorithm.';
 
 const esc = (s) =>
   String(s ?? '')
@@ -123,7 +123,7 @@ safe('/', () =>
     compose({
       title: null,
       description:
-        'NUX is an editorial streaming platform for films, documentaries, games and courses — curated by editors who care. A design-system showcase built on real British cinema.',
+        'NUX is an editorial home for films, documentaries, games and courses — chosen by people, not an algorithm. A design-system showcase built on real British cinema.',
       url: `${ORIGIN}/`,
       preload: '/assets/stills/still-lawrence-of-arabia-2.jpg',
       preloadSrcset:
@@ -134,7 +134,7 @@ safe('/', () =>
 );
 
 safe('/browse', () =>
-  write('/browse', compose({ title: 'Browse', description: 'Search and browse the full NUX catalog by genre, mood and format.', url: `${ORIGIN}/browse` }))
+  write('/browse', compose({ title: 'Browse', description: 'Search and browse the full NUX catalogue by genre, mood and format.', url: `${ORIGIN}/browse` }))
 );
 
 for (const f of FILMS) {

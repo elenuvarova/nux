@@ -44,7 +44,7 @@ export default function MyList() {
             <p className="display-m">Your list is empty</p>
             <p className="browse-empty-sub">Select + on any film, doc, game or course and it’ll show up here.</p>
             <Link to="/browse" className="btn btn-primary">
-              Browse the catalog
+              Browse the catalogue
             </Link>
           </div>
         )}

@@ -142,7 +142,7 @@ export default function Browse() {
               if (e.key === 'Enter') remember(query);
               if (e.key === 'Escape') update({ q: '' });
             }}
-            aria-label="Search the catalog"
+            aria-label="Search the catalogue"
           />
           {focused && !query && recent.length > 0 && (
             <div className="browse-recent">
@@ -203,7 +203,7 @@ export default function Browse() {
           <div className="genre-grid">
             {STOCKED_GENRES.map((g) => (
               <Link to={`/genre/${g.id}`} className="genre-card" key={g.id} aria-label={g.label}>
-                <img src={g.image} alt="" loading="lazy" />
+                <img src={g.image} alt="" loading="lazy" width="300" height="200" />
                 <span>{g.label}</span>
               </Link>
             ))}
@@ -232,7 +232,7 @@ export default function Browse() {
             {extras.map((x) => (
               <Link to={`/title/${x.id}`} className="poster-card" key={x.id} viewTransition>
                 <div className="poster-card-art">
-                  <img src={x.poster} alt={`${x.title}, ${x.type}`} loading="lazy" />
+                  <img src={x.poster} alt={`${x.title}, ${x.type}`} loading="lazy" width="200" height="300" />
                   <span className="poster-card-badge">{x.type}</span>
                   <span className="poster-card-sheen" aria-hidden="true" />
                   <span className="poster-card-play" aria-hidden="true">

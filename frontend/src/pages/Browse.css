@@ -78,7 +78,7 @@
   height: 44px;
   padding: 0 var(--space-10) 0 var(--space-10);
   border-radius: var(--radius-full);
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-input);
   background: var(--surface-raised);
   color: var(--text-primary);
   font: var(--type-input);

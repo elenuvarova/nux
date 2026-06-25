@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import usePageTitle from '../lib/usePageTitle.js';
 import { STOCKED_GENRES, EXTRAS } from '../data/catalog.js';
@@ -9,6 +9,12 @@ export default function Welcome() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [picked, setPicked] = useState(new Set());
+  // On step change, move focus to the new step's heading so keyboard and screen
+  // reader users land on the fresh content (mirrors the route-change focus pattern).
+  const headingRef = useRef(null);
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, [step]);
 
   const togglePick = (id) => {
     const next = new Set(picked);
@@ -51,12 +57,12 @@ export default function Welcome() {
         <img className="welcome-bg" src={EXTRAS.welcomeBg} alt="" fetchpriority="high" />
         <div className="welcome-content">
           <p className="welcome-wordmark">NUX</p>
-          <h1 className="welcome-title" tabIndex={-1}>
+          <h1 className="welcome-title" tabIndex={-1} ref={headingRef}>
             Cinema for{" "}
             <br />
             Curious Minds
           </h1>
-          <p className="welcome-sub">Films and documentaries — curated by editors who care.</p>
+          <p className="welcome-sub">Films and documentaries, chosen one at a time.</p>
           <button type="button" className="btn btn-primary welcome-cta" onClick={() => setStep(1)}>
             Get started
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -77,7 +83,7 @@ export default function Welcome() {
         <span className="welcome-dot" aria-hidden="true" />
         <span className="welcome-dot welcome-dot--active" aria-hidden="true" />
       </div>
-      <h1 className="welcome-genres-title" tabIndex={-1}>
+      <h1 className="welcome-genres-title" tabIndex={-1} ref={headingRef}>
         What kinds of stories move you?
       </h1>
       <p className="welcome-sub">Select all that apply — we’ll use this to personalise your feed.</p>

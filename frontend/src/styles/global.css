@@ -176,6 +176,7 @@ h1[tabindex='-1'] {
   color: var(--text-primary);
   margin: 0 0 var(--space-10);
   max-width: 16ch;
+  text-wrap: balance;
 }
 .section-title.center { text-align: center; max-width: none; margin-inline: auto; }
 

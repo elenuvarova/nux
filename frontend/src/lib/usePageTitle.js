@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 const DEFAULT_DESC =
-  'An editorial streaming platform for films, documentaries, games and courses — curated by editors who care.';
+  'An editorial home for films, documentaries, games and courses — chosen by people, not an algorithm.';
 const DEFAULT_IMAGE = '/og.jpg?v=2';
 
 /* Sets document.title, the meta description, the canonical link and the
