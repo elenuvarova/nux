@@ -76,6 +76,13 @@ export function publicUser(user) {
   return { id: user.id, email: user.email, name: user.name, avatarUrl: user.avatarUrl };
 }
 
+// Buckets protecting authentication / account-recovery. These FAIL CLOSED on a
+// store error: if the persistent counter can't be read, a DB hiccup must NOT
+// silently remove brute-force / credential-stuffing protection. Everything else
+// (curator, scores) is lower-stakes and fails OPEN so a DB blip can't take a
+// non-security feature offline. Match login_acct too (the per-account bucket).
+const AUTH_BUCKETS = new Set(["login", "login_acct", "signup", "forgot", "reset"]);
+
 // ── persistent fixed-window rate limiter (per IP + bucket) ────────────
 // Backed by the rate_limits table, so the window SURVIVES redeploys/restarts
 // and is shared across instances — an attacker can't reset their count by
@@ -83,6 +90,7 @@ export function publicUser(user) {
 // `trust proxy`, so this is the real client IP from nginx's X-Forwarded-For,
 // not a spoofable header. Expired rows are swept by sweepExpired() in server.js.
 export function rateLimit(bucket, max, windowMs, keyFn) {
+  const failClosed = AUTH_BUCKETS.has(bucket);
   return async (req, res, next) => {
     // default key is the client IP; an optional keyFn lets a bucket key on
     // something else (e.g. the target email) for per-account throttling
@@ -105,8 +113,14 @@ export function rateLimit(bucket, max, windowMs, keyFn) {
         }
       }
     } catch (err) {
-      // the limiter must never block legitimate auth on its own failure
       console.error("[ratelimit] check failed:", err?.message || err);
+      // Auth buckets fail CLOSED: without a working counter we can't bound an
+      // attacker, so refuse rather than wave everyone through. Returning 503
+      // (not 429) signals a transient server fault, not the user's own quota.
+      if (failClosed) {
+        return res.status(503).json({ error: "rate_limit_unavailable" });
+      }
+      // Non-auth buckets fail OPEN — a store blip shouldn't break the feature.
     }
     next();
   };

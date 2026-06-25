@@ -1,23 +1,17 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import './Tour.css';
 
-// First-run coachmark tour. Each step optionally spotlights a target element
-// (located by a [data-tour="…"] selector); the last step is a centered sign-off.
+// A single contextual coachmark spotlighting the Curator — NUX's one "aha".
+// (The "curation, not a wall" pitch already lives on the Welcome screen, so the
+// old three-step tour just repeated it; this teaches the one thing Welcome
+// doesn't.) Kept as a STEPS array so it can grow back to multiple steps if needed
+// — the progress dots and Skip button reappear automatically when length > 1.
 const STEPS = [
-  {
-    sel: '[data-tour="hero"]',
-    title: 'Curation, not a wall',
-    body: 'Every rail is hand-picked around a narrative theme — no infinite algorithm scroll.',
-  },
   {
     sel: '[data-tour="curator"]',
     title: 'Meet the Curator',
     body: 'Describe a mood — “a tense noir about betrayal” — and the Curator answers with real picks from the catalogue.',
-  },
-  {
-    sel: null,
-    title: 'That’s the tour',
-    body: 'Browse by theme, search a title, or just ask the Curator. Enjoy.',
   },
 ];
 
@@ -94,8 +88,20 @@ export default function Tour({ onClose }) {
     setCardStyle({ top, left });
   }, [step, rect]);
 
+  // Make the rest of the app inert while the tour is open so keyboard/AT focus
+  // can't reach the spotlit page content behind the (aria-modal) dialog. The
+  // tour is portalled to <body> (see the return), so #root can be inerted
+  // without inerting the tour itself — same pattern as NeonDrift.
+  useEffect(() => {
+    const root = document.getElementById('root');
+    if (root) root.inert = true;
+    return () => {
+      if (root) root.inert = false;
+    };
+  }, []);
+
   // Move focus into the card; Escape ends the tour; Tab is trapped inside the
-  // card so focus can't leak to the (aria-modal) background it claims is inert.
+  // card (defense-in-depth on top of the inert background above).
   useEffect(() => {
     cardRef.current?.focus();
     const onKey = (e) => {
@@ -134,7 +140,7 @@ export default function Tour({ onClose }) {
   // Until the layout effect measures the card (and for the sign-off step) sit dead-centre.
   const centred = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
 
-  return (
+  return createPortal(
     <div className="tour" role="dialog" aria-modal="true" aria-label="Welcome tour">
       <div
         className={spot ? 'tour-backdrop' : 'tour-backdrop tour-backdrop--dim'}
@@ -143,24 +149,29 @@ export default function Tour({ onClose }) {
       />
       {spot && <div className="tour-spotlight" style={spot} aria-hidden="true" />}
       <div className="tour-card" ref={cardRef} tabIndex={-1} style={cardStyle || centred}>
-        <p className="tour-progress">
-          {step + 1} / {STEPS.length}
-        </p>
+        {STEPS.length > 1 && (
+          <p className="tour-progress">
+            {step + 1} / {STEPS.length}
+          </p>
+        )}
         <h3 className="tour-title">{s.title}</h3>
         <p className="tour-body">{s.body}</p>
         <div className="tour-actions">
-          <button type="button" className="tour-skip" onClick={finish}>
-            {last ? 'Close' : 'Skip'}
-          </button>
+          {STEPS.length > 1 && (
+            <button type="button" className="tour-skip" onClick={finish}>
+              {last ? 'Close' : 'Skip'}
+            </button>
+          )}
           <button
             type="button"
             className="btn btn-primary tour-next"
             onClick={() => (last ? finish() : setStep((n) => n + 1))}
           >
-            {last ? 'Done' : 'Next'}
+            {last ? (STEPS.length > 1 ? 'Done' : 'Got it') : 'Next'}
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

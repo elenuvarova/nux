@@ -10,14 +10,15 @@
   display: none;
   justify-content: center;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
   pointer-events: none;
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-3);
 }
 
 .tabbar {
   pointer-events: auto;
   display: flex;
+  min-width: 0; /* let the pill shrink so the detached search never overflows the right edge */
   gap: var(--space-1);
   padding: var(--space-1);
   border-radius: var(--radius-full);
@@ -33,7 +34,8 @@
   display: grid;
   justify-items: center;
   gap: 3px;
-  min-width: 76px;
+  flex: 1 1 64px; /* share the pill evenly; shrink together rather than push search off-screen */
+  min-width: 0;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-full);
   color: var(--text-tertiary);
@@ -44,6 +46,10 @@
 .tabbar-item svg {
   width: 22px;
   height: 22px;
+}
+
+.tabbar-item span {
+  white-space: nowrap;
 }
 
 .tabbar-item.active {
@@ -58,6 +64,7 @@
 
 .tabbar-search {
   pointer-events: auto;
+  flex: none; /* keep the search circle a fixed 52px; only the pill flexes */
   display: grid;
   place-items: center;
   width: 52px;

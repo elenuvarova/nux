@@ -7,8 +7,9 @@ import { SkeletonRail } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useWatchHistory } from '../lib/useWatchHistory.js';
 import Rail, { PosterCard, ContinueCard } from '../components/Rail.jsx';
-import { RAILS, EDITORIAL_PICK, GENRES, GENRE_MATCH, FILMS } from '../data/catalog.js';
+import { RAILS, EDITORIAL_PICK, CURATED_NOTES, GENRES, GENRE_MATCH, FILMS } from '../data/catalog.js';
 import { useCollections } from '../lib/useCollections.js';
+import { toast } from '../lib/toast.js';
 import Tour from '../components/Tour.jsx';
 import './Home.css';
 
@@ -39,16 +40,34 @@ export default function Home() {
   const [personalRails] = useState(readPersonalRails);
   const { history } = useWatchHistory();
   const { collections, loading: collectionsLoading, error: collectionsError } = useCollections();
-  // First-run welcome tour — shown once. A short delay lets the hero + rails lay
-  // out so the coachmark can measure its targets; it does NOT gate content
-  // (the catalog is synchronous, so the page renders immediately — no LCP delay).
+  // First-run, post-onboarding moment (research: one contextual "aha" beats an
+  // upfront tour). Fires ONCE, only right after Welcome completes: a toast that
+  // confirms the feed was tuned to the user's picks (closing the taste loop),
+  // then a single coachmark on the Curator — NUX's one aha. The short delay lets
+  // the hero + rails lay out so the coachmark can measure its target; it never
+  // gates content (the catalog is synchronous — no LCP delay).
   const [showTour, setShowTour] = useState(false);
   useEffect(() => {
     let t;
     try {
-      if (!localStorage.getItem('nux_tour_v1')) t = setTimeout(() => setShowTour(true), 350);
+      if (localStorage.getItem('nux-curator-hint')) {
+        localStorage.removeItem('nux-curator-hint'); // one-shot
+        const prefs = JSON.parse(localStorage.getItem('nux-genre-prefs') || '[]');
+        const labels = (Array.isArray(prefs) ? prefs : [])
+          .map((id) => GENRES.find((g) => g.id === id)?.label)
+          .filter(Boolean)
+          .slice(0, 3);
+        if (labels.length) {
+          const text =
+            labels.length === 1
+              ? labels[0]
+              : `${labels.slice(0, -1).join(', ')} and ${labels[labels.length - 1]}`;
+          toast(`Your feed’s tuned to ${text}`);
+        }
+        t = setTimeout(() => setShowTour(true), 350);
+      }
     } catch {
-      /* private mode — just skip the tour */
+      /* private mode — skip the first-run moment */
     }
     return () => clearTimeout(t);
   }, []);
@@ -89,7 +108,7 @@ export default function Home() {
         <Reveal>
           <Rail title={curated.title}>
             {curated.filmIds.map((id) => (
-              <PosterCard key={id} filmId={id} />
+              <PosterCard key={id} filmId={id} note={CURATED_NOTES[id]} />
             ))}
           </Rail>
         </Reveal>

@@ -2,6 +2,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { api } from './api.js';
 
 const KEY = 'nux-continue';
+// keep in step with the server's GET /history limit (backend/routes/history.js)
+// so the Continue Watching rail doesn't visibly shrink after a local record
+const MAX_CONTINUE = 12;
 
 // "continue watching" — populated only when a visitor actually starts a
 // trailer. Signed in → backend; guest → localStorage. A fresh visitor has
@@ -61,12 +64,12 @@ export function useWatchHistory() {
   }, []);
 
   // frac = how far through the trailer (0..1); most recent first, one entry
-  // per title, capped at 8
+  // per title, capped at MAX_CONTINUE (matches the server's limit)
   const record = useCallback((id, frac, at) => {
     // default 0.05 matches the server (history.js) so a just-started item reads
     // the same on the client and after a refresh
     const f = Math.min(0.95, Math.max(0.04, frac || 0.05));
-    const next = [{ id, frac: f, at }, ...items.filter((x) => x.id !== id)].slice(0, 8);
+    const next = [{ id, frac: f, at }, ...items.filter((x) => x.id !== id)].slice(0, MAX_CONTINUE);
     items = next;
     notify();
     if (authed) {

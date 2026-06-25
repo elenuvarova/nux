@@ -242,6 +242,19 @@
   text-overflow: ellipsis;
 }
 
+/* editorial "why we picked it" line — only on curated rails (PosterCard `note`).
+   Clamped to two lines so cards in a rail keep an even height. */
+.poster-card-note {
+  margin: 4px 0 0;
+  font: var(--type-metadata);
+  color: var(--text-secondary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* ── ContinueCard (landscape still + progress) ───────────────── */
 .continue-card {
   display: grid;

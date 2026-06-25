@@ -489,7 +489,7 @@ export default function NeonDrift({ onClose }) {
                           <span className="ndg-board-name">
                             {row.name}
                             {row.registered && (
-                              <span className="ndg-board-verified" title="Signed-in player" aria-label="signed-in player">●</span>
+                              <span className="ndg-board-verified" role="img" title="Signed-in player" aria-label="Signed-in player">●</span>
                             )}
                           </span>
                           <span className="ndg-board-score">{row.score}</span>

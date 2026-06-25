@@ -1,0 +1,46 @@
+# Dependabot — weekly dependency PRs. Pairs with the non-blocking
+# `dependency-audit` job in ci.yml: the audit SURFACES known advisories on every
+# push; Dependabot opens the PRs that actually fix them. Each npm entry points at
+# a directory with its own package-lock.json (backend / frontend / landing).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /backend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "deps(backend)"
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "deps(frontend)"
+
+  - package-ecosystem: npm
+    directory: /landing
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: "deps(landing)"
+
+  # Keep the CI/CD actions (checkout, setup-node, …) patched and pinned-forward.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: "ci(actions)"

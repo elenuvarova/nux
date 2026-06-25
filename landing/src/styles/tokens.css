@@ -1,3 +1,7 @@
+/* GENERATED — do not edit by hand. Synced from frontend/src/styles/tokens.css
+   by landing/scripts/sync-tokens.mjs (runs on predev + prebuild). Edit the
+   canonical file in the app, then re-run `npm run sync:tokens`. */
+
 /* NUX design tokens — generated from the Figma variable set (Hi-Fi mode).
    Source of truth: Figma file UPtAtDiB37eSssdOGZ8nrq → collections
    Primitives / Wireframe (semantic, Hi-Fi mode) / Spacing & Radius. */

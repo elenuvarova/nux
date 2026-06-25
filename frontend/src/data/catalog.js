@@ -1830,14 +1830,6 @@ export const HERO_ROTATION = [
   { filmId: 'the-red-shoes', eyebrow: 'The Powell & Pressburger Collection' },
 ];
 
-// Honest pairs only: each still actually belongs to the film it labels.
-export const CONTINUE_WATCHING = [
-  { filmId: 'the-third-man', still: still('still-third-man-660.jpg'), minutesLeft: 31 },
-  { filmId: 'black-narcissus', still: still('still-black-narcissus-660.jpg'), minutesLeft: 22 },
-  { filmId: 'lawrence-of-arabia', still: still('still-lawrence-of-arabia-660.jpg'), minutesLeft: 96 },
-  { filmId: 'the-red-shoes', still: still('still2-red-shoes-660.jpg'), minutesLeft: 47 },
-];
-
 export const RAILS = [
   {
     id: 'trending',
@@ -1863,6 +1855,18 @@ export const EDITORIAL_PICK = {
   cta: 'Read the list',
   image: genreImg('genre-arthouse.jpg'),
   slug: 'best-2026',
+};
+
+// One-line "why we picked it" notes for the Curated rail on Home — puts the
+// editorial point of view on the card itself, so curation reads at a glance.
+export const CURATED_NOTES = {
+  'the-wicker-man': 'Pagan dread in broad daylight — folk horror’s touchstone.',
+  'withnail-and-i': 'The most quotable disaster-holiday in British comedy.',
+  naked: 'Thewlis prowls a sleepless London — Leigh at his most merciless.',
+  'sexy-beast': 'Kingsley detonates as Don Logan; menace at the door.',
+  'billy-elliot': 'Boxing gloves traded for ballet against the 1984 strike.',
+  'under-the-skin': 'Glazer’s alien adrift in Glasgow — hypnotic and wordless.',
+  '45-years': 'A letter reopens an old grave; Rampling’s last look says all.',
 };
 
 export const COLLECTIONS = {

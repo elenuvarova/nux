@@ -29,7 +29,7 @@ describe('useMyList', () => {
 });
 
 describe('useWatchHistory', () => {
-  it('records most-recent-first, deduped, capped at 8', () => {
+  it('records most-recent-first, deduped, capped at 12', () => {
     const { result } = renderHook(() => useWatchHistory());
     act(() => result.current.record('senna', 0.3, 1));
     act(() => result.current.record('aftersun', 0.5, 2));

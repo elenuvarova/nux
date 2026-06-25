@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useAuth } from '../lib/useAuth.jsx';
+import { toast } from '../lib/toast.js';
 import './Profile.css';
 
 const Chevron = () => (
@@ -66,11 +67,13 @@ export default function Profile() {
   const navigate = useNavigate();
 
   const signOut = async () => {
-    // always land on sign-in, even if the logout request failed
+    // land back on Home (NUX is fully browsable signed-out — a login wall here
+    // would contradict that), even if the logout request itself failed
     try {
       await logout();
     } finally {
-      navigate('/signin');
+      navigate('/');
+      toast('Signed out');
     }
   };
 
@@ -109,7 +112,7 @@ export default function Profile() {
         <img className="profile-avatar" src={user?.avatarUrl || '/assets/avatar-user.jpg?v=2'} alt="" />
         <div>
           <p className="profile-name">{user?.name || 'Member'}</p>
-          <p className="metadata">{user?.email ? `${user.email} · Premium` : 'Premium'}</p>
+          <p className="metadata">{user?.email ? `${user.email} · Member` : 'Member'}</p>
         </div>
       </div>
 

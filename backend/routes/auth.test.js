@@ -11,8 +11,8 @@ vi.mock("../lib/auth.js", async () => {
 });
 vi.mock("../models.js", () => ({
   User: { findOne: vi.fn(), create: vi.fn() },
-  Session: { create: vi.fn().mockResolvedValue({}) },
-  PasswordReset: { destroy: vi.fn(), create: vi.fn() },
+  Session: { create: vi.fn().mockResolvedValue({}), destroy: vi.fn().mockResolvedValue(0) },
+  PasswordReset: { findOne: vi.fn(), destroy: vi.fn(), create: vi.fn() },
 }));
 vi.mock("../db.js", () => ({
   sequelize: { transaction: vi.fn(async (fn) => fn({})) },
@@ -24,7 +24,8 @@ vi.mock("../lib/email.js", () => ({
   emailConfigured: false,
 }));
 
-import { User, Session } from "../models.js";
+import { User, Session, PasswordReset } from "../models.js";
+import { sendPasswordResetEmail } from "../lib/email.js";
 import authRoutes from "./auth.js";
 
 function makeApp() {
@@ -43,6 +44,11 @@ beforeAll(async () => {
 beforeEach(() => {
   vi.clearAllMocks();
   Session.create.mockResolvedValue({});
+  Session.destroy.mockResolvedValue(0);
+  PasswordReset.destroy.mockResolvedValue(0);
+  PasswordReset.create.mockResolvedValue({});
+  PasswordReset.findOne.mockResolvedValue(null);
+  sendPasswordResetEmail.mockResolvedValue({});
 });
 
 describe("POST /api/auth/signup", () => {
@@ -130,5 +136,124 @@ describe("POST /api/auth/login", () => {
     expect(r.status).toBe(200);
     expect(r.body.user).toMatchObject({ email: "a@b.co" });
     expect(Session.create).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("POST /api/auth/forgot", () => {
+  it("200 generic for a KNOWN email AND creates a reset row", async () => {
+    User.findOne.mockResolvedValue({ id: "u1", email: "a@b.co" });
+    const r = await request(makeApp()).post("/api/auth/forgot").send({ email: "a@b.co" });
+    expect(r.status).toBe(200);
+    expect(r.body.ok).toBe(true);
+    // a single-use token row is created for the known account
+    expect(PasswordReset.create).toHaveBeenCalledTimes(1);
+    // prior tokens for this user are cleared first (one valid token at a time)
+    expect(PasswordReset.destroy).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { UserId: "u1" } })
+    );
+  });
+
+  it("200 generic for an UNKNOWN email and creates NO reset row (no enumeration)", async () => {
+    User.findOne.mockResolvedValue(null);
+    const r = await request(makeApp()).post("/api/auth/forgot").send({ email: "ghost@b.co" });
+    expect(r.status).toBe(200);
+    expect(r.body.ok).toBe(true);
+    expect(PasswordReset.create).not.toHaveBeenCalled();
+    expect(sendPasswordResetEmail).not.toHaveBeenCalled();
+  });
+
+  it("returns the SAME generic body for known and unknown (no response-shape leak)", async () => {
+    User.findOne.mockResolvedValue({ id: "u1", email: "a@b.co" });
+    const known = await request(makeApp()).post("/api/auth/forgot").send({ email: "a@b.co" });
+    User.findOne.mockResolvedValue(null);
+    const unknown = await request(makeApp()).post("/api/auth/forgot").send({ email: "ghost@b.co" });
+    expect(known.body).toEqual(unknown.body);
+  });
+
+  it("200 generic for a malformed email without touching the DB", async () => {
+    const r = await request(makeApp()).post("/api/auth/forgot").send({ email: "not-an-email" });
+    expect(r.status).toBe(200);
+    expect(r.body.ok).toBe(true);
+    expect(User.findOne).not.toHaveBeenCalled();
+    expect(PasswordReset.create).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/auth/reset", () => {
+  // Build a PasswordReset record whose nested User captures the new hash on save,
+  // so we can later prove the password truly changed by logging in with it.
+  function makeRecord() {
+    const user = {
+      id: "u1",
+      email: "a@b.co",
+      name: "A",
+      hashedPassword: HASH, // old hash
+      avatarUrl: null,
+      save: vi.fn(async function () {
+        this._saved = true;
+      }),
+    };
+    return { id: "pr1", User: user, user };
+  }
+
+  it("400 on a weak/short new password (before any token lookup)", async () => {
+    const r = await request(makeApp())
+      .post("/api/auth/reset")
+      .send({ token: "tok", password: "short" });
+    expect(r.status).toBe(400);
+    expect(r.body.error).toBe("weak_password");
+    expect(PasswordReset.findOne).not.toHaveBeenCalled();
+  });
+
+  it("400 on an expired/invalid token (no matching unexpired row)", async () => {
+    PasswordReset.findOne.mockResolvedValue(null); // expiresAt filter excludes expired rows
+    const r = await request(makeApp())
+      .post("/api/auth/reset")
+      .send({ token: "expired", password: "newpassword123" });
+    expect(r.status).toBe(400);
+    expect(r.body.error).toBe("invalid_token");
+  });
+
+  it("400 on a reused / already-used token (single-use: row no longer exists)", async () => {
+    // first use consumed + deleted the row, so the second lookup finds nothing
+    PasswordReset.findOne.mockResolvedValue(null);
+    const r = await request(makeApp())
+      .post("/api/auth/reset")
+      .send({ token: "alreadyused", password: "newpassword123" });
+    expect(r.status).toBe(400);
+    expect(r.body.error).toBe("invalid_token");
+  });
+
+  it("200 on a valid token: changes the password, consumes the token, kills ALL sessions", async () => {
+    const record = makeRecord();
+    PasswordReset.findOne.mockResolvedValue(record);
+    const r = await request(makeApp())
+      .post("/api/auth/reset")
+      .send({ token: "valid", password: "newpassword123" });
+    expect(r.status).toBe(200);
+    expect(r.body.ok).toBe(true);
+
+    // password actually changed: the saved hash verifies against the new pw and
+    // NOT the old one — and we can "log in" with it through the real verifier
+    expect(record.user.save).toHaveBeenCalledTimes(1);
+    expect(record.user.hashedPassword).not.toBe(HASH);
+    expect(await bcrypt.compare("newpassword123", record.user.hashedPassword)).toBe(true);
+    expect(await bcrypt.compare("password123", record.user.hashedPassword)).toBe(false);
+
+    // token is single-use (its rows deleted) and every session is destroyed
+    expect(PasswordReset.destroy).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { UserId: "u1" } })
+    );
+    expect(Session.destroy).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { UserId: "u1" } })
+    );
+
+    // prove "can log in with new pw": drive the real /login against the updated user
+    User.findOne.mockResolvedValue(record.user);
+    const login = await request(makeApp())
+      .post("/api/auth/login")
+      .send({ email: "a@b.co", password: "newpassword123" });
+    expect(login.status).toBe(200);
+    expect(login.body.user).toMatchObject({ email: "a@b.co" });
   });
 });

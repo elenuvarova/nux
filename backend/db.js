@@ -1,5 +1,5 @@
 // Dialect is picked from DATABASE_URL so the same config works locally (SQLite)
-// and on Render (Postgres) without changing any code.
+// and in prod on Coolify-internal Postgres without changing any code.
 import { Sequelize } from "sequelize";
 
 const url = process.env.DATABASE_URL || "";

@@ -33,7 +33,7 @@ function minutesLabel(min) {
   return `${min}m left`;
 }
 
-export const PosterCard = memo(function PosterCard({ filmId }) {
+export const PosterCard = memo(function PosterCard({ filmId, note }) {
   const film = byId(filmId);
   const tilt = useTilt();
   const navigate = useNavigate();
@@ -61,6 +61,7 @@ export const PosterCard = memo(function PosterCard({ filmId }) {
       </div>
       <p className="poster-card-title">{film.title}</p>
       <p className="poster-card-meta">{film.director} · {film.year} · {film.runtime}</p>
+      {note && <p className="poster-card-note">{note}</p>}
     </Link>
   );
 });
@@ -69,10 +70,11 @@ export function ContinueCard({ item }) {
   const film = byId(item.filmId);
   if (!film) return null;
   const total = film.runtimeMin || 120;
-  const frac = typeof item.frac === 'number' ? item.frac : 1 - (item.minutesLeft || 30) / total;
+  // history entries carry { filmId, frac }; default low if frac is ever absent
+  const frac = typeof item.frac === 'number' ? item.frac : 0;
   const progress = Math.min(96, Math.max(4, Math.round(frac * 100)));
   const minutesLeft = Math.max(1, Math.round(total * (1 - frac)));
-  const art = item.still || film.backdrop || film.poster;
+  const art = film.backdrop || film.poster;
   return (
     <Link to={`/watch/${film.id}`} className="continue-card" viewTransition onClick={markHeroArt}>
       <div className="continue-card-art">

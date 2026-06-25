@@ -42,9 +42,9 @@ export default function Settings() {
         <div className="settings-group">
           <Toggle label="Autoplay next" defaultOn />
           <Toggle label="Data Saver" />
-          <button type="button" className="settings-row">
-            Download quality
-            <span className="settings-value">
+          <button type="button" className="settings-row" aria-label="Download quality, High">
+            <span aria-hidden="true">Download quality</span>
+            <span className="settings-value" aria-hidden="true">
               High
               <Chevron />
             </span>
@@ -63,9 +63,9 @@ export default function Settings() {
       <section aria-label="Account">
         <p className="eyebrow settings-eyebrow">Account</p>
         <div className="settings-group">
-          <button type="button" className="settings-row">
-            Manage devices
-            <span className="settings-value"><span className="metadata">Demo</span></span>
+          <button type="button" className="settings-row" aria-label="Manage devices, Demo">
+            <span aria-hidden="true">Manage devices</span>
+            <span className="settings-value" aria-hidden="true"><span className="metadata">Demo</span></span>
           </button>
           <Link to="/p/privacy" className="settings-row">
             Privacy

@@ -2,10 +2,16 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { askCurator } from "./ai.js";
 
 const GEMINI_OK = {
-  candidates: [{ content: { parts: [{ text: JSON.stringify({ reply: "g", filmIds: ["naked"] }) }] } }],
+  candidates: [
+    {
+      content: {
+        parts: [{ text: JSON.stringify({ reply: "g", films: [{ id: "naked", reason: "raw" }] }) }],
+      },
+    },
+  ],
 };
 const GROQ_OK = {
-  choices: [{ message: { content: JSON.stringify({ reply: "q", filmIds: ["if"] }) } }],
+  choices: [{ message: { content: JSON.stringify({ reply: "q", films: [{ id: "if", reason: "revolt" }] }) } }],
 };
 
 function jsonResponse(body, ok = true, status = 200) {
@@ -26,7 +32,7 @@ describe("askCurator failover", () => {
   it("returns the primary (gemini) result when it succeeds", async () => {
     global.fetch = vi.fn().mockResolvedValueOnce(jsonResponse(GEMINI_OK));
     const out = await askCurator({ system: "s", messages: [{ role: "user", content: "hi" }] });
-    expect(out).toEqual({ reply: "g", filmIds: ["naked"] });
+    expect(out).toEqual({ reply: "g", films: [{ id: "naked", reason: "raw" }] });
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
@@ -36,7 +42,7 @@ describe("askCurator failover", () => {
       .mockResolvedValueOnce(jsonResponse({ error: "rate" }, false, 429)) // gemini 429
       .mockResolvedValueOnce(jsonResponse(GEMINI_OK)); // gemini retry succeeds
     const out = await askCurator({ system: "s", messages: [{ role: "user", content: "hi" }] });
-    expect(out).toEqual({ reply: "g", filmIds: ["naked"] });
+    expect(out).toEqual({ reply: "g", films: [{ id: "naked", reason: "raw" }] });
     expect(global.fetch).toHaveBeenCalledTimes(2);
   });
 
@@ -47,7 +53,7 @@ describe("askCurator failover", () => {
       .mockResolvedValueOnce(jsonResponse({ error: "boom" }, false, 500)) // gemini 500 (retry)
       .mockResolvedValueOnce(jsonResponse(GROQ_OK)); // groq ok
     const out = await askCurator({ system: "s", messages: [{ role: "user", content: "hi" }] });
-    expect(out).toEqual({ reply: "q", filmIds: ["if"] });
+    expect(out).toEqual({ reply: "q", films: [{ id: "if", reason: "revolt" }] });
     expect(global.fetch).toHaveBeenCalledTimes(3);
   });
 
@@ -62,7 +68,7 @@ describe("askCurator failover", () => {
     delete process.env.GEMINI_API_KEY; // only groq configured
     global.fetch = vi.fn().mockResolvedValueOnce(jsonResponse(GROQ_OK));
     const out = await askCurator({ system: "s", messages: [{ role: "user", content: "hi" }] });
-    expect(out).toEqual({ reply: "q", filmIds: ["if"] });
+    expect(out).toEqual({ reply: "q", films: [{ id: "if", reason: "revolt" }] });
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
@@ -74,5 +80,28 @@ describe("askCurator failover", () => {
     expect(url).toContain("gemini-2.0-flash");
     expect(url).not.toContain("evil");
     delete process.env.GEMINI_MODEL;
+  });
+
+  it("normalises a legacy filmIds-only response into the new films shape", async () => {
+    const legacy = {
+      candidates: [
+        { content: { parts: [{ text: JSON.stringify({ reply: "g", filmIds: ["naked", "if"] }) }] } },
+      ],
+    };
+    global.fetch = vi.fn().mockResolvedValueOnce(jsonResponse(legacy));
+    const out = await askCurator({ system: "s", messages: [{ role: "user", content: "hi" }] });
+    expect(out).toEqual({ reply: "g", films: [{ id: "naked" }, { id: "if" }] });
+  });
+
+  it("fails over when a response has neither films nor filmIds (bad shape)", async () => {
+    const bad = {
+      candidates: [{ content: { parts: [{ text: JSON.stringify({ reply: "g" }) }] } }],
+    };
+    global.fetch = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse(bad)) // gemini bad shape
+      .mockResolvedValueOnce(jsonResponse(GROQ_OK)); // failover to groq
+    const out = await askCurator({ system: "s", messages: [{ role: "user", content: "hi" }] });
+    expect(out).toEqual({ reply: "q", films: [{ id: "if", reason: "revolt" }] });
   });
 });

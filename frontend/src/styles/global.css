@@ -24,9 +24,11 @@ body {
 }
 
 /* room for the floating tab bar — otherwise it permanently covers
-   the footer links at the bottom of every page */
+   the footer links at the bottom of every page. Skipped on bare routes
+   (welcome / auth) which have no tab bar — there the clearance was just
+   dead, scrollable space below a full-height screen. */
 @media (max-width: 768px) {
-  body {
+  .grain:not(.grain--bare) {
     padding-bottom: calc(var(--tabbar-clearance) + env(safe-area-inset-bottom, 0px));
   }
 }
@@ -94,7 +96,7 @@ h1[tabindex='-1'] {
   transform: translateY(-200%);
 }
 
-.skip-link:focus {
+.skip-link:focus-visible {
   transform: none;
 }
 

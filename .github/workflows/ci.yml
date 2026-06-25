@@ -8,9 +8,17 @@ on:
     branches: [main]
   pull_request:
 
+# Cancel an in-flight run when a newer commit lands on the same ref, so a quick
+# follow-up push doesn't queue behind a stale run (saves minutes; the latest
+# commit is the one that matters as the deploy gate).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   backend:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: backend
@@ -26,6 +34,7 @@ jobs:
 
   frontend:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: frontend
@@ -44,6 +53,7 @@ jobs:
     # backend/data/films.js is a generated projection of the frontend catalog;
     # fail if someone changed the catalog without re-running the generator
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -53,3 +63,34 @@ jobs:
         working-directory: backend
       - name: films.js must match the catalog
         run: git diff --exit-code backend/data/films.js
+
+  # Dependency audit — SURFACED but NON-BLOCKING (continue-on-error: true).
+  # Deliberately not a hard gate: a single transitive / dev-only high advisory
+  # (common in the Vite/vitest toolchain) would otherwise false-fail every push
+  # and, because Coolify deploys on push regardless, train people to ignore a red
+  # X. Keeping it green-but-visible means the audit output is always one click
+  # away in the run summary without holding the deploy gate hostage to noise.
+  # If a genuinely exploitable runtime advisory appears, triage it and (when
+  # warranted) promote the relevant package's audit to a blocking step.
+  dependency-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [backend, frontend, landing]
+    defaults:
+      run:
+        working-directory: ${{ matrix.package }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ${{ matrix.package }}/package-lock.json
+      # --audit-level=high → only High/Critical advisories make the step "fail"
+      # (which is then softened to a warning by continue-on-error above).
+      # All three packages have a committed package-lock.json, so this runs for each.
+      - run: npm audit --audit-level=high
