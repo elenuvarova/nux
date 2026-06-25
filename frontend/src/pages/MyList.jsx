@@ -32,7 +32,7 @@ export default function MyList() {
             </div>
             {!user && (
               <p className="browse-empty-sub" style={{ marginTop: 'var(--space-8)', textAlign: 'center' }}>
-                Saved on this device — <Link to="/signin">sign in</Link> to keep your list anywhere.
+                Saved on this device — <Link to="/signin">sign in</Link> to keep your list anywhere.
               </p>
             )}
           </>

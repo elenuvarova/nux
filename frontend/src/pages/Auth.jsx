@@ -12,7 +12,7 @@ const SERVER_ERRORS = {
   weak_password: { field: 'password', msg: 'At least 8 characters.' },
   invalid_email: { field: 'email', msg: 'Enter a valid email.' },
   name_required: { field: 'name', msg: 'Tell us your name.' },
-  too_many_requests: { field: 'password', msg: 'Too many attempts — try again in a minute.' },
+  too_many_requests: { field: 'password', msg: 'Too many attempts — try again in a minute.' },
 };
 
 export default function Auth({ mode = 'signin' }) {
@@ -62,8 +62,8 @@ export default function Auth({ mode = 'signin' }) {
         // pinning it to the password field (which read as a credentials error)
         setFormError(
           err?.status >= 500
-            ? 'Our server had a problem — please try again.'
-            : 'Couldn’t reach the server — check your connection and try again.'
+            ? 'Our server had a problem — please try again.'
+            : 'Couldn’t reach the server — check your connection and try again.'
         );
       }
     } finally {

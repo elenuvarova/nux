@@ -31,7 +31,7 @@ const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 
 /* On forward navigation: scroll to top and move focus to the new page's
    heading (otherwise focus is lost to <body> when the clicked link unmounts).
-   On back/forward (POP) the browser restores scroll — don't fight it. */
+   On back/forward (POP) the browser restores scroll — don't fight it. */
 function RouteReset() {
   const { pathname } = useLocation();
   const navType = useNavigationType();

@@ -65,7 +65,7 @@ function NewsletterForm() {
       <label htmlFor="news">A short letter when we add something worth your evening.</label>
       {done ? (
         <p className="news-done" role="status" tabIndex={-1} ref={doneRef}>
-          This is the bit that would sign you up — NUX is a portfolio concept, so there’s no list to join yet.
+          This is the bit that would sign you up — NUX is a portfolio concept, so there’s no list to join yet.
           Thanks for the interest, though.
         </p>
       ) : (
@@ -109,7 +109,7 @@ export default function App() {
             <p className="eyebrow">British cinema · curated by hand</p>
             <h1 className="hero-title">Stop scrolling. We’ve already watched everything</h1>
             <p className="hero-sub">
-              A small, hand-built home for British cinema. No infinite wall, no “because you watched” —
+              A small, hand-built home for British cinema. No infinite wall, no “because you watched” —
               just films a person would actually put in front of you, and a curator that answers when you ask.
             </p>
             <div className="cta-row">
@@ -140,7 +140,7 @@ export default function App() {
               <h2 id="cur-h" className="section-title">Tell it the mood.<br />It does the deciding</h2>
               <p className="curator-prompt">“{CURATOR.prompt}”</p>
               <p className="curator-note">
-                Start with <em>Kes</em> — a Barnsley boy and a kestrel, tenderness with the grain left in.
+                Start with <em>Kes</em> — a Barnsley boy and a kestrel, tenderness with the grain left in.
                 Keep <em>Ratcatcher</em> for the canal-side beauty in a bin-strike summer, and save
                 {' '}<em>Aftersun</em> for when you can take the ache. All three reward a grey afternoon.
               </p>
@@ -225,15 +225,15 @@ export default function App() {
           <ol className="moves">
             <li className="move">
               <span className="move-n" aria-hidden="true">01</span>
-              <div className="move-body"><h3>Tell us what moves you</h3><p>A few minutes, once. Your homepage opens with those films up top — no quiz, no cold start.</p></div>
+              <div className="move-body"><h3>Tell us what moves you</h3><p>A few minutes, once. Your homepage opens with those films up top — no quiz, no cold start.</p></div>
             </li>
             <li className="move">
               <span className="move-n" aria-hidden="true">02</span>
-              <div className="move-body"><h3>Get a programme, not a grid</h3><p>Themed rails and collections, put together by hand and changed most weeks — like a season at a rep cinema.</p></div>
+              <div className="move-body"><h3>Get a programme, not a grid</h3><p>Themed rails and collections, put together by hand and changed most weeks — like a season at a rep cinema.</p></div>
             </li>
             <li className="move">
               <span className="move-n" aria-hidden="true">03</span>
-              <div className="move-body"><h3>Ask the Curator anything</h3><p>Stuck for the evening? Describe a mood in plain English and get three films, with reasons — not two hundred results.</p></div>
+              <div className="move-body"><h3>Ask the Curator anything</h3><p>Stuck for the evening? Describe a mood in plain English and get three films, with reasons — not two hundred results.</p></div>
             </li>
           </ol>
         </section>
@@ -246,7 +246,7 @@ export default function App() {
             <div className="plan plan-free">
               <p className="plan-name">Browse</p>
               <p className="plan-price">Free</p>
-              <p className="plan-note">The whole catalogue, every film page, your own list — no account needed.</p>
+              <p className="plan-note">The whole catalogue, every film page, your own list — no account needed.</p>
               <a className="link-arrow" href={`${APP}/browse`} onClick={() => track('cta_browse_click', { location: 'pricing' })}>Browse the catalogue <span>→</span></a>
             </div>
             <div className="plan plan-member">
@@ -258,13 +258,13 @@ export default function App() {
               <p className="plan-price">{annual ? <>£4.99<span className="per"> a month</span></> : <>£8.99<span className="per"> a month</span></>}</p>
               <p className="plan-note">{annual ? 'Billed annually at £59.88.' : 'Billed monthly.'} Everything in Browse, plus:</p>
               <ul className="plan-feats">
-                <li>The Curator — describe a mood, get a short list back</li>
-                <li>Editors’ Collections — a new programme most weeks</li>
+                <li>The Curator — describe a mood, get a short list back</li>
+                <li>Editors’ Collections — a new programme most weeks</li>
                 <li>Every film, no ads, ever</li>
                 <li>Download in HD for the train · two screens at once</li>
               </ul>
               <a className="btn btn-primary btn-block" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'pricing' })}><PlayIcon /> Start watching</a>
-              <p className="plan-reassure">Free for 14 days. Nothing charged today — cancel anytime.</p>
+              <p className="plan-reassure">Free for 14 days. Nothing charged today — cancel anytime.</p>
             </div>
           </div>
         </section>
@@ -274,7 +274,7 @@ export default function App() {
           <p className="colophon-mark">✳</p>
           <p className="colophon-text">
             NUX is a design portfolio project by Elena Uvarova. The catalogue is real British cinema;
-            the streaming, accounts and payments are simulated. The library is deliberately small —
+            the streaming, accounts and payments are simulated. The library is deliberately small —
             that’s the point.
           </p>
         </section>
@@ -309,7 +309,7 @@ export default function App() {
         </div>
         <p className="footer-mark" aria-hidden="true">NUX</p>
         <div className="footer-legal">
-          <span>© 2026 NUX — a portfolio concept by Elena Uvarova.</span>
+          <span>© 2026 NUX — a portfolio concept by Elena Uvarova.</span>
           <span>Cinema for Curious Minds</span>
         </div>
       </footer>

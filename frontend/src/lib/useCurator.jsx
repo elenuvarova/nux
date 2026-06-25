@@ -15,7 +15,7 @@ export function configureCurator(user) {
 }
 
 const ERROR_BY_CODE = {
-  too_many_requests: "A bit too fast — give the Curator a minute.",
+  too_many_requests: "A bit too fast — give the Curator a minute.",
   curator_unavailable: "The Curator stepped away. Try again in a moment.",
 };
 const ERROR_FALLBACK = "Something went wrong. Try again in a moment.";

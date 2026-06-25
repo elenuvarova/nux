@@ -35,7 +35,7 @@ export default function ResetPassword() {
       setPassword(''); // don't keep the new password in component state
       setDone(true);
     } catch (err) {
-      setError(ERRORS[err.code] || 'Something went wrong — try again.');
+      setError(ERRORS[err.code] || 'Something went wrong — try again.');
     } finally {
       setBusy(false);
     }

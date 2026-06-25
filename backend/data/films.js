@@ -7,7 +7,7 @@ export const FILMS = [
     "year": 1949,
     "genre": "Film-Noir",
     "director": "Carol Reed",
-    "synopsis": "Pulp novelist Holly Martins arrives in postwar Vienna to bury an old friend — and finds the city's black market very much alive. Carol Reed's shadow-soaked masterpiece of friendship and betrayal."
+    "synopsis": "Pulp novelist Holly Martins arrives in postwar Vienna to bury an old friend — and finds the city’s black market very much alive. Carol Reed’s shadow-soaked masterpiece of friendship and betrayal."
   },
   {
     "id": "brief-encounter",
@@ -15,7 +15,7 @@ export const FILMS = [
     "year": 1945,
     "genre": "Romance",
     "director": "David Lean",
-    "synopsis": "A married woman and a doctor meet by chance in a railway station tearoom — and fall, impossibly, in love. Noël Coward and David Lean turn restraint itself into heartbreak."
+    "synopsis": "A married woman and a doctor meet by chance in a railway station tearoom — and fall, impossibly, in love. Noël Coward and David Lean turn restraint itself into heartbreak."
   },
   {
     "id": "black-narcissus",
@@ -39,7 +39,7 @@ export const FILMS = [
     "year": 1960,
     "genre": "Horror",
     "director": "Michael Powell",
-    "synopsis": "A shy focus-puller films his victims as they die, hunting the perfect image of fear. The film that scandalised Britain in 1960 — and was rediscovered as a masterpiece."
+    "synopsis": "A shy focus-puller films his victims as they die, hunting the perfect image of fear. The film that scandalised Britain in 1960 — and was rediscovered as a masterpiece."
   },
   {
     "id": "lawrence-of-arabia",
@@ -47,7 +47,7 @@ export const FILMS = [
     "year": 1962,
     "genre": "Epic",
     "director": "David Lean",
-    "synopsis": "David Lean's monumental account of T. E. Lawrence — archaeologist, soldier, enigma — and the desert war that made and unmade him."
+    "synopsis": "David Lean’s monumental account of T. E. Lawrence — archaeologist, soldier, enigma — and the desert war that made and unmade him."
   },
   {
     "id": "billy-liar",
@@ -55,7 +55,7 @@ export const FILMS = [
     "year": 1963,
     "genre": "Comedy",
     "director": "John Schlesinger",
-    "synopsis": "An undertaker's clerk in a northern town lies his way through life and daydreams of escape to London. A bittersweet landmark of the British New Wave."
+    "synopsis": "An undertaker’s clerk in a northern town lies his way through life and daydreams of escape to London. A bittersweet landmark of the British New Wave."
   },
   {
     "id": "if",
@@ -63,7 +63,7 @@ export const FILMS = [
     "year": 1968,
     "genre": "Drama",
     "director": "Lindsay Anderson",
-    "synopsis": "At an English boarding school ruled by tradition and cruelty, three boys drift from rebellion into insurrection. Lindsay Anderson's Palme d'Or-winning provocation."
+    "synopsis": "At an English boarding school ruled by tradition and cruelty, three boys drift from rebellion into insurrection. Lindsay Anderson’s Palme d’Or-winning provocation."
   },
   {
     "id": "dont-look-now",
@@ -71,7 +71,7 @@ export const FILMS = [
     "year": 1973,
     "genre": "Horror",
     "director": "Nicolas Roeg",
-    "synopsis": "A grieving couple moves to wintry Venice after their daughter's death, where a red coat keeps flickering at the edge of sight. Roeg's shattering mosaic of grief and premonition."
+    "synopsis": "A grieving couple moves to wintry Venice after their daughter’s death, where a red coat keeps flickering at the edge of sight. Roeg’s shattering mosaic of grief and premonition."
   },
   {
     "id": "the-wicker-man",
@@ -95,7 +95,7 @@ export const FILMS = [
     "year": 1993,
     "genre": "Drama",
     "director": "Mike Leigh",
-    "synopsis": "Johnny talks his way through a long London night — brilliant, cruel, and burning down to the end of himself. Mike Leigh at his darkest; Thewlis at his best."
+    "synopsis": "Johnny talks his way through a long London night — brilliant, cruel, and burning down to the end of himself. Mike Leigh at his darkest; Thewlis at his best."
   },
   {
     "id": "sexy-beast",
@@ -103,7 +103,7 @@ export const FILMS = [
     "year": 2000,
     "genre": "Crime",
     "director": "Jonathan Glazer",
-    "synopsis": "A retired safecracker sunning himself in Spain is visited by the one man who won't take no for an answer. Ben Kingsley as cinema's most terrifying houseguest."
+    "synopsis": "A retired safecracker sunning himself in Spain is visited by the one man who won’t take no for an answer. Ben Kingsley as cinema’s most terrifying houseguest."
   },
   {
     "id": "billy-elliot",
@@ -111,7 +111,7 @@ export const FILMS = [
     "year": 2000,
     "genre": "Drama",
     "director": "Stephen Daldry",
-    "synopsis": "During the miners' strike, a boy from a Durham pit village trades boxing gloves for ballet shoes — against everything his family knows."
+    "synopsis": "During the miners’ strike, a boy from a Durham pit village trades boxing gloves for ballet shoes — against everything his family knows."
   },
   {
     "id": "under-the-skin",
@@ -119,7 +119,7 @@ export const FILMS = [
     "year": 2013,
     "genre": "Sci-Fi",
     "director": "Jonathan Glazer",
-    "synopsis": "Something wearing a woman's body drives a van through Glasgow, watching, luring, learning. Glazer's hypnotic alien gaze turned on us."
+    "synopsis": "Something wearing a woman’s body drives a van through Glasgow, watching, luring, learning. Glazer’s hypnotic alien gaze turned on us."
   },
   {
     "id": "45-years",
@@ -135,7 +135,7 @@ export const FILMS = [
     "year": 2019,
     "genre": "Drama",
     "director": "Joanna Hogg",
-    "synopsis": "A film student in 1980s London falls into a consuming relationship with a charming, untrustworthy older man. Joanna Hogg's exacting memory-piece."
+    "synopsis": "A film student in 1980s London falls into a consuming relationship with a charming, untrustworthy older man. Joanna Hogg’s exacting memory-piece."
   },
   {
     "id": "saint-maud",
@@ -143,7 +143,7 @@ export const FILMS = [
     "year": 2019,
     "genre": "Horror",
     "director": "Rose Glass",
-    "synopsis": "A devout hospice nurse becomes convinced God has a mission for her dying patient's soul. Rose Glass's razor-wire debut about faith curdling into obsession."
+    "synopsis": "A devout hospice nurse becomes convinced God has a mission for her dying patient’s soul. Rose Glass’s razor-wire debut about faith curdling into obsession."
   },
   {
     "id": "aftersun",
@@ -159,7 +159,7 @@ export const FILMS = [
     "year": 2003,
     "genre": "Documentary",
     "director": "Kevin Macdonald",
-    "synopsis": "Two climbers, one rope, an impossible decision in the Peruvian Andes — and the crawl back that shouldn't have been survivable. Docudrama at its most gripping."
+    "synopsis": "Two climbers, one rope, an impossible decision in the Peruvian Andes — and the crawl back that shouldn’t have been survivable. Docudrama at its most gripping."
   },
   {
     "id": "senna",
@@ -167,7 +167,7 @@ export const FILMS = [
     "year": 2010,
     "genre": "Documentary",
     "director": "Asif Kapadia",
-    "synopsis": "Ayrton Senna's decade in Formula One — faith, genius, politics and the weekend at Imola — told entirely through archive footage."
+    "synopsis": "Ayrton Senna’s decade in Formula One — faith, genius, politics and the weekend at Imola — told entirely through archive footage."
   },
   {
     "id": "a-matter-of-life-and-death",
@@ -175,7 +175,7 @@ export const FILMS = [
     "year": 1946,
     "genre": "Fantasy",
     "director": "Powell & Pressburger",
-    "synopsis": "A burning RAF pilot bails out without a parachute, survives by a clerical error in heaven, and must argue for his life — and his new love — before a celestial court. Powell & Pressburger flip Technico"
+    "synopsis": "A burning RAF pilot bails out without a parachute, survives by a clerical error in heaven, and must argue for his life — and his new love — before a celestial court. Powell & Pressburger flip Technico"
   },
   {
     "id": "the-fallen-idol",
@@ -183,7 +183,7 @@ export const FILMS = [
     "year": 1948,
     "genre": "Thriller",
     "director": "Carol Reed",
-    "synopsis": "A diplomat's lonely young son worships the embassy butler — and then thinks he's seen him kill. Carol Reed and Graham Greene turn a child's misreading of the adult world into an exquisitely tense thri"
+    "synopsis": "A diplomat’s lonely young son worships the embassy butler — and then thinks he’s seen him kill. Carol Reed and Graham Greene turn a child’s misreading of the adult world into an exquisitely tense thri"
   },
   {
     "id": "a-canterbury-tale",
@@ -191,7 +191,7 @@ export const FILMS = [
     "year": 1944,
     "genre": "Drama",
     "director": "Powell & Pressburger",
-    "synopsis": "A landgirl, a GI and a British sergeant chase a phantom \"glue man\" through wartime Kent in Powell & Pressburger's strangest, most pantheistic film — a mystery that dissolves into a hymn to English lan"
+    "synopsis": "A landgirl, a GI and a British sergeant chase a phantom \"glue man\" through wartime Kent in Powell & Pressburger’s strangest, most pantheistic film — a mystery that dissolves into a hymn to English lan"
   },
   {
     "id": "kind-hearts-and-coronets",
@@ -199,7 +199,7 @@ export const FILMS = [
     "year": 1949,
     "genre": "Comedy",
     "director": "Robert Hamer",
-    "synopsis": "A disinherited draper's son murders his way through the eight relatives between him and a dukedom — all of them played by Alec Guinness. The wittiest, most elegantly amoral comedy Ealing ever made, na"
+    "synopsis": "A disinherited draper’s son murders his way through the eight relatives between him and a dukedom — all of them played by Alec Guinness. The wittiest, most elegantly amoral comedy Ealing ever made, na"
   },
   {
     "id": "the-lavender-hill-mob",
@@ -207,7 +207,7 @@ export const FILMS = [
     "year": 1951,
     "genre": "Comedy",
     "director": "Charles Crichton",
-    "synopsis": "Alec Guinness plays a timid bank clerk who has spent twenty grey years guarding gold he will never own — then quietly decides to steal all of it. The most genteelly subversive of the Ealing comedies, "
+    "synopsis": "Alec Guinness plays a timid bank clerk who has spent twenty grey years guarding gold he will never own — then quietly decides to steal all of it. The most genteelly subversive of the Ealing comedies, "
   },
   {
     "id": "the-ladykillers",
@@ -215,7 +215,7 @@ export const FILMS = [
     "year": 1955,
     "genre": "Comedy",
     "director": "Alexander Mackendrick",
-    "synopsis": "A gang of crooks rents a room from a tiny, oblivious old widow and is slowly undone by her gentility. The last great Ealing comedy, and the cruellest — a pitch-black fable about a postwar England too "
+    "synopsis": "A gang of crooks rents a room from a tiny, oblivious old widow and is slowly undone by her gentility. The last great Ealing comedy, and the cruellest — a pitch-black fable about a postwar England too "
   },
   {
     "id": "richard-iii",
@@ -223,7 +223,7 @@ export const FILMS = [
     "year": 1955,
     "genre": "History",
     "director": "Laurence Olivier",
-    "synopsis": "Olivier directs himself as Shakespeare's hunchbacked schemer, confiding every murder to the camera with a black, delighted wink. The most purely entertaining of the great Shakespeare films, in sumptuo"
+    "synopsis": "Olivier directs himself as Shakespeare’s hunchbacked schemer, confiding every murder to the camera with a black, delighted wink. The most purely entertaining of the great Shakespeare films, in sumptuo"
   },
   {
     "id": "saturday-night-and-sunday-morning",
@@ -231,7 +231,7 @@ export const FILMS = [
     "year": 1960,
     "genre": "Drama",
     "director": "Karel Reisz",
-    "synopsis": "Albert Finney's Nottingham lathe-operator drinks, brawls and beds another man's wife on his wages, determined not to let the bastards grind him down. The film that detonated the British New Wave — ang"
+    "synopsis": "Albert Finney’s Nottingham lathe-operator drinks, brawls and beds another man’s wife on his wages, determined not to let the bastards grind him down. The film that detonated the British New Wave — ang"
   },
   {
     "id": "the-innocents",
@@ -239,7 +239,7 @@ export const FILMS = [
     "year": 1961,
     "genre": "Horror",
     "director": "Jack Clayton",
-    "synopsis": "Deborah Kerr's governess arrives to mind two angelic children and becomes convinced the dead are walking — though the film never lets us decide whether the ghosts are real or hers. The best British gh"
+    "synopsis": "Deborah Kerr’s governess arrives to mind two angelic children and becomes convinced the dead are walking — though the film never lets us decide whether the ghosts are real or hers. The best British gh"
   },
   {
     "id": "this-sporting-life",
@@ -247,7 +247,7 @@ export const FILMS = [
     "year": 1963,
     "genre": "Drama",
     "director": "Lindsay Anderson",
-    "synopsis": "Richard Harris is a Yorkshire miner turned brutal rugby-league star who can flatten any man on the pitch but can't reach the widow he loves. The rawest, most anguished of the kitchen-sink dramas."
+    "synopsis": "Richard Harris is a Yorkshire miner turned brutal rugby-league star who can flatten any man on the pitch but can’t reach the widow he loves. The rawest, most anguished of the kitchen-sink dramas."
   },
   {
     "id": "the-servant",
@@ -255,7 +255,7 @@ export const FILMS = [
     "year": 1963,
     "genre": "Drama",
     "director": "Joseph Losey",
-    "synopsis": "Dirk Bogarde's manservant moves into a young aristocrat's townhouse and, with Pinter's poison-velvet dialogue, inverts master and servant until the whole class order curdles. Losey's chilliest film."
+    "synopsis": "Dirk Bogarde’s manservant moves into a young aristocrat’s townhouse and, with Pinter’s poison-velvet dialogue, inverts master and servant until the whole class order curdles. Losey’s chilliest film."
   },
   {
     "id": "zulu",
@@ -263,7 +263,7 @@ export const FILMS = [
     "year": 1964,
     "genre": "History",
     "director": "Cy Endfield",
-    "synopsis": "January 1879: a hundred-odd British soldiers hold a mission station at Rorke's Drift against four thousand Zulu warriors. Endfield stages the siege with overwhelming scale and a surprising lack of jin"
+    "synopsis": "January 1879: a hundred-odd British soldiers hold a mission station at Rorke’s Drift against four thousand Zulu warriors. Endfield stages the siege with overwhelming scale and a surprising lack of jin"
   },
   {
     "id": "kes",
@@ -271,7 +271,7 @@ export const FILMS = [
     "year": 1969,
     "genre": "Drama",
     "director": "Ken Loach",
-    "synopsis": "A bullied Barnsley schoolboy, written off by everyone, finds the one thing that's his alone: a kestrel he trains from the nest. Loach's tender, unsparing landmark of British realism — and the kindest "
+    "synopsis": "A bullied Barnsley schoolboy, written off by everyone, finds the one thing that’s his alone: a kestrel he trains from the nest. Loach’s tender, unsparing landmark of British realism — and the kindest "
   },
   {
     "id": "performance",
@@ -279,7 +279,7 @@ export const FILMS = [
     "year": 1970,
     "genre": "Crime",
     "director": "Donald Cammell & Nicolas Roeg",
-    "synopsis": "A gangster and a faded rock star (James Fox and Mick Jagger) dissolve into one another in a Notting Hill basement. The film that broke the British crime picture open and let the sixties bleed out — Ro"
+    "synopsis": "A gangster and a faded rock star (James Fox and Mick Jagger) dissolve into one another in a Notting Hill basement. The film that broke the British crime picture open and let the sixties bleed out — Ro"
   },
   {
     "id": "walkabout",
@@ -295,7 +295,7 @@ export const FILMS = [
     "year": 1971,
     "genre": "Horror",
     "director": "Ken Russell",
-    "synopsis": "Ken Russell's still-mutilated masterpiece torches the line between the sacred and the obscene as a 17th-century priest burns for politics dressed as witchcraft. Oliver Reed has never been more magnifi"
+    "synopsis": "Ken Russell’s still-mutilated masterpiece torches the line between the sacred and the obscene as a 17th-century priest burns for politics dressed as witchcraft. Oliver Reed has never been more magnifi"
   },
   {
     "id": "get-carter",
@@ -303,7 +303,7 @@ export const FILMS = [
     "year": 1971,
     "genre": "Crime",
     "director": "Mike Hodges",
-    "synopsis": "A London enforcer rides north to bury his brother and won't accept it was an accident. Hodges shoots Newcastle in cold daylight and Michael Caine plays Jack Carter as a beautifully tailored shark — th"
+    "synopsis": "A London enforcer rides north to bury his brother and won’t accept it was an accident. Hodges shoots Newcastle in cold daylight and Michael Caine plays Jack Carter as a beautifully tailored shark — th"
   },
   {
     "id": "the-long-good-friday",
@@ -311,7 +311,7 @@ export const FILMS = [
     "year": 1980,
     "genre": "Crime",
     "director": "John Mackenzie",
-    "synopsis": "A London crime boss with dreams of going legit watches his empire detonate over one Easter weekend — and never sees who's really pulling it apart. Bob Hoskins is volcanic, and the final shot is one of"
+    "synopsis": "A London crime boss with dreams of going legit watches his empire detonate over one Easter weekend — and never sees who’s really pulling it apart. Bob Hoskins is volcanic, and the final shot is one of"
   },
   {
     "id": "the-draughtsmans-contract",
@@ -319,7 +319,7 @@ export const FILMS = [
     "year": 1982,
     "genre": "Mystery",
     "director": "Peter Greenaway",
-    "synopsis": "Greenaway's wickedly formal country-house puzzle, where every drawing is evidence and every line of dialogue a trap, scored by Michael Nyman's clockwork menace. The most ravishing film ever made about"
+    "synopsis": "Greenaway’s wickedly formal country-house puzzle, where every drawing is evidence and every line of dialogue a trap, scored by Michael Nyman’s clockwork menace. The most ravishing film ever made about"
   },
   {
     "id": "mona-lisa",
@@ -327,7 +327,7 @@ export const FILMS = [
     "year": 1986,
     "genre": "Crime",
     "director": "Neil Jordan",
-    "synopsis": "Bob Hoskins, never better, drives a high-class call girl through a neon-rotted London he can't read, falling for a woman who is using him. Neil Jordan's heartbroken neo-noir — tender and merciless at "
+    "synopsis": "Bob Hoskins, never better, drives a high-class call girl through a neon-rotted London he can’t read, falling for a woman who is using him. Neil Jordan’s heartbroken neo-noir — tender and merciless at "
   },
   {
     "id": "distant-voices-still-lives",
@@ -335,7 +335,7 @@ export const FILMS = [
     "year": 1988,
     "genre": "Drama",
     "director": "Terence Davies",
-    "synopsis": "Terence Davies remembers his Liverpool childhood not as a story but as a hymn-book — a violent father, a steadfast mother, and a working-class family who sing through everything. One of the most beaut"
+    "synopsis": "Terence Davies remembers his Liverpool childhood not as a story but as a hymn-book — a violent father, a steadfast mother, and a working-class family who sing through everything. One of the most beaut"
   },
   {
     "id": "ratcatcher",
@@ -343,7 +343,7 @@ export const FILMS = [
     "year": 1999,
     "genre": "Drama",
     "director": "Lynne Ramsay",
-    "synopsis": "Lynne Ramsay's astonishing debut sets a guilt-haunted boy adrift in a rubbish-strewn Glasgow during the 1973 bin strike, where squalor and tenderness share the same frame. Spare, lyrical and almost un"
+    "synopsis": "Lynne Ramsay’s astonishing debut sets a guilt-haunted boy adrift in a rubbish-strewn Glasgow during the 1973 bin strike, where squalor and tenderness share the same frame. Spare, lyrical and almost un"
   },
   {
     "id": "this-is-england",
@@ -359,7 +359,7 @@ export const FILMS = [
     "year": 2006,
     "genre": "Thriller",
     "director": "Andrea Arnold",
-    "synopsis": "A Glasgow CCTV operator spots a face on her monitors she had hoped never to see again, and lets surveillance curdle into pursuit. Andrea Arnold's ferocious debut turns the panopticon of the city into "
+    "synopsis": "A Glasgow CCTV operator spots a face on her monitors she had hoped never to see again, and lets surveillance curdle into pursuit. Andrea Arnold’s ferocious debut turns the panopticon of the city into "
   },
   {
     "id": "we-need-to-talk-about-kevin",
@@ -367,7 +367,7 @@ export const FILMS = [
     "year": 2011,
     "genre": "Thriller",
     "director": "Lynne Ramsay",
-    "synopsis": "Tilda Swinton burns slow and cold as a mother sifting the wreckage of her son's atrocity for the moment it all went wrong. Ramsay films guilt as a colour — relentless arterial red — in a fractured, ne"
+    "synopsis": "Tilda Swinton burns slow and cold as a mother sifting the wreckage of her son’s atrocity for the moment it all went wrong. Ramsay films guilt as a colour — relentless arterial red — in a fractured, ne"
   },
   {
     "id": "weekend",
@@ -391,7 +391,7 @@ export const FILMS = [
     "year": 2015,
     "genre": "Documentary",
     "director": "Asif Kapadia",
-    "synopsis": "Asif Kapadia assembles a damning portrait almost entirely from archive — home video, voicemails, paparazzi footage — letting Amy Winehouse's own voice indict the industry and intimates that fed on her"
+    "synopsis": "Asif Kapadia assembles a damning portrait almost entirely from archive — home video, voicemails, paparazzi footage — letting Amy Winehouse’s own voice indict the industry and intimates that fed on her"
   },
   {
     "id": "i-daniel-blake",
@@ -399,7 +399,7 @@ export const FILMS = [
     "year": 2016,
     "genre": "Drama",
     "director": "Ken Loach",
-    "synopsis": "A widowed Newcastle joiner, ruled fit to work by a system that has just told his heart otherwise, is ground between a benefits bureaucracy and his own stubborn decency. Loach's Palme d'Or winner — pla"
+    "synopsis": "A widowed Newcastle joiner, ruled fit to work by a system that has just told his heart otherwise, is ground between a benefits bureaucracy and his own stubborn decency. Loach’s Palme d’Or winner — pla"
   },
   {
     "id": "gods-own-country",
@@ -407,7 +407,7 @@ export const FILMS = [
     "year": 2017,
     "genre": "Romance",
     "director": "Francis Lee",
-    "synopsis": "On a hard, wind-scoured Yorkshire hill farm, a young man numbs himself with drink and joyless sex until a Romanian migrant worker arrives for lambing season. Francis Lee's astonishing debut is a love "
+    "synopsis": "On a hard, wind-scoured Yorkshire hill farm, a young man numbs himself with drink and joyless sex until a Romanian migrant worker arrives for lambing season. Francis Lee’s astonishing debut is a love "
   },
   {
     "id": "bait",
@@ -415,7 +415,7 @@ export const FILMS = [
     "year": 2019,
     "genre": "Drama",
     "director": "Mark Jenkin",
-    "synopsis": "Shot on a hand-cranked Bolex and hand-processed onto 16mm monochrome, Mark Jenkin's debut watches a Cornish cove fisherman lose his harbour to second-homers and the tourist trade. It looks like a reli"
+    "synopsis": "Shot on a hand-cranked Bolex and hand-processed onto 16mm monochrome, Mark Jenkin’s debut watches a Cornish cove fisherman lose his harbour to second-homers and the tourist trade. It looks like a reli"
   },
   {
     "id": "trainspotting",
@@ -423,7 +423,7 @@ export const FILMS = [
     "year": 1996,
     "genre": "Crime",
     "director": "Danny Boyle",
-    "synopsis": "Renton wants off heroin and out of Edinburgh, but Sick Boy, Spud and the psychotic Begbie keep dragging him back under. Danny Boyle's needle-sharp blast of a film — funny, horrifying, impossible to sh"
+    "synopsis": "Renton wants off heroin and out of Edinburgh, but Sick Boy, Spud and the psychotic Begbie keep dragging him back under. Danny Boyle’s needle-sharp blast of a film — funny, horrifying, impossible to sh"
   },
   {
     "id": "hunger",
@@ -431,7 +431,7 @@ export const FILMS = [
     "year": 2008,
     "genre": "Drama",
     "director": "Steve McQueen",
-    "synopsis": "Inside the Maze prison in 1981, IRA prisoner Bobby Sands turns his own body into the last weapon he has left. Steve McQueen's debut is brutal, near-wordless and unbearably still."
+    "synopsis": "Inside the Maze prison in 1981, IRA prisoner Bobby Sands turns his own body into the last weapon he has left. Steve McQueen’s debut is brutal, near-wordless and unbearably still."
   },
   {
     "id": "local-hero",
@@ -439,7 +439,7 @@ export const FILMS = [
     "year": 1983,
     "genre": "Comedy",
     "director": "Bill Forsyth",
-    "synopsis": "An American oil man flies to a tiny Scottish village to buy the whole place — and slowly forgets why he ever wanted to leave. Bill Forsyth's gentlest comedy, full of northern lights and quiet ache."
+    "synopsis": "An American oil man flies to a tiny Scottish village to buy the whole place — and slowly forgets why he ever wanted to leave. Bill Forsyth’s gentlest comedy, full of northern lights and quiet ache."
   },
   {
     "id": "a-taste-of-honey",
@@ -447,7 +447,7 @@ export const FILMS = [
     "year": 1961,
     "genre": "Drama",
     "director": "Tony Richardson",
-    "synopsis": "A Salford teenager, pregnant and on her own, sets up home with a gentle gay art student while her mother chases men. Tony Richardson's tender landmark of the British New Wave, shot in real back-street"
+    "synopsis": "A Salford teenager, pregnant and on her own, sets up home with a gentle gay art student while her mother chases men. Tony Richardson’s tender landmark of the British New Wave, shot in real back-street"
   },
   {
     "id": "the-loneliness-of-the-long-distance-runner",
@@ -455,7 +455,7 @@ export const FILMS = [
     "year": 1962,
     "genre": "Drama",
     "director": "Tony Richardson",
-    "synopsis": "A borstal boy with a gift for running is groomed by the governor for a big race — and decides exactly what to do with his lead. Tom Courtenay's breakthrough, and one of the great two-fingered endings."
+    "synopsis": "A borstal boy with a gift for running is groomed by the governor for a big race — and decides exactly what to do with his lead. Tom Courtenay’s breakthrough, and one of the great two-fingered endings."
   },
   {
     "id": "my-beautiful-laundrette",
@@ -463,7 +463,7 @@ export const FILMS = [
     "year": 1985,
     "genre": "Drama",
     "director": "Stephen Frears",
-    "synopsis": "A young British-Pakistani man and his ex-skinhead lover do up a run-down London launderette while Thatcher's Britain seethes around them. Stephen Frears and Hanif Kureishi made something funny, frank "
+    "synopsis": "A young British-Pakistani man and his ex-skinhead lover do up a run-down London launderette while Thatcher’s Britain seethes around them. Stephen Frears and Hanif Kureishi made something funny, frank "
   },
   {
     "id": "secrets-and-lies",
@@ -471,7 +471,7 @@ export const FILMS = [
     "year": 1996,
     "genre": "Drama",
     "director": "Mike Leigh",
-    "synopsis": "A successful Black optician traces her birth mother and finds a frazzled white factory worker who never told a soul. Mike Leigh coaxes the year's most devastating performances out of an ordinary front"
+    "synopsis": "A successful Black optician traces her birth mother and finds a frazzled white factory worker who never told a soul. Mike Leigh coaxes the year’s most devastating performances out of an ordinary front"
   },
   {
     "id": "repulsion",
@@ -479,7 +479,7 @@ export const FILMS = [
     "year": 1965,
     "genre": "Horror",
     "director": "Roman Polanski",
-    "synopsis": "Left alone in her sister's South Kensington flat, a withdrawn young woman comes quietly, terrifyingly apart. Roman Polanski's first English film turns wallpaper, cracks and silence into pure dread."
+    "synopsis": "Left alone in her sister’s South Kensington flat, a withdrawn young woman comes quietly, terrifyingly apart. Roman Polanski’s first English film turns wallpaper, cracks and silence into pure dread."
   },
   {
     "id": "the-elephant-man",
@@ -487,7 +487,7 @@ export const FILMS = [
     "year": 1980,
     "genre": "Drama",
     "director": "David Lynch",
-    "synopsis": "In Victorian London a surgeon rescues Joseph Merrick from a freak show and discovers the gentle, cultured man underneath. David Lynch shot it in stately black and white — and broke a generation's hear"
+    "synopsis": "In Victorian London a surgeon rescues Joseph Merrick from a freak show and discovers the gentle, cultured man underneath. David Lynch shot it in stately black and white — and broke a generation’s hear"
   },
   {
     "id": "quadrophenia",
@@ -495,7 +495,7 @@ export const FILMS = [
     "year": 1979,
     "genre": "Drama",
     "director": "Franc Roddam",
-    "synopsis": "Jimmy trades a dead-end job for scooters, pills and the Mod tribe, then chases the dream to a Brighton seafront brawl. Franc Roddam's furious snapshot of belonging to something that can't hold you."
+    "synopsis": "Jimmy trades a dead-end job for scooters, pills and the Mod tribe, then chases the dream to a Brighton seafront brawl. Franc Roddam’s furious snapshot of belonging to something that can’t hold you."
   },
   {
     "id": "fish-tank",
@@ -503,7 +503,7 @@ export const FILMS = [
     "year": 2009,
     "genre": "Drama",
     "director": "Andrea Arnold",
-    "synopsis": "A volatile fifteen-year-old on an Essex estate dances alone in an empty flat until her mum's new boyfriend starts paying attention. Andrea Arnold films it raw and close, with Katie Jarvis a revelation"
+    "synopsis": "A volatile fifteen-year-old on an Essex estate dances alone in an empty flat until her mum’s new boyfriend starts paying attention. Andrea Arnold films it raw and close, with Katie Jarvis a revelation"
   },
   {
     "id": "tyrannosaur",
@@ -511,7 +511,7 @@ export const FILMS = [
     "year": 2011,
     "genre": "Drama",
     "director": "Paddy Considine",
-    "synopsis": "A man eaten alive by his own rage finds something like grace in a charity-shop volunteer hiding her own bruises. Paddy Considine's directorial debut is hard to watch and harder to forget."
+    "synopsis": "A man eaten alive by his own rage finds something like grace in a charity-shop volunteer hiding her own bruises. Paddy Considine’s directorial debut is hard to watch and harder to forget."
   },
   {
     "id": "kill-list",
@@ -519,7 +519,7 @@ export const FILMS = [
     "year": 2011,
     "genre": "Horror",
     "director": "Ben Wheatley",
-    "synopsis": "An ex-soldier takes one last contract-killing job with an old mate, and the work turns stranger and darker with every name. Ben Wheatley's dread-soaked thriller that detours somewhere you won't see co"
+    "synopsis": "An ex-soldier takes one last contract-killing job with an old mate, and the work turns stranger and darker with every name. Ben Wheatley’s dread-soaked thriller that detours somewhere you won’t see co"
   },
   {
     "id": "moon",
@@ -527,7 +527,7 @@ export const FILMS = [
     "year": 2009,
     "genre": "Sci-Fi",
     "director": "Duncan Jones",
-    "synopsis": "Three years alone mining the far side of the Moon, with only a soft-spoken computer for company, Sam Bell makes a discovery that unravels everything. Duncan Jones's lo-fi marvel — practical models, bi"
+    "synopsis": "Three years alone mining the far side of the Moon, with only a soft-spoken computer for company, Sam Bell makes a discovery that unravels everything. Duncan Jones’s lo-fi marvel — practical models, bi"
   },
   {
     "id": "pride",
@@ -535,7 +535,7 @@ export const FILMS = [
     "year": 2014,
     "genre": "Drama",
     "director": "Matthew Warchus",
-    "synopsis": "In 1984 a band of London lesbians and gays start raising money for striking Welsh miners — two worlds with no idea what to make of each other. Matthew Warchus turns a true story into the warmest crowd"
+    "synopsis": "In 1984 a band of London lesbians and gays start raising money for striking Welsh miners — two worlds with no idea what to make of each other. Matthew Warchus turns a true story into the warmest crowd"
   },
   {
     "id": "control",
@@ -543,7 +543,7 @@ export const FILMS = [
     "year": 2007,
     "genre": "Drama",
     "director": "Anton Corbijn",
-    "synopsis": "The short, fraught life of Ian Curtis — Macclesfield, marriage, epilepsy, Joy Division — rendered in stark monochrome. Photographer Anton Corbijn's first feature, with Sam Riley uncannily right."
+    "synopsis": "The short, fraught life of Ian Curtis — Macclesfield, marriage, epilepsy, Joy Division — rendered in stark monochrome. Photographer Anton Corbijn’s first feature, with Sam Riley uncannily right."
   },
   {
     "id": "24-hour-party-people",
@@ -551,7 +551,7 @@ export const FILMS = [
     "year": 2002,
     "genre": "Comedy",
     "director": "Michael Winterbottom",
-    "synopsis": "Tony Wilson narrates the rise and ruin of Manchester's Factory Records and the Haçienda, from punk to acid house. Michael Winterbottom's gleefully unreliable history of great music and spectacular bad"
+    "synopsis": "Tony Wilson narrates the rise and ruin of Manchester’s Factory Records and the Haçienda, from punk to acid house. Michael Winterbottom’s gleefully unreliable history of great music and spectacular bad"
   },
   {
     "id": "submarine",
@@ -559,7 +559,7 @@ export const FILMS = [
     "year": 2010,
     "genre": "Comedy",
     "director": "Richard Ayoade",
-    "synopsis": "A precocious Welsh fifteen-year-old schemes to lose his virginity and save his parents' marriage, narrating his own life as if it mattered enormously. Richard Ayoade's debut — deadpan, bookish and qui"
+    "synopsis": "A precocious Welsh fifteen-year-old schemes to lose his virginity and save his parents’ marriage, narrating his own life as if it mattered enormously. Richard Ayoade’s debut — deadpan, bookish and qui"
   },
   {
     "id": "the-favourite",
@@ -567,7 +567,7 @@ export const FILMS = [
     "year": 2018,
     "genre": "History",
     "director": "Yorgos Lanthimos",
-    "synopsis": "In the court of an ailing Queen Anne, two cousins claw and scheme to become the woman the crown can't do without. Yorgos Lanthimos's wicked, fish-eyed costume drama, with three actresses off the leash"
+    "synopsis": "In the court of an ailing Queen Anne, two cousins claw and scheme to become the woman the crown can’t do without. Yorgos Lanthimos’s wicked, fish-eyed costume drama, with three actresses off the leash"
   },
   {
     "id": "nil-by-mouth",
@@ -575,7 +575,7 @@ export const FILMS = [
     "year": 1997,
     "genre": "Drama",
     "director": "Gary Oldman",
-    "synopsis": "A South London family orbits Ray, a husband whose love and violence come from the same place. Gary Oldman wrote and directed this furious, autobiographical gut-punch — Kathy Burke and Ray Winstone are"
+    "synopsis": "A South London family orbits Ray, a husband whose love and violence come from the same place. Gary Oldman wrote and directed this furious, autobiographical gut-punch — Kathy Burke and Ray Winstone are"
   }
 ];
 

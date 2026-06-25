@@ -11,7 +11,7 @@ const STEPS = [
   {
     sel: '[data-tour="curator"]',
     title: 'Meet the Curator',
-    body: 'Describe a mood — “a tense noir about betrayal” — and the Curator answers with a few from the catalogue.',
+    body: 'Describe a mood — “a tense noir about betrayal” — and the Curator answers with a few from the catalogue.',
   },
 ];
 

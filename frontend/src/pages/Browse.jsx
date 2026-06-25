@@ -219,7 +219,7 @@ export default function Browse() {
           </span>
         </h2>
         {/* polite live region OUTSIDE the heading, so result-set changes —
-            including an empty result — are announced to screen readers */}
+            including an empty result — are announced to screen readers */}
         <p className="sr-only" role="status">
           {count === 0
             ? query

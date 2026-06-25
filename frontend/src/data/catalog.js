@@ -30,7 +30,7 @@ export const FILMS = [
     poster: poster('poster-third-man.jpg'),
     backdrop: still('still-third-man.jpg'),
     synopsis:
-      "Pulp novelist Holly Martins arrives in postwar Vienna to bury an old friend — and finds the city’s black market very much alive. Carol Reed’s shadow-soaked masterpiece of friendship and betrayal.",
+      "Pulp novelist Holly Martins arrives in postwar Vienna to bury an old friend — and finds the city’s black market very much alive. Carol Reed’s shadow-soaked masterpiece of friendship and betrayal.",
     director: 'Carol Reed',
     country: 'UK',
     language: 'English',
@@ -54,7 +54,7 @@ export const FILMS = [
     poster: poster('poster-brief-encounter.jpg'),
     director: 'David Lean',
     synopsis:
-      'A married woman and a doctor meet by chance in a railway station tearoom — and fall, impossibly, in love. Noël Coward and David Lean turn restraint itself into heartbreak.',
+      'A married woman and a doctor meet by chance in a railway station tearoom — and fall, impossibly, in love. Noël Coward and David Lean turn restraint itself into heartbreak.',
     rating: 8.0,
     certificate: 'PG',
     country: 'UK',
@@ -130,7 +130,7 @@ export const FILMS = [
     poster: poster('poster-peeping-tom.jpg'),
     director: 'Michael Powell',
     synopsis:
-      'A shy focus-puller films his victims as they die, hunting the perfect image of fear. The film that scandalised Britain in 1960 — and was rediscovered as a masterpiece.',
+      'A shy focus-puller films his victims as they die, hunting the perfect image of fear. The film that scandalised Britain in 1960 — and was rediscovered as a masterpiece.',
     rating: 7.6,
     certificate: '15',
     country: 'UK',
@@ -158,7 +158,7 @@ export const FILMS = [
     backdrop2: still('still-lawrence-of-arabia-2.jpg'),
     director: 'David Lean',
     synopsis:
-      "David Lean’s monumental account of T. E. Lawrence — archaeologist, soldier, enigma — and the desert war that made and unmade him.",
+      "David Lean’s monumental account of T. E. Lawrence — archaeologist, soldier, enigma — and the desert war that made and unmade him.",
     certificate: 'PG',
     country: 'UK',
     language: 'English',
@@ -305,7 +305,7 @@ export const FILMS = [
     poster: poster('poster-naked.jpg'),
     director: 'Mike Leigh',
     synopsis:
-      'Johnny talks his way through a long London night — brilliant, cruel, and burning down to the end of himself. Mike Leigh at his darkest; Thewlis at his best.',
+      'Johnny talks his way through a long London night — brilliant, cruel, and burning down to the end of himself. Mike Leigh at his darkest; Thewlis at his best.',
     rating: 7.7,
     certificate: '18',
     country: 'UK',
@@ -353,7 +353,7 @@ export const FILMS = [
     poster: poster('poster-billy-elliot.jpg'),
     director: 'Stephen Daldry',
     synopsis:
-      'During the miners’ strike, a boy from a Durham pit village trades boxing gloves for ballet shoes — against everything his family knows.',
+      'During the miners’ strike, a boy from a Durham pit village trades boxing gloves for ballet shoes — against everything his family knows.',
     rating: 7.7,
     certificate: '15',
     country: 'UK',
@@ -497,7 +497,7 @@ export const FILMS = [
     poster: poster('poster-touching-the-void.jpg'),
     director: 'Kevin Macdonald',
     synopsis:
-      'Two climbers, one rope, an impossible decision in the Peruvian Andes — and the crawl back that shouldn’t have been survivable. Docudrama at its most gripping.',
+      'Two climbers, one rope, an impossible decision in the Peruvian Andes — and the crawl back that shouldn’t have been survivable. Docudrama at its most gripping.',
     rating: 8.0,
     certificate: '15',
     country: 'UK',
@@ -520,7 +520,7 @@ export const FILMS = [
     poster: poster('poster-senna.jpg'),
     director: 'Asif Kapadia',
     synopsis:
-      'Ayrton Senna’s decade in Formula One — faith, genius, politics and the weekend at Imola — told entirely through archive footage.',
+      'Ayrton Senna’s decade in Formula One — faith, genius, politics and the weekend at Imola — told entirely through archive footage.',
     rating: 8.5,
     certificate: '12A',
     country: 'UK',
@@ -543,7 +543,7 @@ export const FILMS = [
     poster: poster('poster-a-matter-of-life-and-death.jpg'),
     director: 'Powell & Pressburger',
     synopsis:
-      'A burning RAF pilot bails out without a parachute, survives by a clerical error in heaven, and must argue for his life — and his new love — before a celestial court. Powell & Pressburger flip Technicolor earth against monochrome eternity in their most romantic English fantasy.',
+      'A burning RAF pilot bails out without a parachute, survives by a clerical error in heaven, and must argue for his life — and his new love — before a celestial court. Powell & Pressburger flip Technicolor earth against monochrome eternity in their most romantic English fantasy.',
     certificate: 'U',
     country: 'UK',
     language: 'English',
@@ -568,7 +568,7 @@ export const FILMS = [
     poster: poster('poster-the-fallen-idol.jpg'),
     director: 'Carol Reed',
     synopsis:
-      'A diplomat’s lonely young son worships the embassy butler — and then thinks he’s seen him kill. Carol Reed and Graham Greene turn a child’s misreading of the adult world into an exquisitely tense thriller of marble staircases and dread.',
+      'A diplomat’s lonely young son worships the embassy butler — and then thinks he’s seen him kill. Carol Reed and Graham Greene turn a child’s misreading of the adult world into an exquisitely tense thriller of marble staircases and dread.',
     certificate: 'PG',
     country: 'UK',
     language: 'English',
@@ -593,7 +593,7 @@ export const FILMS = [
     poster: poster('poster-a-canterbury-tale.jpg'),
     director: 'Powell & Pressburger',
     synopsis:
-      'A landgirl, a GI and a British sergeant chase a phantom "glue man" through wartime Kent in Powell & Pressburger’s strangest, most pantheistic film — a mystery that dissolves into a hymn to English landscape and continuity.',
+      'A landgirl, a GI and a British sergeant chase a phantom "glue man" through wartime Kent in Powell & Pressburger’s strangest, most pantheistic film — a mystery that dissolves into a hymn to English landscape and continuity.',
     certificate: 'U',
     country: 'UK',
     language: 'English',
@@ -618,7 +618,7 @@ export const FILMS = [
     poster: poster('poster-kind-hearts-and-coronets.jpg'),
     director: 'Robert Hamer',
     synopsis:
-      'A disinherited draper’s son murders his way through the eight relatives between him and a dukedom — all of them played by Alec Guinness. The wittiest, most elegantly amoral comedy Ealing ever made, narrated from the condemned cell with perfect manners.',
+      'A disinherited draper’s son murders his way through the eight relatives between him and a dukedom — all of them played by Alec Guinness. The wittiest, most elegantly amoral comedy Ealing ever made, narrated from the condemned cell with perfect manners.',
     certificate: 'PG',
     country: 'UK',
     language: 'English',
@@ -643,7 +643,7 @@ export const FILMS = [
     poster: poster('poster-the-lavender-hill-mob.jpg'),
     director: 'Charles Crichton',
     synopsis:
-      'Alec Guinness plays a timid bank clerk who has spent twenty grey years guarding gold he will never own — then quietly decides to steal all of it. The most genteelly subversive of the Ealing comedies, larceny as the last refuge of the put-upon Englishman.',
+      'Alec Guinness plays a timid bank clerk who has spent twenty grey years guarding gold he will never own — then quietly decides to steal all of it. The most genteelly subversive of the Ealing comedies, larceny as the last refuge of the put-upon Englishman.',
     certificate: 'U',
     country: 'UK',
     language: 'English',
@@ -668,7 +668,7 @@ export const FILMS = [
     poster: poster('poster-the-ladykillers.jpg'),
     director: 'Alexander Mackendrick',
     synopsis:
-      'A gang of crooks rents a room from a tiny, oblivious old widow and is slowly undone by her gentility. The last great Ealing comedy, and the cruellest — a pitch-black fable about a postwar England too polite to notice it’s being robbed.',
+      'A gang of crooks rents a room from a tiny, oblivious old widow and is slowly undone by her gentility. The last great Ealing comedy, and the cruellest — a pitch-black fable about a postwar England too polite to notice it’s being robbed.',
     certificate: 'U',
     country: 'UK',
     language: 'English',
@@ -717,7 +717,7 @@ export const FILMS = [
     poster: poster('poster-saturday-night-and-sunday-morning.jpg'),
     director: 'Karel Reisz',
     synopsis:
-      'Albert Finney’s Nottingham lathe-operator drinks, brawls and beds another man’s wife on his wages, determined not to let the bastards grind him down. The film that detonated the British New Wave — angry, randy and unapologetic.',
+      'Albert Finney’s Nottingham lathe-operator drinks, brawls and beds another man’s wife on his wages, determined not to let the bastards grind him down. The film that detonated the British New Wave — angry, randy and unapologetic.',
     certificate: '12',
     country: 'UK',
     language: 'English',
@@ -742,7 +742,7 @@ export const FILMS = [
     poster: poster('poster-the-innocents.jpg'),
     director: 'Jack Clayton',
     synopsis:
-      'Deborah Kerr’s governess arrives to mind two angelic children and becomes convinced the dead are walking — though the film never lets us decide whether the ghosts are real or hers. The best British ghost film ever made.',
+      'Deborah Kerr’s governess arrives to mind two angelic children and becomes convinced the dead are walking — though the film never lets us decide whether the ghosts are real or hers. The best British ghost film ever made.',
     certificate: '12A',
     country: 'UK',
     language: 'English',
@@ -842,7 +842,7 @@ export const FILMS = [
     poster: poster('poster-kes.jpg'),
     director: 'Ken Loach',
     synopsis:
-      'A bullied Barnsley schoolboy, written off by everyone, finds the one thing that’s his alone: a kestrel he trains from the nest. Loach’s tender, unsparing landmark of British realism — and the kindest film he ever made.',
+      'A bullied Barnsley schoolboy, written off by everyone, finds the one thing that’s his alone: a kestrel he trains from the nest. Loach’s tender, unsparing landmark of British realism — and the kindest film he ever made.',
     certificate: 'PG',
     country: 'UK',
     language: 'English',
@@ -867,7 +867,7 @@ export const FILMS = [
     poster: poster('poster-performance.jpg'),
     director: 'Donald Cammell & Nicolas Roeg',
     synopsis:
-      'A gangster and a faded rock star (James Fox and Mick Jagger) dissolve into one another in a Notting Hill basement. The film that broke the British crime picture open and let the sixties bleed out — Roeg’s fractured editing arrives fully formed.',
+      'A gangster and a faded rock star (James Fox and Mick Jagger) dissolve into one another in a Notting Hill basement. The film that broke the British crime picture open and let the sixties bleed out — Roeg’s fractured editing arrives fully formed.',
     certificate: '18',
     country: 'UK',
     language: 'English',
@@ -938,7 +938,7 @@ export const FILMS = [
     poster: poster('poster-get-carter.jpg'),
     director: 'Mike Hodges',
     synopsis:
-      'A London enforcer rides north to bury his brother and won’t accept it was an accident. Hodges shoots Newcastle in cold daylight and Michael Caine plays Jack Carter as a beautifully tailored shark — the British gangster film all the others are measured against.',
+      'A London enforcer rides north to bury his brother and won’t accept it was an accident. Hodges shoots Newcastle in cold daylight and Michael Caine plays Jack Carter as a beautifully tailored shark — the British gangster film all the others are measured against.',
     certificate: '18',
     country: 'UK',
     language: 'English',
@@ -961,7 +961,7 @@ export const FILMS = [
     poster: poster('poster-the-long-good-friday.jpg'),
     director: 'John Mackenzie',
     synopsis:
-      'A London crime boss with dreams of going legit watches his empire detonate over one Easter weekend — and never sees who’s really pulling it apart. Bob Hoskins is volcanic, and the final shot is one of British cinema’s great close-ups.',
+      'A London crime boss with dreams of going legit watches his empire detonate over one Easter weekend — and never sees who’s really pulling it apart. Bob Hoskins is volcanic, and the final shot is one of British cinema’s great close-ups.',
     certificate: '18',
     country: 'UK',
     language: 'English',
@@ -1011,7 +1011,7 @@ export const FILMS = [
     poster: poster('poster-mona-lisa.jpg'),
     director: 'Neil Jordan',
     synopsis:
-      'Bob Hoskins, never better, drives a high-class call girl through a neon-rotted London he can’t read, falling for a woman who is using him. Neil Jordan’s heartbroken neo-noir — tender and merciless at once.',
+      'Bob Hoskins, never better, drives a high-class call girl through a neon-rotted London he can’t read, falling for a woman who is using him. Neil Jordan’s heartbroken neo-noir — tender and merciless at once.',
     certificate: '18',
     country: 'UK',
     language: 'English',
@@ -1036,7 +1036,7 @@ export const FILMS = [
     poster: poster('poster-distant-voices-still-lives.jpg'),
     director: 'Terence Davies',
     synopsis:
-      'Terence Davies remembers his Liverpool childhood not as a story but as a hymn-book — a violent father, a steadfast mother, and a working-class family who sing through everything. One of the most beautiful films Britain has made.',
+      'Terence Davies remembers his Liverpool childhood not as a story but as a hymn-book — a violent father, a steadfast mother, and a working-class family who sing through everything. One of the most beautiful films Britain has made.',
     certificate: '15',
     country: 'UK',
     language: 'English',
@@ -1131,7 +1131,7 @@ export const FILMS = [
     poster: poster('poster-we-need-to-talk-about-kevin.jpg'),
     director: 'Lynne Ramsay',
     synopsis:
-      'Tilda Swinton burns slow and cold as a mother sifting the wreckage of her son’s atrocity for the moment it all went wrong. Ramsay films guilt as a colour — relentless arterial red — in a fractured, near-wordless nightmare.',
+      'Tilda Swinton burns slow and cold as a mother sifting the wreckage of her son’s atrocity for the moment it all went wrong. Ramsay films guilt as a colour — relentless arterial red — in a fractured, near-wordless nightmare.',
     certificate: '15',
     country: 'UK',
     language: 'English',
@@ -1204,7 +1204,7 @@ export const FILMS = [
     poster: poster('poster-amy.jpg'),
     director: 'Asif Kapadia',
     synopsis:
-      'Asif Kapadia assembles a damning portrait almost entirely from archive — home video, voicemails, paparazzi footage — letting Amy Winehouse’s own voice indict the industry and intimates that fed on her.',
+      'Asif Kapadia assembles a damning portrait almost entirely from archive — home video, voicemails, paparazzi footage — letting Amy Winehouse’s own voice indict the industry and intimates that fed on her.',
     certificate: '15',
     country: 'UK',
     language: 'English',
@@ -1220,7 +1220,7 @@ export const FILMS = [
     poster: poster('poster-i-daniel-blake.jpg'),
     director: 'Ken Loach',
     synopsis:
-      'A widowed Newcastle joiner, ruled fit to work by a system that has just told his heart otherwise, is ground between a benefits bureaucracy and his own stubborn decency. Loach’s Palme d’Or winner — plain, furious and unbearably humane.',
+      'A widowed Newcastle joiner, ruled fit to work by a system that has just told his heart otherwise, is ground between a benefits bureaucracy and his own stubborn decency. Loach’s Palme d’Or winner — plain, furious and unbearably humane.',
     certificate: '15',
     country: 'UK',
     language: 'English',
@@ -1296,7 +1296,7 @@ export const FILMS = [
     poster: poster('poster-trainspotting.jpg'),
     backdrop: still('still-trainspotting.jpg'),
     synopsis:
-      "Renton wants off heroin and out of Edinburgh, but Sick Boy, Spud and the psychotic Begbie keep dragging him back under. Danny Boyle’s needle-sharp blast of a film — funny, horrifying, impossible to shake.",
+      "Renton wants off heroin and out of Edinburgh, but Sick Boy, Spud and the psychotic Begbie keep dragging him back under. Danny Boyle’s needle-sharp blast of a film — funny, horrifying, impossible to shake.",
     director: 'Danny Boyle',
     country: 'UK',
     language: 'English',
@@ -1345,7 +1345,7 @@ export const FILMS = [
     poster: poster('poster-local-hero.jpg'),
     backdrop: still('still-local-hero.jpg'),
     synopsis:
-      "An American oil man flies to a tiny Scottish village to buy the whole place — and slowly forgets why he ever wanted to leave. Bill Forsyth’s gentlest comedy, full of northern lights and quiet ache.",
+      "An American oil man flies to a tiny Scottish village to buy the whole place — and slowly forgets why he ever wanted to leave. Bill Forsyth’s gentlest comedy, full of northern lights and quiet ache.",
     director: 'Bill Forsyth',
     country: 'UK',
     language: 'English',
@@ -1395,7 +1395,7 @@ export const FILMS = [
     poster: poster('poster-the-loneliness-of-the-long-distance-runner.jpg'),
     backdrop: still('still-the-loneliness-of-the-long-distance-runner.jpg'),
     synopsis:
-      "A borstal boy with a gift for running is groomed by the governor for a big race — and decides exactly what to do with his lead. Tom Courtenay’s breakthrough, and one of the great two-fingered endings.",
+      "A borstal boy with a gift for running is groomed by the governor for a big race — and decides exactly what to do with his lead. Tom Courtenay’s breakthrough, and one of the great two-fingered endings.",
     director: 'Tony Richardson',
     country: 'UK',
     language: 'English',
@@ -1495,7 +1495,7 @@ export const FILMS = [
     poster: poster('poster-the-elephant-man.jpg'),
     backdrop: still('still-the-elephant-man.jpg'),
     synopsis:
-      "In Victorian London a surgeon rescues Joseph Merrick from a freak show and discovers the gentle, cultured man underneath. David Lynch shot it in stately black and white — and broke a generation’s heart.",
+      "In Victorian London a surgeon rescues Joseph Merrick from a freak show and discovers the gentle, cultured man underneath. David Lynch shot it in stately black and white — and broke a generation’s heart.",
     director: 'David Lynch',
     country: 'UK',
     language: 'English',
@@ -1619,7 +1619,7 @@ export const FILMS = [
     poster: poster('poster-moon.jpg'),
     backdrop: still('still-moon.jpg'),
     synopsis:
-      "Three years alone mining the far side of the Moon, with only a soft-spoken computer for company, Sam Bell makes a discovery that unravels everything. Duncan Jones’s lo-fi marvel — practical models, big ideas, Sam Rockwell twice over.",
+      "Three years alone mining the far side of the Moon, with only a soft-spoken computer for company, Sam Bell makes a discovery that unravels everything. Duncan Jones’s lo-fi marvel — practical models, big ideas, Sam Rockwell twice over.",
     director: 'Duncan Jones',
     country: 'UK',
     language: 'English',
@@ -1644,7 +1644,7 @@ export const FILMS = [
     poster: poster('poster-pride.jpg'),
     backdrop: still('still-pride.jpg'),
     synopsis:
-      "In 1984 a band of London lesbians and gays start raising money for striking Welsh miners — two worlds with no idea what to make of each other. Matthew Warchus turns a true story into the warmest crowd-pleaser of its year.",
+      "In 1984 a band of London lesbians and gays start raising money for striking Welsh miners — two worlds with no idea what to make of each other. Matthew Warchus turns a true story into the warmest crowd-pleaser of its year.",
     director: 'Matthew Warchus',
     country: 'UK',
     language: 'English',
@@ -1669,7 +1669,7 @@ export const FILMS = [
     poster: poster('poster-control.jpg'),
     backdrop: still('still-control.jpg'),
     synopsis:
-      "The short, fraught life of Ian Curtis — Macclesfield, marriage, epilepsy, Joy Division — rendered in stark monochrome. Photographer Anton Corbijn’s first feature, with Sam Riley uncannily right.",
+      "The short, fraught life of Ian Curtis — Macclesfield, marriage, epilepsy, Joy Division — rendered in stark monochrome. Photographer Anton Corbijn’s first feature, with Sam Riley uncannily right.",
     director: 'Anton Corbijn',
     country: 'UK',
     language: 'English',
@@ -1719,7 +1719,7 @@ export const FILMS = [
     poster: poster('poster-submarine.jpg'),
     backdrop: still('still-submarine.jpg'),
     synopsis:
-      "A precocious Welsh fifteen-year-old schemes to lose his virginity and save his parents’ marriage, narrating his own life as if it mattered enormously. Richard Ayoade’s debut — deadpan, bookish and quietly tender.",
+      "A precocious Welsh fifteen-year-old schemes to lose his virginity and save his parents’ marriage, narrating his own life as if it mattered enormously. Richard Ayoade’s debut — deadpan, bookish and quietly tender.",
     director: 'Richard Ayoade',
     country: 'UK',
     language: 'English',
@@ -1769,7 +1769,7 @@ export const FILMS = [
     poster: poster('poster-nil-by-mouth.jpg'),
     backdrop: still('still-nil-by-mouth.jpg'),
     synopsis:
-      "A South London family orbits Ray, a husband whose love and violence come from the same place. Gary Oldman wrote and directed this furious, autobiographical gut-punch — Kathy Burke and Ray Winstone are extraordinary.",
+      "A South London family orbits Ray, a husband whose love and violence come from the same place. Gary Oldman wrote and directed this furious, autobiographical gut-punch — Kathy Burke and Ray Winstone are extraordinary.",
     director: 'Gary Oldman',
     country: 'UK',
     language: 'English',
@@ -1851,7 +1851,7 @@ export const RAILS = [
 export const EDITORIAL_PICK = {
   eyebrow: 'Editorial Pick',
   title: 'The Essential Ten',
-  dek: 'Ten films we keep returning to — the canon we’d hand a newcomer first',
+  dek: 'Ten films we keep returning to — the canon we’d hand a newcomer first',
   cta: 'Read the list',
   image: genreImg('genre-arthouse.jpg'),
   slug: 'best-2026',
@@ -1860,12 +1860,12 @@ export const EDITORIAL_PICK = {
 // One-line "why we picked it" notes for the Curated rail on Home — puts the
 // editorial point of view on the card itself, so curation reads at a glance.
 export const CURATED_NOTES = {
-  'the-wicker-man': 'Pagan dread in broad daylight — folk horror’s touchstone.',
+  'the-wicker-man': 'Pagan dread in broad daylight — folk horror’s touchstone.',
   'withnail-and-i': 'The most quotable disaster-holiday in British comedy.',
-  naked: 'Thewlis prowls a sleepless London — Leigh at his most merciless.',
+  naked: 'Thewlis prowls a sleepless London — Leigh at his most merciless.',
   'sexy-beast': 'Kingsley detonates as Don Logan; menace at the door.',
   'billy-elliot': 'Boxing gloves traded for ballet against the 1984 strike.',
-  'under-the-skin': 'Glazer’s alien adrift in Glasgow — hypnotic and wordless.',
+  'under-the-skin': 'Glazer’s alien adrift in Glasgow — hypnotic and wordless.',
   '45-years': 'A letter reopens an old grave; Rampling’s last look says all.',
 };
 
@@ -1874,16 +1874,16 @@ export const COLLECTIONS = {
     eyebrow: 'The Curator’s Canon',
     title: 'The Essential Ten',
     intro:
-      'The ten we’d start anyone with — restorations that arrived like new releases, and modern films already built to last. Each one earned a second, third, fourth watch.',
+      'The ten we’d start anyone with — restorations that arrived like new releases, and modern films already built to last. Each one earned a second, third, fourth watch.',
     cover: genreImg('genre-arthouse.jpg'),
     entries: [
-      ['aftersun', 'A camcorder holiday becomes the saddest film about memory in years — the one we kept coming back to.'],
+      ['aftersun', 'A camcorder holiday becomes the saddest film about memory in years — the one we kept coming back to.'],
       ['the-souvenir', 'Joanna Hogg’s exacting memory-piece: love as a slow, deliberate undoing.'],
       ['saint-maud', 'Faith curdles into obsession in 84 razor-wire minutes.'],
-      ['under-the-skin', 'An alien gaze turned on us — still the most hypnotic thing on the platform.'],
+      ['under-the-skin', 'An alien gaze turned on us — still the most hypnotic thing on the platform.'],
       ['45-years', 'A marriage subsides in a single week; Rampling’s final shot is the year’s best.'],
       ['the-red-shoes', 'The 4K restoration that played like the boldest new release of the year.'],
-      ['black-narcissus', 'Technicolor delirium, restored — altitude, wind and memory undoing a convent.'],
+      ['black-narcissus', 'Technicolor delirium, restored — altitude, wind and memory undoing a convent.'],
       ['the-third-man', 'Shadow-soaked Vienna, sharper than ever in the new transfer.'],
       ['lawrence-of-arabia', 'Still the widest screen cinema can offer.'],
       ['naked', 'Thewlis talks through one long London night; Leigh at his darkest.'],
@@ -1954,7 +1954,7 @@ export const EXTRAS = {
     meta: 'by A. Okonkwo · 12 lessons · 4h 30m · ★ 4.8',
     poster: genreImg('genre-poster-course.jpg'),
     synopsis:
-      'Twelve lessons on the invisible craft — rhythm, the cut on motion, the eyeline match, and how an edit makes you feel. Taught through the films in the NUX library.',
+      'Twelve lessons on the invisible craft — rhythm, the cut on motion, the eyeline match, and how an edit makes you feel. Taught through the films in the NUX library.',
     lessons: [
       { n: 1, title: 'Cutting on Motion', len: '18 min' },
       { n: 2, title: 'The Invisible Cut', len: '22 min' },

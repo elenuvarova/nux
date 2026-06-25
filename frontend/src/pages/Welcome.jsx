@@ -79,14 +79,14 @@ export default function Welcome() {
 
   return (
     <main className="welcome welcome--genres">
-      <div className="welcome-steps" role="group" aria-label="Onboarding progress — step 2 of 2">
+      <div className="welcome-steps" role="group" aria-label="Onboarding progress — step 2 of 2">
         <span className="welcome-dot" aria-hidden="true" />
         <span className="welcome-dot welcome-dot--active" aria-hidden="true" />
       </div>
       <h1 className="welcome-genres-title" tabIndex={-1} ref={headingRef}>
         What kinds of stories move you?
       </h1>
-      <p className="welcome-sub">Select all that apply — we’ll use this to personalise your feed.</p>
+      <p className="welcome-sub">Select all that apply — we’ll use this to personalise your feed.</p>
       <div className="welcome-grid" role="group" aria-label="Genres">
         {STOCKED_GENRES.map((g) => (
           <button

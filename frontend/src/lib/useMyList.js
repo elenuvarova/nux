@@ -85,11 +85,11 @@ function applyToggle(id, title) {
         // the write failed — undo the optimistic change and surface it rather
         // than letting the save silently not persist
         setIds(prev);
-        toast(adding ? 'Couldn’t save to My List — try again' : 'Couldn’t update My List — try again');
+        toast(adding ? 'Couldn’t save to My List — try again' : 'Couldn’t update My List — try again');
       });
   } else {
     localStorage.setItem(KEY, JSON.stringify(next));
-    successToast(); // guests have no server round-trip — the optimistic state is the truth
+    successToast(); // guests have no server round-trip — the optimistic state is the truth
   }
 }
 
