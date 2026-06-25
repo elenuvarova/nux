@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import HeroDome from './components/HeroDome.jsx';
 import { DIRECTORS, WALL, CURATOR, RAILS, FOTW, COLLECTIONS, poster, still } from './data/films.js';
 import { useTilt } from './lib/useTilt.js';
+import { track, scrollDepth } from './lib/analytics.js';
 
 const APP = 'https://app.nux.ontwrpn.com';
 
-// Rail slugs mostly match app film ids; two use short forms (the app ids carry "the-").
-const APP_FILM_ID = { 'third-man': 'the-third-man', 'red-shoes': 'the-red-shoes' };
-const filmHref = (slug) => `${APP}/film/${APP_FILM_ID[slug] || slug}`;
+// Deep-links use the REAL catalog id carried on each film (films.js is generated
+// from the app catalog), so every poster/tile resolves to a live app route.
+const filmHref = (id) => `${APP}/film/${id}`;
+const collectionHref = (c) => `${APP}/${c.kind === 'collection' ? 'collection' : 'film'}/${c.href}`;
 
 // Same play glyph as the app's primary "Play" button (rounded triangle) so the
 // CTA icon reads identically across the marketing site and the app.
@@ -26,7 +28,7 @@ const Slate = ({ n, label, center }) => (
 function RailCard({ f }) {
   const tilt = useTilt();
   return (
-    <a className="poster-card" href={filmHref(f.slug)}>
+    <a className="poster-card" href={filmHref(f.id)} onClick={() => track('rail_film_click', { id: f.id, title: f.title })}>
       <div className="poster-card-art" ref={tilt.ref} onPointerMove={tilt.onPointerMove} onPointerLeave={tilt.onPointerLeave} onBlur={tilt.onBlur}>
         <img src={poster(f.slug)} alt="" loading="lazy" width="200" height="300" />
         <span className="poster-card-badge">{f.genre}</span>
@@ -41,14 +43,25 @@ function RailCard({ f }) {
   );
 }
 
-// Footer newsletter — confirms on submit instead of silently swallowing it.
+// Footer newsletter — there's no list backend (NUX is a portfolio concept), so
+// the confirmation is honest about that rather than faking a subscription.
 function NewsletterForm() {
   const [done, setDone] = useState(false);
   return (
-    <form className="news-form" onSubmit={(e) => { e.preventDefault(); setDone(true); }}>
+    <form
+      className="news-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        track('newsletter_submit');
+        setDone(true);
+      }}
+    >
       <label htmlFor="news">A short letter when we add something worth your evening.</label>
       {done ? (
-        <p className="news-done" role="status">Thanks — you're on the list. Look out for the next letter.</p>
+        <p className="news-done" role="status">
+          This is the bit that would sign you up — NUX is a portfolio concept, so there’s no list to join yet.
+          Thanks for the interest, though.
+        </p>
       ) : (
         <div className="news-row">
           <input id="news" type="email" required placeholder="Email address" />
@@ -61,6 +74,15 @@ function NewsletterForm() {
 
 export default function App() {
   const [annual, setAnnual] = useState(true);
+  const proofRef = useRef(null);
+  const pricingRef = useRef(null);
+
+  // Scroll-depth beacons — how far down the page visitors actually get.
+  useEffect(() => {
+    const offProof = scrollDepth(proofRef.current, 'scroll_proof');
+    const offPricing = scrollDepth(pricingRef.current, 'scroll_pricing');
+    return () => { offProof(); offPricing(); };
+  }, []);
 
   return (
     <div className="page" id="top">
@@ -70,7 +92,7 @@ export default function App() {
         <a className="wordmark" href="#top">NUX</a>
         <nav className="nav-actions">
           <a className="nav-link" href={`${APP}/signin`}>Sign in</a>
-          <a className="btn btn-primary" href={`${APP}/welcome`}><PlayIcon /> Start watching</a>
+          <a className="btn btn-primary" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'nav' })}><PlayIcon /> Start watching</a>
         </nav>
       </header>
 
@@ -85,15 +107,15 @@ export default function App() {
               just films a person would actually put in front of you, and a curator that answers when you ask.
             </p>
             <div className="cta-row">
-              <a className="btn btn-primary btn-lg" href={`${APP}/welcome`}><PlayIcon /> Start watching</a>
-              <a className="link-arrow" href="#catalogue">Browse the catalogue <span>→</span></a>
+              <a className="btn btn-primary btn-lg" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'hero' })}><PlayIcon /> Start watching</a>
+              <a className="link-arrow" href="#catalogue" onClick={() => track('cta_browse_click', { location: 'hero' })}>Browse the catalogue <span>→</span></a>
             </div>
             <p className="hero-hint">drag to spin<span className="hint-cursor"> · move your cursor to look around</span></p>
           </div>
         </HeroDome>
 
         {/* N°01 — the library: poster wall as proof */}
-        <section className="proof" aria-labelledby="proof-h">
+        <section className="proof" aria-labelledby="proof-h" ref={proofRef}>
           <div className="wall" aria-hidden="true">
             {WALL.map((s) => <img key={s} src={poster(s)} alt="" loading="lazy" />)}
           </div>
@@ -117,7 +139,7 @@ export default function App() {
                 {' '}<em>Aftersun</em> for when you can take the ache. All three reward a grey afternoon.
               </p>
               <p className="curator-sign">— The NUX Curator</p>
-              <a className="link-arrow" href={`${APP}/welcome`}>Ask it yourself <span>→</span></a>
+              <a className="link-arrow" href={`${APP}/welcome`} onClick={() => track('curator_ask_click')}>Ask it yourself <span>→</span></a>
             </div>
             <ul className="picks">
               {CURATOR.picks.map((p) => (
@@ -142,7 +164,7 @@ export default function App() {
               <Slate n="03" label="The collection" />
               <h2 id="cat-h" className="section-title">This is the catalogue, not a teaser</h2>
             </div>
-            <a className="link-arrow" href={`${APP}/browse`}>Browse everything <span>→</span></a>
+            <a className="link-arrow" href={`${APP}/browse`} onClick={() => track('cta_browse_click', { location: 'catalogue' })}>Browse everything <span>→</span></a>
           </div>
 
           {RAILS.map((rail) => (
@@ -160,7 +182,7 @@ export default function App() {
         <section className="section fotw" aria-labelledby="fotw-h">
           <Slate n="04" label="The editors' room" />
           <h2 id="fotw-h" className="section-title">We'd rather show you one film properly than fifty in a hurry</h2>
-          <a className="fotw-card" href={`${APP}/film/${FOTW.slug}`}>
+          <a className="fotw-card" href={filmHref(FOTW.id)} onClick={() => track('rail_film_click', { id: FOTW.id, location: 'editors-room' })}>
             <div className="fotw-art" style={{ backgroundImage: `url(${FOTW.still})` }} aria-hidden="true" />
             <div className="fotw-body">
               <p className="fotw-meta">{FOTW.director} · {FOTW.year} · {FOTW.runtime}</p>
@@ -177,8 +199,8 @@ export default function App() {
           <h2 id="coll-h" className="section-title">Every rail has a point of{' '}view</h2>
           <div className="coll-stack">
             {COLLECTIONS.map((c, i) => (
-              <a className={`coll-tile t${i + 1}`} href={`${APP}/browse`} key={c.title}>
-                <img className="coll-still" src={still(c.slug)} alt="" loading="lazy" />
+              <a className={`coll-tile t${i + 1}`} href={collectionHref(c)} key={c.title} onClick={() => track('rail_film_click', { location: 'collections', title: c.title })}>
+                <img className="coll-still" src={still(c.still)} alt="" loading="lazy" />
                 <div className="coll-text">
                   <span className="coll-n">{String(i + 1).padStart(2, '0')}</span>
                   <h3 className="coll-title">{c.title}</h3>
@@ -211,7 +233,7 @@ export default function App() {
         </section>
 
         {/* N°06 — membership */}
-        <section className="section pricing" aria-labelledby="price-h">
+        <section className="section pricing" aria-labelledby="price-h" ref={pricingRef}>
           <Slate n="07" label="Membership" center />
           <h2 id="price-h" className="section-title center">Anyone can browse.<br />Members get the editors</h2>
           <div className="plans">
@@ -219,13 +241,13 @@ export default function App() {
               <p className="plan-name">Browse</p>
               <p className="plan-price">Free</p>
               <p className="plan-note">The whole catalogue, every film page, your own list — no account needed.</p>
-              <a className="link-arrow" href={`${APP}/browse`}>Browse the catalogue <span>→</span></a>
+              <a className="link-arrow" href={`${APP}/browse`} onClick={() => track('cta_browse_click', { location: 'pricing' })}>Browse the catalogue <span>→</span></a>
             </div>
             <div className="plan plan-member">
               <p className="plan-name">NUX Membership</p>
               <div className="toggle" role="group" aria-label="Billing period">
-                <button type="button" className={!annual ? 'on' : ''} onClick={() => setAnnual(false)} aria-pressed={!annual}>Monthly</button>
-                <button type="button" className={annual ? 'on' : ''} onClick={() => setAnnual(true)} aria-pressed={annual}>Annual <span className="save">Save 44%</span></button>
+                <button type="button" className={!annual ? 'on' : ''} onClick={() => { setAnnual(false); track('pricing_toggle', { period: 'monthly' }); }} aria-pressed={!annual}>Monthly</button>
+                <button type="button" className={annual ? 'on' : ''} onClick={() => { setAnnual(true); track('pricing_toggle', { period: 'annual' }); }} aria-pressed={annual}>Annual <span className="save">Save 44%</span></button>
               </div>
               <p className="plan-price">{annual ? <>£4.99<span className="per"> a month</span></> : <>£8.99<span className="per"> a month</span></>}</p>
               <p className="plan-note">{annual ? 'Billed annually at £59.88.' : 'Billed monthly.'} Everything in Browse, plus:</p>
@@ -235,7 +257,7 @@ export default function App() {
                 <li>Every film, no ads, ever</li>
                 <li>Download in HD for the train · two screens at once</li>
               </ul>
-              <a className="btn btn-primary btn-block" href={`${APP}/welcome`}><PlayIcon /> Start watching</a>
+              <a className="btn btn-primary btn-block" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'pricing' })}><PlayIcon /> Start watching</a>
               <p className="plan-reassure">Free for 14 days. Nothing charged today — cancel anytime.</p>
             </div>
           </div>
@@ -255,7 +277,7 @@ export default function App() {
         <section className="final-cta">
           <Slate n="08" label="Now showing" center />
           <h2 className="final-line">The lights are down.<br />Put something good on</h2>
-          <a className="btn btn-primary btn-lg" href={`${APP}/welcome`}><PlayIcon /> Start watching</a>
+          <a className="btn btn-primary btn-lg" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'final' })}><PlayIcon /> Start watching</a>
         </section>
 
         {/* Director marquee — end-credits band of directors, just before the footer */}

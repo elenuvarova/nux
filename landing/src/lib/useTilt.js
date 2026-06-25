@@ -1,23 +1,38 @@
 import { useRef, useCallback, useEffect } from 'react';
 
-/* Pointer-driven 3D tilt + a warm sheen that follows the cursor — ported from the
-   app so the landing's poster cards behave identically. Mouse-only, GPU-cheap. */
+/* Pointer-driven 3D tilt + a warm sheen that follows the cursor — ported 1:1 from
+   the app (frontend/src/lib/useTilt.js) so the landing's poster cards behave
+   identically. Returns props to spread on the element that should tilt.
+   Pointer-only (no tilt on touch / reduced-motion), GPU-cheap (transform + a CSS
+   var). Reduced-motion is cached in a ref and kept fresh via the media-query
+   change event, rather than re-read on every pointer move. */
 export function useTilt({ max = 7 } = {}) {
   const ref = useRef(null);
   const raf = useRef(0);
+  const reduce = useRef(false);
 
-  useEffect(() => () => cancelAnimationFrame(raf.current), []);
+  // cancel any queued frame if the element unmounts mid-tilt so the callback
+  // never runs against a detached node
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    reduce.current = mq.matches;
+    const on = () => (reduce.current = mq.matches);
+    mq.addEventListener('change', on);
+    return () => {
+      mq.removeEventListener('change', on);
+      cancelAnimationFrame(raf.current);
+    };
+  }, []);
 
   const onPointerMove = useCallback(
     (e) => {
-      if (e.pointerType !== 'mouse') return;
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (e.pointerType !== 'mouse' || reduce.current) return;
       const el = ref.current;
       if (!el) return;
       cancelAnimationFrame(raf.current);
       raf.current = requestAnimationFrame(() => {
         const r = el.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width;
+        const px = (e.clientX - r.left) / r.width; // 0..1
         const py = (e.clientY - r.top) / r.height;
         el.style.setProperty('--ry', `${(px - 0.5) * 2 * max}deg`);
         el.style.setProperty('--rx', `${(0.5 - py) * 2 * max}deg`);
@@ -34,6 +49,8 @@ export function useTilt({ max = 7 } = {}) {
     if (!el) return;
     el.style.setProperty('--ry', '0deg');
     el.style.setProperty('--rx', '0deg');
+    /* recentre the sheen origin too, else the next hover flashes the cursor
+       sheen from the last exit position for one frame */
     el.style.setProperty('--mx', '50%');
     el.style.setProperty('--my', '50%');
   }, []);
