@@ -85,7 +85,7 @@ export default function Auth({ mode = 'signin' }) {
           {signup ? 'Create your account' : 'Welcome back'}
         </h1>
         <p className="auth-sub">
-          {signup ? 'Start your membership — cancel anytime.' : 'Sign in to pick up where you left off.'}
+          {signup ? 'Create a free account to sync your list and history.' : 'Sign in to pick up where you left off.'}
         </p>
 
         <form className="auth-form" onSubmit={submit} noValidate>

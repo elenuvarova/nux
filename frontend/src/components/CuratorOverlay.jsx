@@ -64,9 +64,17 @@ function CuratorReply({ message, animate }) {
       )}
       {done && message.films?.length > 0 && (
         <div className="curator-results">
-          {message.films.map((id) => (
-            <PosterCard key={id} filmId={id} />
-          ))}
+          {message.films.map((f) => {
+            // backend now returns { id, reason? }; tolerate legacy [string] rows
+            const id = typeof f === "string" ? f : f.id;
+            const reason = typeof f === "string" ? null : f.reason;
+            return (
+              <div className="curator-pick" key={id}>
+                <PosterCard filmId={id} />
+                {reason && <p className="curator-pick-reason">{reason}</p>}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

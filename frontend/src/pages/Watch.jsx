@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { loadYouTube } from '../lib/youtube.js';
@@ -83,7 +83,12 @@ const IconSkip = ({ forward }) => (
 export default function Watch() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const film = anyTitleById(id);
+  // On a fresh deep-link (no in-app history) the back arrow would exit the app;
+  // send it to the film page instead. location.key is 'default' only on the
+  // initial entry, so an in-app navigation keeps the normal back behaviour.
+  const goBack = () => (location.key === 'default' && film ? navigate(`/film/${film.id}`) : navigate(-1));
   const trailer = film ? TRAILERS[film.id] : null;
   usePageTitle(film ? `Watch ${film.title}` : 'Watch');
   const { record } = useWatchHistory();
@@ -488,7 +493,7 @@ export default function Watch() {
 
       {/* top chrome */}
       <div className="player-top">
-        <button type="button" className="player-iconbtn" onClick={() => navigate(-1)} aria-label="Go back">
+        <button type="button" className="player-iconbtn" onClick={goBack} aria-label="Go back">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M11.5 3.5 6 9l5.5 5.5" />
           </svg>

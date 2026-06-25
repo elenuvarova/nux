@@ -17,21 +17,23 @@ export default function Welcome() {
     setPicked(next);
   };
 
-  // Onboarding is the single first-run path: mark it done AND suppress the Home
-  // Tour coachmark so a new visitor never gets two first-run systems stacked.
+  // Onboarding is the single first-run path. Completing it (finish) arms ONE
+  // contextual Curator coachmark on Home; "Sign in" skips straight past it — so
+  // a visitor never gets two stacked first-run systems.
   const markOnboarded = () => {
     try {
       localStorage.setItem('nux-onboarded', '1');
-      localStorage.setItem('nux_tour_v1', '1');
     } catch {
       /* private mode — nothing to persist */
     }
   };
   // Persist the genre picks so Home can show a real "Because you like…" rail —
-  // the taste step is no longer collected-then-thrown-away.
+  // the taste step is no longer collected-then-thrown-away — and arm the one-shot
+  // first-run moment on Home (taste confirmation + the single Curator coachmark).
   const finish = () => {
     try {
       localStorage.setItem('nux-genre-prefs', JSON.stringify([...picked]));
+      localStorage.setItem('nux-curator-hint', '1');
     } catch {
       /* private mode */
     }

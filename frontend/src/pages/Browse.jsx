@@ -60,7 +60,11 @@ export default function Browse() {
     if (v.length < 2) return;
     const next = [v, ...recent.filter((x) => x.toLowerCase() !== v.toLowerCase())].slice(0, 6);
     setRecent(next);
-    localStorage.setItem('nux-recent-search', JSON.stringify(next));
+    try {
+      localStorage.setItem('nux-recent-search', JSON.stringify(next));
+    } catch {
+      // private mode / storage disabled — keep the in-memory list, don't crash search
+    }
   };
 
   const films = useMemo(() => {
@@ -100,6 +104,7 @@ export default function Browse() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, films.length, extras.length]);
 
+  const count = films.length + extras.length;
   const emptyCopy = query
     ? 'Try a different title, genre or year.'
     : 'This shelf is empty for now.';
@@ -209,11 +214,20 @@ export default function Browse() {
       <section className="browse-grid-wrap" aria-label="All titles">
         <h2 className="headline">
           {query ? `Results for “${query}”` : 'All Titles'}
-          <span className="browse-count" role="status">
-            {films.length + extras.length} {films.length + extras.length === 1 ? 'title' : 'titles'}
+          <span className="browse-count" aria-hidden="true">
+            {count} {count === 1 ? 'title' : 'titles'}
           </span>
         </h2>
-        {films.length + extras.length > 0 ? (
+        {/* polite live region OUTSIDE the heading, so result-set changes —
+            including an empty result — are announced to screen readers */}
+        <p className="sr-only" role="status">
+          {count === 0
+            ? query
+              ? `No titles match “${query}”`
+              : 'No titles here yet'
+            : `${count} ${count === 1 ? 'title' : 'titles'}`}
+        </p>
+        {count > 0 ? (
           <div className="browse-grid">
             {extras.map((x) => (
               <Link to={`/title/${x.id}`} className="poster-card" key={x.id} viewTransition>

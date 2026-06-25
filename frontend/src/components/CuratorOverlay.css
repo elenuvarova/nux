@@ -64,7 +64,10 @@
 }
 .curator-note { margin: 0 0 var(--space-3); line-height: 1.5; }
 .curator-results { display: flex; gap: var(--space-3); overflow-x: auto; padding-bottom: 4px; animation: curator-fade var(--dur-crossfade) var(--ease-out); }
-.curator-results .poster-card { flex: 0 0 120px; }
+.curator-pick { flex: 0 0 132px; display: flex; flex-direction: column; gap: var(--space-2); }
+.curator-pick .poster-card { width: 100%; }
+/* the per-pick "why this fits" line — the Curator justifies each result */
+.curator-pick-reason { margin: 0; font: var(--type-metadata); color: var(--text-secondary); }
 @keyframes curator-fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 /* typing caret shown while the latest reply reveals */
 .curator-caret {
