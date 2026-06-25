@@ -97,8 +97,9 @@ export default function Rail({ title, wide = false, seeAllTo = null, children })
     <section className="rail">
       <header className="rail-header">
         <h2 className="headline">{title}</h2>
-        {/* only rails with a real destination show "See all" — the finite editorial
-            rails are shown in full, so a link to the generic grid would mislead */}
+        {/* "See all" appears when the rail has a broader destination (seeAllTo):
+            selection rails → the full catalogue, "Because you like" rails → their
+            genre page. Personal rails (e.g. Continue Watching) have none. */}
         {seeAllTo && (
           <Link to={seeAllTo} className="rail-seeall link-arrow">
             See all <span aria-hidden="true">→</span>
