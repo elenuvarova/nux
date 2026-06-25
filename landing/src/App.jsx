@@ -98,7 +98,7 @@ export default function App() {
         <a className="wordmark" href="#top">NUX</a>
         <nav className="nav-actions">
           <a className="nav-link" href={`${APP}/signin`}>Sign in</a>
-          <a className="btn btn-primary" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'nav' })}><PlayIcon /> Start watching</a>
+          <a className="btn btn-secondary" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'nav' })}>Start free trial</a>
         </nav>
       </header>
 
@@ -107,13 +107,13 @@ export default function App() {
         <HeroDome>
           <div className="hero-content">
             <p className="eyebrow">British cinema · curated by hand</p>
-            <h1 className="hero-title">Stop scrolling. We’ve already watched everything</h1>
+            <h1 className="hero-title">Stop scrolling. We’ve already watched&nbsp;everything</h1>
             <p className="hero-sub">
               A small, hand-built home for British cinema. No infinite wall, no “because you watched” —
               just films a person would actually put in front of you, and a curator that answers when you ask.
             </p>
             <div className="cta-row">
-              <a className="btn btn-primary btn-lg" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'hero' })}><PlayIcon /> Start watching</a>
+              <a className="btn btn-primary btn-lg" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'hero' })}><PlayIcon /> Start free trial</a>
               <a className="link-arrow" href="#catalogue" onClick={() => track('cta_browse_click', { location: 'hero' })}>Browse the catalogue <span>→</span></a>
             </div>
             <p className="hero-hint">drag to spin<span className="hint-cursor"> · move your cursor to look around</span></p>
@@ -246,7 +246,7 @@ export default function App() {
             <div className="plan plan-free">
               <p className="plan-name">Browse</p>
               <p className="plan-price">Free</p>
-              <p className="plan-note">The whole catalogue, every film page, your own list — no account needed.</p>
+              <p className="plan-note">Browse the whole catalogue and read every film page, free.</p>
               <a className="link-arrow" href={`${APP}/browse`} onClick={() => track('cta_browse_click', { location: 'pricing' })}>Browse the catalogue <span>→</span></a>
             </div>
             <div className="plan plan-member">
@@ -263,7 +263,7 @@ export default function App() {
                 <li>Every film, no ads, ever</li>
                 <li>Download in HD for the train · two screens at once</li>
               </ul>
-              <a className="btn btn-primary btn-block" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'pricing' })}><PlayIcon /> Start watching</a>
+              <a className="btn btn-primary btn-block" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'pricing' })}><PlayIcon /> Start free trial</a>
               <p className="plan-reassure">Free for 14 days. Nothing charged today — cancel anytime.</p>
             </div>
           </div>
@@ -283,7 +283,7 @@ export default function App() {
         <section className="final-cta">
           <Slate n="08" label="Now showing" center />
           <h2 className="final-line">The lights are down.<br />Put something good on</h2>
-          <a className="btn btn-primary btn-lg" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'final' })}><PlayIcon /> Start watching</a>
+          <a className="btn btn-primary btn-lg" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'final' })}><PlayIcon /> Start free trial</a>
         </section>
 
         {/* Director marquee — end-credits band of directors, just before the footer */}

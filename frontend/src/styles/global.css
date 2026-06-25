@@ -77,8 +77,12 @@ ol {
   box-shadow: var(--focus-ring);
 }
 
-/* page headings receive programmatic focus on route change */
-h1[tabindex='-1'] {
+/* page headings AND the skip-link / route-focus container receive PROGRAMMATIC
+   focus on route change — they aren't interactive controls, so they must not
+   render the amber focus ring. On #main (a full-width wrapper) that ring's
+   bottom edge read as a stray full-width amber hairline on every page. */
+h1[tabindex='-1'],
+#main[tabindex='-1'] {
   outline: none;
   box-shadow: none;
 }
@@ -227,6 +231,20 @@ h1[tabindex='-1'] {
   font: var(--type-metadata);
   color: var(--text-tertiary);
   font-variant-numeric: tabular-nums;
+}
+
+/* "Demo" marker on not-yet-wired rows — a defined chip rather than faint
+   tertiary text, so it reads as an intentional badge (and clears AA) instead
+   of looking like leftover scaffolding */
+.demo-tag {
+  font: var(--type-caption);
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  background: var(--surface-chip);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
+  padding: 2px 7px;
+  white-space: nowrap;
 }
 
 /* visually hidden, still read by assistive tech (standard clip pattern) */

@@ -26,11 +26,15 @@
   justify-content: space-between;
   gap: var(--space-3); /* keep the title clear of the New/close cluster — they were touching */
   padding: var(--space-4) var(--space-5);
+  /* reserve a stable height so the header never grows when the "New" pill
+     appears in the result state (it used to shove the tagline to a 2nd line) */
+  min-height: 72px;
   border-bottom: 1px solid var(--border-subtle);
 }
 .curator-head h2 { font-size: 18px; margin: 0; } /* one-off: panel title between --type-title (17px) and --type-headline */
-.curator-head-titles { display: grid; gap: 2px; min-width: 0; } /* let the tagline wrap instead of shoving the actions */
-.curator-tagline { margin: 0; font: var(--type-caption); color: var(--text-secondary); }
+.curator-head-titles { display: grid; gap: 2px; min-width: 0; }
+/* one line, always — ellipsise rather than wrap when the New pill is present */
+.curator-tagline { margin: 0; font: var(--type-caption); color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .curator-close {
   background: none; border: 0; color: inherit; font-size: 18px; cursor: pointer;
   width: 36px; height: 36px; display: grid; place-items: center; /* >=24px hit target */
@@ -63,8 +67,10 @@
   padding: var(--space-2) var(--space-3); border-radius: 14px 14px 2px 14px; margin: 0;
 }
 .curator-note { margin: 0 0 var(--space-3); line-height: 1.5; }
-.curator-results { display: flex; gap: var(--space-3); overflow-x: auto; padding-bottom: 4px; animation: curator-fade var(--dur-crossfade) var(--ease-out); }
-.curator-pick { flex: 0 0 132px; display: flex; flex-direction: column; gap: var(--space-2); }
+/* end padding so the last pick keeps a clear peek and is never severed at its
+   tag/metadata against the panel edge */
+.curator-results { display: flex; gap: var(--space-3); overflow-x: auto; padding-bottom: 4px; padding-right: var(--space-5); scroll-padding-right: var(--space-5); animation: curator-fade var(--dur-crossfade) var(--ease-out); }
+.curator-pick { flex: 0 0 124px; display: flex; flex-direction: column; gap: var(--space-2); }
 .curator-pick .poster-card { width: 100%; }
 /* the per-pick "why this fits" line — the Curator justifies each result */
 .curator-pick-reason { margin: 0; font: var(--type-metadata); color: var(--text-secondary); }

@@ -7,7 +7,7 @@ import { SkeletonRail } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useWatchHistory } from '../lib/useWatchHistory.js';
 import Rail, { PosterCard, ContinueCard } from '../components/Rail.jsx';
-import { RAILS, EDITORIAL_PICK, CURATED_NOTES, GENRES, GENRE_MATCH, FILMS } from '../data/catalog.js';
+import { RAILS, EDITORIAL_PICK, REASONS, GENRES, GENRE_MATCH, FILMS, COLLECTIONS, byId } from '../data/catalog.js';
 import { useCollections } from '../lib/useCollections.js';
 import { toast } from '../lib/toast.js';
 import Tour from '../components/Tour.jsx';
@@ -38,6 +38,41 @@ export default function Home() {
   usePageTitle(null);
   const [trending, curated, fresh] = RAILS;
   const [personalRails] = useState(readPersonalRails);
+  // Cross-rail de-duplication: the same title appearing in three rails within one
+  // viewport read like a broken recommender on a curation-first product. Walk the
+  // rails in display order and drop any film already shown — but never gut a rail
+  // below `min` (fall back to its full list so no rail goes sparse/empty).
+  // Show each title once across the page so the same poster doesn't repeat in
+  // three rails (which read like a broken recommender on a curation-first home).
+  const seen = new Set();
+  // Personal rails first: dedupe NON-destructively and only commit a rail's ids
+  // to `seen` once it survives the >=3 filter — otherwise a dropped rail's films
+  // would be marked seen and then vanish from the static rails below too.
+  const personalRailsD = [];
+  for (const p of personalRails) {
+    const ids = p.ids.filter((id) => !seen.has(id));
+    if (ids.length >= 3) {
+      ids.forEach((id) => seen.add(id));
+      personalRailsD.push({ ...p, ids });
+    }
+  }
+  // Static rails are never dropped, so commit eagerly; only fall back to the full
+  // list if dedupe would empty a rail (a short all-unique rail beats a repeating one).
+  const take = (ids) => {
+    const fresh = ids.filter((id) => !seen.has(id));
+    const out = fresh.length > 0 ? fresh : ids;
+    out.forEach((id) => seen.add(id));
+    return out;
+  };
+  const trendingIds = take(trending.filmIds);
+  const curatedIds = take(curated.filmIds);
+  const freshIds = take(fresh.filmIds);
+  // Essential-Ten promo: a stack of the first three real covers reads as "a
+  // collection worth opening" — replaces the abstract genre-flare placeholder.
+  const essentialCovers = (COLLECTIONS[EDITORIAL_PICK.slug]?.entries || [])
+    .slice(0, 3)
+    .map(([id]) => byId(id))
+    .filter(Boolean);
   const { history } = useWatchHistory();
   const { collections, loading: collectionsLoading, error: collectionsError } = useCollections();
   // First-run, post-onboarding moment (research: one contextual "aha" beats an
@@ -77,22 +112,22 @@ export default function Home() {
       <Hero />
       <Reveal as="header" className="home-lead">
         <Slate n="—" label="Tonight" />
-        <h2 className="section-title">What we’re showing</h2>
+        <h2 className="section-title home-section-title">What we’re showing</h2>
       </Reveal>
       <div className="home-rails">
-        {personalRails.map((p) => (
+        {personalRailsD.map((p) => (
           <Reveal key={p.gid}>
             <Rail title={`Because you like ${p.label}`} seeAllTo={`/genre/${p.gid}`}>
               {p.ids.map((id) => (
-                <PosterCard key={id} filmId={id} />
+                <PosterCard key={id} filmId={id} note={REASONS[id]} />
               ))}
             </Rail>
           </Reveal>
         ))}
         <Reveal>
           <Rail title={trending.title} seeAllTo="/browse">
-            {trending.filmIds.map((id) => (
-              <PosterCard key={id} filmId={id} />
+            {trendingIds.map((id) => (
+              <PosterCard key={id} filmId={id} note={REASONS[id]} />
             ))}
           </Rail>
         </Reveal>
@@ -107,15 +142,15 @@ export default function Home() {
         )}
         <Reveal>
           <Rail title={curated.title} seeAllTo="/browse">
-            {curated.filmIds.map((id) => (
-              <PosterCard key={id} filmId={id} note={CURATED_NOTES[id]} />
+            {curatedIds.map((id) => (
+              <PosterCard key={id} filmId={id} note={REASONS[id]} />
             ))}
           </Rail>
         </Reveal>
         <Reveal>
           <Rail title={fresh.title} seeAllTo="/browse">
-            {fresh.filmIds.map((id) => (
-              <PosterCard key={id} filmId={id} />
+            {freshIds.map((id) => (
+              <PosterCard key={id} filmId={id} note={REASONS[id]} />
             ))}
           </Rail>
         </Reveal>
@@ -129,9 +164,17 @@ export default function Home() {
               {EDITORIAL_PICK.cta}
             </Link>
           </div>
-          <div className="editorial-cover">
-            <img src={EDITORIAL_PICK.image} alt="" loading="lazy" />
-          </div>
+          {essentialCovers.length === 3 ? (
+            <div className="editorial-stack" aria-hidden="true">
+              {essentialCovers.map((f) => (
+                <img key={f.id} src={f.poster} alt="" loading="lazy" />
+              ))}
+            </div>
+          ) : (
+            <div className="editorial-cover">
+              <img src={EDITORIAL_PICK.image} alt="" loading="lazy" />
+            </div>
+          )}
         </Reveal>
 
         {/* Generated collections load after the static rails. Hold their place
@@ -150,8 +193,8 @@ export default function Home() {
           collections.map((c) => (
             <Reveal key={c.slug}>
               <Rail title={c.title} seeAllTo={`/collection/${c.slug}`}>
-                {c.entries.map(([id]) => (
-                  <PosterCard key={id} filmId={id} />
+                {c.entries.map(([id, reason]) => (
+                  <PosterCard key={id} filmId={id} note={reason || REASONS[id]} />
                 ))}
               </Rail>
             </Reveal>

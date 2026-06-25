@@ -4,6 +4,19 @@ import usePageTitle from '../lib/usePageTitle.js';
 import { STOCKED_GENRES, EXTRAS } from '../data/catalog.js';
 import './Welcome.css';
 
+// Honest 2-step indicator shown on BOTH steps: the hero ("Get started") is
+// step 1, the taste picker is step 2 — so the picker no longer reads "2 of 2"
+// with no visible first step. A visible label backs up the dots.
+function Steps({ current }) {
+  return (
+    <div className="welcome-steps" role="group" aria-label={`Onboarding progress — step ${current} of 2`}>
+      <span className={current === 1 ? 'welcome-dot welcome-dot--active' : 'welcome-dot'} aria-hidden="true" />
+      <span className={current === 2 ? 'welcome-dot welcome-dot--active' : 'welcome-dot'} aria-hidden="true" />
+      <span className="welcome-steps-label" aria-hidden="true">Step {current} of 2</span>
+    </div>
+  );
+}
+
 export default function Welcome() {
   usePageTitle('Welcome');
   const navigate = useNavigate();
@@ -56,6 +69,7 @@ export default function Welcome() {
       <main className="welcome">
         <img className="welcome-bg" src={EXTRAS.welcomeBg} alt="" fetchpriority="high" />
         <div className="welcome-content">
+          <Steps current={1} />
           <p className="welcome-wordmark">NUX</p>
           <h1 className="welcome-title" tabIndex={-1} ref={headingRef}>
             Cinema for{" "}
@@ -82,6 +96,7 @@ export default function Welcome() {
       <div className="welcome-steps" role="group" aria-label="Onboarding progress — step 2 of 2">
         <span className="welcome-dot" aria-hidden="true" />
         <span className="welcome-dot welcome-dot--active" aria-hidden="true" />
+        <span className="welcome-steps-label" aria-hidden="true">Step 2 of 2</span>
       </div>
       <h1 className="welcome-genres-title" tabIndex={-1} ref={headingRef}>
         What kinds of stories move you?
@@ -98,11 +113,18 @@ export default function Welcome() {
           >
             <img src={g.image} alt="" loading="lazy" />
             <span>{g.label}</span>
+            {picked.has(g.id) && (
+              <span className="welcome-check" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2.5 7.5 6 11l5.5-7" />
+                </svg>
+              </span>
+            )}
           </button>
         ))}
       </div>
       <button type="button" className="btn btn-primary welcome-cta" onClick={finish}>
-        Continue
+        {picked.size === 0 ? 'Skip for now' : 'Continue'}
       </button>
     </main>
   );
