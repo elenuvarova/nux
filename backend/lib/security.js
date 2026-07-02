@@ -13,7 +13,8 @@ function allowedOrigins() {
     const app = process.env.APP_URL || "https://app.nux.ontwrpn.com";
     return [app.replace(/\/$/, "")];
   }
-  return ["http://localhost:5173", "http://localhost:5174"];
+  // 5173/5174 = vite dev; 4173 = `vite preview` (built PWA + /api proxy)
+  return ["http://localhost:5173", "http://localhost:5174", "http://localhost:4173"];
 }
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);

@@ -132,6 +132,22 @@ export const GameScore = sequelize.define(
   }
 );
 
+// Web-push subscriptions for the weekly "new collections" broadcast. One row
+// per browser endpoint (the endpoint URL is the identity — unique, and can
+// exceed 255 chars, hence STRING(512)). UserId is nullable: the broadcast is
+// content marketing, so signed-out visitors may subscribe too. Rows are pruned
+// when the push service reports the endpoint gone (404/410).
+export const PushSubscription = sequelize.define(
+  "PushSubscription",
+  {
+    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    endpoint: { type: DataTypes.STRING(512), allowNull: false, unique: true },
+    p256dh: { type: DataTypes.STRING, allowNull: false },
+    auth: { type: DataTypes.STRING, allowNull: false },
+  },
+  { tableName: "push_subscriptions" }
+);
+
 // Fixed-window rate-limit counters, keyed by `${bucket}:${ip}`. Persisted (not
 // in-memory) so the window survives redeploys and is shared across instances —
 // an attacker can't reset their count by waiting for the next Coolify deploy.
@@ -158,3 +174,8 @@ User.hasMany(CuratorMessage, { onDelete: "CASCADE" });
 CuratorMessage.belongsTo(User);
 User.hasMany(GameScore, { onDelete: "CASCADE" });
 GameScore.belongsTo(User);
+// SET NULL, not CASCADE: notification permission belongs to the BROWSER, not
+// the account — deleting the account demotes the row to an anonymous
+// subscription instead of silently cancelling what the device opted into.
+User.hasMany(PushSubscription, { onDelete: "SET NULL" });
+PushSubscription.belongsTo(User);

@@ -1,6 +1,7 @@
 import { CuratorCollection } from "../models.js";
 import { sequelize } from "../db.js";
 import { generateCollections } from "./curatorCollections.js";
+import { sendBroadcast } from "./push.js";
 
 const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 let regenerating = false; // single-flight guard for background regeneration
@@ -47,7 +48,16 @@ export function kickRegeneration() {
       const cols = await generateCollections();
       // only replace the live shelf with a healthy set — never let a thin/odd
       // regen overwrite a good cache for a week
-      if (cols.length >= 2) await persist(cols);
+      if (cols.length >= 2) {
+        await persist(cols);
+        // fresh shelf published → tell subscribers. Fire-and-forget: a push
+        // hiccup must never mark the regen as failed (the cache IS updated).
+        sendBroadcast({
+          title: "New collections this week",
+          body: cols[0].title,
+          url: "/",
+        }).catch((e) => console.error("[push] broadcast failed:", e?.message || e));
+      }
     } catch (e) {
       console.error("[collections] regen failed:", e?.message || e);
     } finally {

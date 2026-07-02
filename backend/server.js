@@ -10,6 +10,7 @@ import historyRoutes from "./routes/history.js";
 import curatorRoutes from "./routes/curator.js";
 import collectionsRoutes from "./routes/collections.js";
 import scoresRoutes from "./routes/scores.js";
+import pushRoutes from "./routes/push.js";
 import { ah } from "./lib/asyncHandler.js";
 import { csrfOriginCheck } from "./lib/security.js";
 import { readCache, isStale, kickRegeneration } from "./lib/collectionsCache.js";
@@ -29,7 +30,7 @@ app.use(cookieParser());
 if (!isProd) {
   app.use(
     cors({
-      origin: ["http://localhost:5173", "http://localhost:5174"],
+      origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:4173"],
       credentials: true,
     })
   );
@@ -59,6 +60,7 @@ app.use("/api/history", historyRoutes);
 app.use("/api/curator", curatorRoutes);
 app.use("/api/collections", collectionsRoutes);
 app.use("/api/scores", scoresRoutes);
+app.use("/api/push", pushRoutes);
 
 // Global error handler — must be registered AFTER all routes so it catches
 // errors funnelled through next() by the ah() wrapper. This process serves the

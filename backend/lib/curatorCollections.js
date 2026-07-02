@@ -8,7 +8,7 @@ const NOTE_MAX = 160;
 // A generated collection must never reuse one of these, or its "See all" link
 // would route to the hard-coded editorial page instead of the curated shelf.
 // Seed the uniquifier with these so any collision is bumped to "-2", "-3", etc.
-const RESERVED_SLUGS = ["best-2026"];
+const RESERVED_SLUGS = ["best-2026", "five-films-on-grief", "london-after-dark"];
 
 // Gemini responseSchema (Groq ignores it but the prompt spells the shape out).
 const COLLECTIONS_SCHEMA = {
