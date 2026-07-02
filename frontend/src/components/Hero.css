@@ -7,6 +7,9 @@
   min-height: 86vh;
   display: flex;
   align-items: flex-end;
+  /* keep horizontal drags for the swipe handlers (Hero.jsx) — vertical pan and
+     pinch-zoom stay with the browser */
+  touch-action: pan-y pinch-zoom;
 }
 
 /* ambient projector glow — a warm light that slowly breathes behind the
@@ -156,6 +159,29 @@
   background-clip: content-box;
 }
 
+/* poster + progress belong to the ≥768px thumbnail presentation; hidden while
+   the pager renders as dots, so the lazy imgs never fetch on mobile */
+.hero-dot img,
+.hero-dot-progress {
+  display: none;
+}
+
+/* dots-as-dots on touch: pad the 8px dot to a 44px hit target (dot itself
+   stays 8px — background paints only the content box). Row margin grows to
+   match so the left edge stays put; row height is already 44px from the
+   padded pause control. Capped at 767px so the ≥768px thumbs (44×66,
+   border-box) never inherit the padding. */
+@media (pointer: coarse) and (max-width: 767px) {
+  .hero-dot {
+    padding: 18px;
+  }
+
+  .hero-dots {
+    margin-right: -18px;
+    margin-left: -18px;
+  }
+}
+
 /* slideshow pause/resume — a quiet sibling to the dots, never a CTA. Low-key
    by default; amber only when the user has explicitly paused (engaged).
    Single source of truth for this control (a dead duplicate previously lived
@@ -195,6 +221,102 @@
 @media (pointer: coarse) {
   .hero-pause {
     padding: 10px; /* 24 + 2×10 = 44px hit target, glyph stays put */
+  }
+}
+
+/* ≥768px the dots grow into poster thumbnails (Paramount+ pattern) — the
+   artwork itself becomes the pager. Below that the 8px dots stay: 44×66
+   thumbs would crowd the tab bar. */
+@media (min-width: 768px) {
+  .hero-dots {
+    gap: var(--space-2);
+    align-items: center;
+    /* no hit-target padding to pull in — thumbs sit flush with the content */
+    margin: var(--space-4) 0 0;
+  }
+
+  .hero-dot {
+    box-sizing: border-box;
+    position: relative;
+    width: 44px;
+    height: 66px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+    /* solid chip under the dimmed poster so hero art can't bleed through */
+    background: var(--surface-chip);
+    background-clip: padding-box;
+    transition:
+      box-shadow var(--dur-base) var(--ease-out),
+      transform var(--dur-base) var(--ease-out);
+  }
+
+  .hero-dot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.55;
+    filter: saturate(0.8);
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      filter var(--dur-base) var(--ease-out);
+  }
+
+  .hero-dot:hover img,
+  .hero-dot:focus-visible img,
+  .hero-dot--on img {
+    opacity: 1;
+    filter: none;
+  }
+
+  .hero-dot--on {
+    box-shadow: 0 0 0 2px var(--border-focus);
+    transform: scale(1.04);
+  }
+
+  /* the active ring must not swallow the global focus ring (same specificity,
+     later file) — restate it for keyboard focus on the active thumb */
+  .hero-dot--on:focus-visible {
+    box-shadow: var(--focus-ring);
+  }
+
+  /* auto-advance underline — decorative (aria-hidden), frozen while paused.
+     8s matches the interval in Hero.jsx, same contract as the ken-burns zoom */
+  .hero-dot-progress {
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: var(--accent-progress);
+    animation: hero-thumb-progress 8s linear forwards;
+  }
+
+  .hero-dots--paused .hero-dot-progress {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes hero-thumb-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* thumb/dot state changes stay, transitions and the progress sweep don't */
+@media (prefers-reduced-motion: reduce) {
+  .hero-dot,
+  .hero-dot img {
+    transition: none;
+  }
+
+  .hero-dot-progress {
+    display: none;
   }
 }
 

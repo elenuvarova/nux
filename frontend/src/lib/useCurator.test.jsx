@@ -55,6 +55,19 @@ describe("useCurator", () => {
     await waitFor(() => expect(result.current.error).toMatch(/stepped away|moment/i));
   });
 
+  it("marks a sent reply fresh, and closing the panel clears the flag", async () => {
+    api.post.mockResolvedValue({ reply: "Here.", films: [] });
+    const { result } = renderHook(() => useCurator(), { wrapper });
+    await act(async () => {
+      await result.current.send("hi");
+    });
+    // fresh gates the overlay's one-shot animate/announce for this reply
+    expect(result.current.messages[1].fresh).toBe(true);
+    act(() => result.current.closeCurator());
+    // a reopen must not replay the reply, so close marks it as seen
+    expect(result.current.messages[1].fresh).toBe(false);
+  });
+
   it("loads saved history when a user signs in", async () => {
     api.get.mockResolvedValue({
       messages: [
@@ -68,6 +81,8 @@ describe("useCurator", () => {
     });
     await waitFor(() => expect(result.current.messages).toHaveLength(2));
     expect(api.get).toHaveBeenCalledWith("/curator/history");
+    // restored turns must never re-animate or re-announce in the overlay
+    expect(result.current.messages.some((m) => m.fresh)).toBe(false);
   });
 
   it("clears the conversation on sign-out", async () => {

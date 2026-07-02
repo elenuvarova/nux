@@ -56,6 +56,11 @@ const IconChevR = () => (
     <path d="M5 3l4.5 4L5 11" />
   </svg>
 );
+const IconClose = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+    <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" />
+  </svg>
+);
 const IconSkip = ({ forward }) => (
   <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
     <path
@@ -76,6 +81,22 @@ const IconSkip = ({ forward }) => (
     </text>
   </svg>
 );
+
+/* the "?" cheat sheet — mirrors the keydown map in Watch(); keep both in sync */
+const SHORTCUTS = [
+  { label: 'Play / pause', keys: ['Space', 'K'] },
+  { label: 'Back 5s', keys: ['←'] },
+  { label: 'Forward 5s', keys: ['→'] },
+  { label: 'Back 10s', keys: ['J'] },
+  { label: 'Forward 10s', keys: ['L'] },
+  { label: 'Volume', keys: ['↑', '↓'] },
+  { label: 'Mute', keys: ['M'] },
+  { label: 'Fullscreen', keys: ['F'] },
+  { label: 'Captions', keys: ['C'] },
+  { label: 'Speed', keys: ['<', '>'] },
+  { label: 'Close menus', keys: ['Esc'] },
+  { label: 'Shortcuts', keys: ['?'] },
+];
 
 /* NUX player — Figma player anatomy in code. YouTube is only the engine:
    controls=0 behind pointer-events:none; paused state is covered by our
@@ -114,6 +135,7 @@ export default function Watch() {
   const [quality, setQuality] = useState('auto');
   const [qualities, setQualities] = useState([]);
   const [menu, setMenu] = useState(null); // null | 'settings' | 'speed' | 'quality'
+  const [keysOpen, setKeysOpen] = useState(false); // "?" shortcuts sheet
 
   const hostRef = useRef(null);
   const stageRef = useRef(null);
@@ -191,6 +213,7 @@ export default function Watch() {
       if (!disposed) {
         setStarted(false);
         setLoadError(true);
+        setKeysOpen(false); // don't leave the shortcuts sheet queued for a retry
       }
     });
     return () => {
@@ -319,12 +342,32 @@ export default function Watch() {
     if (msg && started && liveRef.current) liveRef.current.textContent = msg;
   }, [playing, muted, captions, rate, started]);
 
-  // keyboard map (universal player conventions)
+  // keyboard map (universal player conventions); listens from the pre-roll
+  // facade on so "?" answers before playback — transport keys need the engine
   useEffect(() => {
-    if (!started) return undefined;
+    if (!trailer) return undefined;
     const onKey = (e) => {
       if (e.target.matches('input, textarea, select')) return;
-      switch (e.key.toLowerCase()) {
+      const key = e.key.toLowerCase();
+      // shortcuts sheet open: player hotkeys sleep; Escape / ? only close the
+      // sheet — stopPropagation keeps Escape from any other overlay handler
+      if (keysOpen) {
+        if (key === 'escape' || key === '?') {
+          e.preventDefault();
+          e.stopPropagation();
+          setKeysOpen(false);
+        }
+        return;
+      }
+      if (key === '?') {
+        // shift+/ on most layouts; e.key is layout-aware
+        e.preventDefault();
+        setMenu(null);
+        setKeysOpen(true);
+        return;
+      }
+      if (!started) return;
+      switch (key) {
         case ' ':
         case 'k':
           e.preventDefault();
@@ -377,7 +420,7 @@ export default function Watch() {
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [started, toggle, skip, applyVolume, toggleMute, goFullscreen, toggleCaptions, applyRate, menu, rate, rates, volume]);
+  }, [trailer, started, toggle, skip, applyVolume, toggleMute, goFullscreen, toggleCaptions, applyRate, menu, keysOpen, rate, rates, volume]);
 
   // close the settings popover on outside click
   useEffect(() => {
@@ -389,6 +432,62 @@ export default function Watch() {
     return () => document.removeEventListener('pointerdown', onDown);
   }, [menu]);
 
+  // The element focused before the settings menu opened (the gear button),
+  // restored when the menu closes — Escape or outside tap would otherwise drop
+  // keyboard focus to <body> when the popover unmounts (WCAG 2.4.3). Same
+  // pattern as CuratorOverlay's lastFocusedRef.
+  const lastFocusedRef = useRef(null);
+  useEffect(() => {
+    if (menu) {
+      // save once per open; submenu hops (settings → speed) keep `menu` truthy
+      if (!lastFocusedRef.current) lastFocusedRef.current = document.activeElement;
+    } else if (lastFocusedRef.current) {
+      lastFocusedRef.current.focus?.();
+      lastFocusedRef.current = null;
+    }
+  }, [menu]);
+
+  // Shortcuts-sheet focus lifecycle, same lastFocusedRef pattern. Declared
+  // after the menu effect on purpose: opening the sheet from the menu row
+  // closes the menu first, which refocuses the gear — so the sheet saves the
+  // gear as its opener and closing the sheet lands back on it.
+  const keysPanelRef = useRef(null);
+  const keysCloseRef = useRef(null);
+  const keysLastFocusedRef = useRef(null);
+  useEffect(() => {
+    if (keysOpen) {
+      keysLastFocusedRef.current = document.activeElement;
+      keysCloseRef.current?.focus();
+    } else if (keysLastFocusedRef.current) {
+      keysLastFocusedRef.current.focus?.();
+      keysLastFocusedRef.current = null;
+    }
+  }, [keysOpen]);
+
+  // Tab stays inside the sheet while it's open (same trap as CuratorOverlay)
+  useEffect(() => {
+    if (!keysOpen) return undefined;
+    const onTrap = (e) => {
+      if (e.key !== 'Tab' || !keysPanelRef.current) return;
+      const focusable = keysPanelRef.current.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!keysPanelRef.current.contains(document.activeElement)) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener('keydown', onTrap);
+    return () => window.removeEventListener('keydown', onTrap);
+  }, [keysOpen]);
+
   if (!film) return <NotFound message="We couldn't find that title in the catalogue." />;
 
   const art = film.backdrop || film.poster;
@@ -397,7 +496,7 @@ export default function Watch() {
 
   return (
     <main
-      className={`player ${started && playing && idle && !menu ? 'player--idle' : ''}`}
+      className={`player ${started && playing && idle && !menu && !keysOpen ? 'player--idle' : ''}`}
       ref={stageRef}
       onPointerMove={wake}
       onTouchStart={wake}
@@ -422,7 +521,7 @@ export default function Watch() {
           >
             <img src={art} alt="" />
             <span className="player-bigplay" aria-hidden="true">
-              <svg width="24" height="24" viewBox="0 0 14 14" fill="currentColor">
+              <svg width="24" height="24" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
                 <path d="M3 1.8v10.4c0 .6.65.97 1.17.66l8.4-5.2a.78.78 0 0 0 0-1.32l-8.4-5.2A.78.78 0 0 0 3 1.8z" />
               </svg>
             </span>
@@ -628,6 +727,20 @@ export default function Watch() {
                     <span>Subtitles</span>
                     <span className="player-menu-value">{captions ? 'On' : 'Off'}</span>
                   </button>
+                  <button
+                    type="button"
+                    className="player-menu-row"
+                    aria-haspopup="dialog"
+                    onClick={() => {
+                      setMenu(null);
+                      setKeysOpen(true);
+                    }}
+                  >
+                    <span>Keyboard shortcuts</span>
+                    <span className="player-menu-value">
+                      <kbd>?</kbd>
+                    </span>
+                  </button>
                 </div>
               )}
 
@@ -683,6 +796,40 @@ export default function Watch() {
                 <path d="M7 2.5H2.5V7M11 2.5h4.5V7M7 15.5H2.5V11M11 15.5h4.5V11" />
               </svg>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* "?" cheat sheet — modal over the stage (pre-roll included);
+          hotkeys sleep while it's open */}
+      {trailer && keysOpen && (
+        <div className="player-keys-scrim" onClick={() => setKeysOpen(false)}>
+          <div
+            className="player-keys"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Keyboard shortcuts"
+            ref={keysPanelRef}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="player-keys-head">
+              <h2 className="player-keys-title">Keyboard shortcuts</h2>
+              <button type="button" className="player-iconbtn" onClick={() => setKeysOpen(false)} aria-label="Close" ref={keysCloseRef}>
+                <IconClose />
+              </button>
+            </div>
+            <dl className="player-keys-list">
+              {SHORTCUTS.map(({ label, keys }) => (
+                <div className="player-keys-item" key={label}>
+                  <dt>{label}</dt>
+                  <dd>
+                    {keys.map((k) => (
+                      <kbd key={k}>{k}</kbd>
+                    ))}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
       )}

@@ -75,6 +75,8 @@
 }
 
 /* ── step 2: genre taste ─────────────────────────────────────── */
+/* the chip grid itself lives in components/GenreTastePicker.css —
+   it's shared with Settings → Your taste */
 .welcome--genres {
   place-items: start center;
   align-content: start;
@@ -115,90 +117,7 @@
   text-align: center;
 }
 
-.welcome-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(150px, 224px));
-  gap: var(--space-4);
-  max-width: 1000px;
-}
-
-.welcome-genre {
-  position: relative;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  aspect-ratio: 16 / 10;
-  box-shadow: var(--shadow-glass-edge);
-  transition: box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
-}
-
-.welcome-genre img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.welcome-genre::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgb(var(--ink-900-rgb) / 0.8), rgb(var(--ink-900-rgb) / 0.1) 60%);
-}
-
-.welcome-genre span {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: var(--space-2);
-  z-index: 1;
-  font: 600 13px/1 var(--font-ui);
-  color: var(--paper-100);
-  text-align: center;
-}
-
-.welcome-genre:hover,
-.welcome-genre--on:hover,
-.welcome-genre:focus-within,
-.welcome-genre--on:focus-within {
-  transform: scale(1.02);
-}
-
-.welcome-genre--on {
-  box-shadow:
-    inset 0 0 0 2px var(--amber-500),
-    0 0 0 1px var(--amber-500);
-}
-
-/* unmistakable "selected" mark — an amber check disc in the corner, on top of
-   the resting ring, so a pick reads at a glance before pressing Continue */
-.welcome-check {
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: var(--radius-full);
-  background: var(--amber-500);
-  color: var(--action-primary-text);
-}
-
-/* aligned to the system breakpoints (768 / 640) */
-@media (max-width: 768px) {
-  .welcome-grid {
-    grid-template-columns: repeat(3, 1fr);
-    width: 100%;
-  }
-}
-
 @media (max-width: 640px) {
-  .welcome-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .welcome-title {
     font: var(--type-display-m);
     letter-spacing: var(--track-display);

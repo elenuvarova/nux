@@ -126,6 +126,9 @@ export default function Collection() {
   // (the one injection vector for inline JSON-LD; JSON.stringify alone won't).
   const jsonLdHtml = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 
+  // The other hand-written collections; on a generated page all of them show.
+  const moreCollections = Object.entries(COLLECTIONS).filter(([s]) => s !== slug);
+
   return (
     <main className="collection">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml }} />
@@ -167,6 +170,21 @@ export default function Collection() {
             );
           })}
         </ol>
+
+        {moreCollections.length > 0 && (
+          <nav className="collection-more" aria-label="More collections">
+            <p className="eyebrow">More collections</p>
+            <ul className="collection-more-list">
+              {moreCollections.map(([s, c]) => (
+                <li key={s}>
+                  <Link to={`/collection/${s}`} className="collection-more-link">
+                    {c.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </div>
     </main>
   );

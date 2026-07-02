@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import usePageTitle from '../lib/usePageTitle.js';
+import PushToggle from '../components/PushToggle.jsx';
+import GenreTastePicker from '../components/GenreTastePicker.jsx';
+import { readGenrePrefs, writeGenrePrefs } from '../lib/prefs.js';
 import './Settings.css';
 
 function Toggle({ label, defaultOn = false }) {
@@ -12,6 +15,36 @@ function Toggle({ label, defaultOn = false }) {
         <span className="toggle-knob" />
       </span>
     </button>
+  );
+}
+
+/* The onboarding genre picks, editable after the fact. Every toggle saves
+   immediately — no submit button — so a transient "Saved" note confirms it. */
+function TasteSection() {
+  const [picked, setPicked] = useState(() => new Set(readGenrePrefs()));
+  const [saved, setSaved] = useState(false);
+  const timer = useRef();
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const toggle = (id) => {
+    const next = new Set(picked);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setPicked(next);
+    writeGenrePrefs(next);
+    setSaved(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setSaved(false), 2400);
+  };
+  return (
+    <section aria-label="Your taste">
+      <div className="settings-taste-head">
+        <p className="eyebrow settings-eyebrow">Your taste</p>
+        {/* live region stays mounted so the confirmation is announced */}
+        <p className="settings-saved" role="status">{saved ? 'Saved' : ''}</p>
+      </div>
+      <p className="settings-taste-hint">Tunes the “Because you like…” rows on Home — picks save as you go.</p>
+      <GenreTastePicker picked={picked} onToggle={toggle} />
+    </section>
   );
 }
 
@@ -52,10 +85,13 @@ export default function Settings() {
         </div>
       </section>
 
+      <TasteSection />
+
       <section aria-label="Notifications">
         <p className="eyebrow settings-eyebrow">Notifications</p>
         <div className="settings-group">
-          <Toggle label="Push notifications" defaultOn />
+          {/* real web push (hidden until the backend has VAPID keys) */}
+          <PushToggle />
           <Toggle label="Email updates" />
         </div>
       </section>

@@ -1,7 +1,7 @@
 .curator-scrim {
   position: fixed;
   inset: 0;
-  z-index: 110; /* overlay tier — above chrome (100), below skip-link (200) */
+  z-index: var(--z-overlay); /* overlay tier — above --z-chrome, below --z-skip-link */
   background: var(--surface-scrim-pressed);
   display: flex;
   justify-content: flex-end;
@@ -50,12 +50,15 @@
 .curator-body { flex: 1; overflow-y: auto; padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
 .curator-greeting { opacity: 0.8; }
 .curator-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+/* keep in step with .chip in Browse.css — same pill recipe (border-default,
+   press-scale on :active); height stays natural so suggestion chips can wrap */
 .curator-chip {
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-default);
   background: transparent; color: inherit; border-radius: var(--radius-full);
   padding: var(--space-2) var(--space-4); cursor: pointer; font: var(--type-label);
 }
 .curator-chip:hover { background: var(--white-a07); }
+.curator-chip:active { transform: scale(var(--press-scale)); }
 /* Follow-up refinements after a reply — lighter/secondary vs the empty-state chips */
 .curator-followups { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: -4px; }
 .curator-followups .curator-chip { font: var(--type-caption); padding: 6px var(--space-3); opacity: 0.85; }
@@ -103,7 +106,10 @@
 }
 /* secondary (not tertiary): tertiary/paper-500 on the lightened ink-500 field is 4.33:1 — below AA */
 .curator-input input::placeholder { color: var(--text-secondary); opacity: 1; }
-.curator-input input:disabled { opacity: var(--opacity-disabled); cursor: default; }
+/* the busy field is readOnly (never disabled — disabled would drop focus to
+   <body> mid-send) but keeps the dimmed "busy" look */
+.curator-input input:disabled,
+.curator-input input:read-only { opacity: var(--opacity-disabled); cursor: default; }
 .curator-input button {
   width: 40px; height: 40px; border: 0; border-radius: var(--radius-full);
   background: var(--action-primary); color: var(--action-primary-text); cursor: pointer; font-size: 16px; /* one-off: send glyph */

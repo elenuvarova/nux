@@ -1843,7 +1843,7 @@ export const RAILS = [
   },
   {
     id: 'restorations',
-    title: 'New Restorations',
+    title: 'New on NUX',
     filmIds: ['the-souvenir', 'saint-maud', 'aftersun', 'touching-the-void', 'senna', 'the-third-man', 'brief-encounter'],
   },
 ];
@@ -1965,6 +1965,35 @@ export const COLLECTIONS = {
       ['the-third-man', 'Shadow-soaked Vienna, sharper than ever in the new transfer.'],
       ['lawrence-of-arabia', 'Still the widest screen cinema can offer.'],
       ['naked', 'Thewlis talks through one long London night; Leigh at his darkest.'],
+    ],
+  },
+  'five-films-on-grief': {
+    eyebrow: 'Theme of the Week',
+    title: 'Five Films on Grief',
+    intro:
+      'Grief on screen usually means catharsis on schedule. These five refuse the arc — they sit with loss the way people actually do: sideways, in fragments, over years.',
+    cover: still('still-aftersun.jpg'),
+    entries: [
+      ['brief-encounter', 'Laura narrates her affair like a eulogy — mourning a love she gave up before it could live.'],
+      ['dont-look-now', 'A drowned daughter’s red coat keeps surfacing in Venice; grief sharpened into premonition.'],
+      ['45-years', 'One letter about a body in a glacier, and fifty years of banked grief seep into a marriage.'],
+      ['the-souvenir', 'Hogg rebuilds her own great loss from memory, every object placed like evidence.'],
+      ['aftersun', 'Sophie rewinds the holiday tapes, hunting the sadness in her father she missed at eleven.'],
+    ],
+  },
+  'london-after-dark': {
+    eyebrow: 'The Late Programme',
+    title: 'London After Dark',
+    intro:
+      'The other London starts when the offices empty: Soho neon, lock-ups, upstairs rooms where deals go quietly wrong. Six films across forty years that know the city best by night.',
+    cover: still('still-mona-lisa.jpg'),
+    entries: [
+      ['peeping-tom', 'The camera as murder weapon, London as its darkroom — the scandal that ended Powell’s career.'],
+      ['performance', 'A gangster on the run goes to ground in a Notting Hill basement and comes apart there.'],
+      ['the-long-good-friday', 'One Easter weekend to sell the Docklands dream, while somebody dismantles it bomb by bomb.'],
+      ['mona-lisa', 'Hoskins ferries a call girl through neon Soho and King’s Cross, falling for her as he drives.'],
+      ['naked', 'Johnny drifts across the sleepless city, picking arguments with anyone still awake.'],
+      ['sexy-beast', 'Hauled off a Spanish sunlounger for one last London job: a bank vault, a bathhouse, Don Logan.'],
     ],
   },
 };

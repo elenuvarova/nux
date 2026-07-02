@@ -1,3 +1,16 @@
+.fd {
+  /* sticky anchor-bar height — section scroll offsets derive from it */
+  --fd-anchors-h: var(--space-12);
+}
+
+/* smooth in-page jumps only where the user hasn't opted out of motion
+   (global.css additionally forces scroll-behavior: auto under reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.fd) {
+    scroll-behavior: smooth;
+  }
+}
+
 .fd-hero {
   position: relative;
   min-height: 78vh;
@@ -72,6 +85,14 @@
   object-fit: cover;
 }
 
+/* Receiving end of the poster → film page morph. Only one hero layout
+   renders per page, so the name stays unique; TitleDetail's inline
+   hero-art wins over this rule on /title pages. */
+.fd-art img,
+.fd-poster-frame img {
+  view-transition-name: film-poster;
+}
+
 .fd-content--poster {
   padding: 0;
   margin: 0;
@@ -105,8 +126,64 @@
 
 .fd-actions {
   display: flex;
+  flex-wrap: wrap; /* three pills — must never force sideways scroll on narrow phones */
   gap: var(--space-3);
   margin-top: var(--space-2);
+}
+
+/* the mobile .btn drops to 40px; touch devices keep the 44px target */
+@media (pointer: coarse) {
+  .fd-actions .btn {
+    height: 44px;
+  }
+}
+
+/* ── In-page anchor bar (More Like This · Cast & Crew · Details · Reviews) ── */
+.fd-anchors {
+  position: sticky;
+  top: var(--nav-h);
+  z-index: var(--z-sticky);
+}
+
+.fd-anchors ul {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--space-16);
+  display: flex;
+  gap: var(--space-8);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.fd-anchors ul::-webkit-scrollbar {
+  display: none;
+}
+
+.fd-anchor-link {
+  display: inline-flex;
+  align-items: center;
+  height: var(--fd-anchors-h);
+  border-bottom: 2px solid transparent; /* reserved so activation never shifts layout */
+  font: var(--type-label);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition:
+    color var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.fd-anchor-link:hover {
+  color: var(--text-primary);
+}
+
+.fd-anchor-link[aria-current] {
+  color: var(--text-primary);
+  border-bottom-color: var(--action-primary);
+}
+
+/* anchor jumps land below the fixed nav + sticky anchor bar */
+.fd [data-fd-section] {
+  scroll-margin-top: calc(var(--nav-h) + var(--fd-anchors-h));
 }
 
 .fd-body {
@@ -205,11 +282,55 @@
   letter-spacing: var(--track-display, normal);
 }
 
+/* ── Reviews — two critic pull-quote cards ── */
+.fd-reviews {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+
+.fd-review {
+  display: grid;
+  align-content: space-between; /* captions align across unequal quote lengths */
+  gap: var(--space-5);
+  padding: var(--space-8);
+  background: var(--surface-raised);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass-edge);
+}
+
+.fd-review blockquote {
+  font: var(--type-pullquote);
+  color: var(--text-primary);
+  text-wrap: pretty;
+}
+
+.fd-review figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.fd-review-stars {
+  font: var(--type-caption); /* the 13px step */
+  color: var(--action-primary);
+}
+
+.fd-review-source {
+  font: var(--type-metadata);
+  color: var(--text-tertiary);
+}
+
 @media (max-width: 768px) {
   .fd-content,
   .fd-section {
     padding-left: var(--space-4);
     padding-right: var(--space-4);
+  }
+
+  .fd-anchors ul {
+    padding: 0 var(--space-4);
+    gap: var(--space-6);
   }
 
   .fd-title {
@@ -220,5 +341,9 @@
   .fd-details-row {
     grid-template-columns: 112px 1fr;
     gap: var(--space-4);
+  }
+
+  .fd-reviews {
+    grid-template-columns: 1fr;
   }
 }

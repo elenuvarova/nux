@@ -66,8 +66,22 @@ export function CuratorProvider({ children }) {
     };
   }, []);
 
-  const openCurator = useCallback(() => setOpen(true), []);
-  const closeCurator = useCallback(() => setOpen(false), []);
+  // The opener must be captured HERE, synchronously, before the open renders:
+  // the FAB goes display:none in that same commit and the browser blurs it to
+  // <body> before any overlay effect can read document.activeElement.
+  const lastFocusedRef = useRef(null);
+  const openCurator = useCallback(() => {
+    lastFocusedRef.current = document.activeElement;
+    setOpen(true);
+  }, []);
+  // `fresh` gates the overlay's one-shot reply animation/announcement, so a
+  // reopen must not replay the last reply — closing marks everything as seen.
+  const closeCurator = useCallback(() => {
+    setOpen(false);
+    setMessages((prev) =>
+      prev.some((m) => m.fresh) ? prev.map((m) => (m.fresh ? { ...m, fresh: false } : m)) : prev
+    );
+  }, []);
 
   // "New chat" — clear locally and, for signed-in users, on the server too.
   const clearHistory = useCallback(async () => {
@@ -103,7 +117,12 @@ export function CuratorProvider({ children }) {
       const { reply, films } = await api.post("/curator", { messages: history });
       // a New/sign-out happened mid-request — drop this now-orphaned reply
       if (gen !== genRef.current) return;
-      setMessages((prev) => [...prev, { id: ++msgSeq, role: "assistant", content: reply, films: films || [] }]);
+      // `fresh` marks a reply born in this session (vs restored history): only
+      // fresh replies animate/announce, and the flag never reaches the server.
+      setMessages((prev) => [
+        ...prev,
+        { id: ++msgSeq, role: "assistant", content: reply, films: films || [], fresh: true },
+      ]);
     } catch (e) {
       if (gen !== genRef.current) return;
       setError(ERROR_BY_CODE[e?.code] || ERROR_FALLBACK);
@@ -144,6 +163,7 @@ export function CuratorProvider({ children }) {
       send,
       retry,
       clearHistory,
+      lastFocusedRef,
     }),
     [open, messages, loading, error, retryText, openCurator, closeCurator, send, retry, clearHistory]
   );

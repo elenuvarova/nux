@@ -3,14 +3,14 @@
   right: var(--space-5);
   /* lifted off the page bottom so it never sits on the footer link row */
   bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
-  z-index: 100; /* chrome tier — matches NavBar/TabBar; hidden under the overlay (110) */
+  z-index: var(--z-chrome); /* chrome tier — matches NavBar/TabBar; hidden under the overlay (--z-overlay) */
   display: flex;
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   /* neutral dark glass — the solid amber fill competed with the hero Play CTA
      for the "primary action" signal. Amber now lives only in the ✦ glyph. */
-  border: 1px solid var(--white-a18);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-full);
   background: var(--glass-bg-strong);
   -webkit-backdrop-filter: blur(var(--blur-chrome));

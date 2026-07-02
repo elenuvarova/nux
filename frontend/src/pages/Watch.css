@@ -5,7 +5,7 @@
 .player {
   position: fixed;
   inset: 0;
-  z-index: 150;
+  z-index: var(--z-player);
   background: var(--surface-sunken);
   overflow: hidden;
 }
@@ -62,7 +62,7 @@
   height: 44px;
   margin: -22px 0 0 -22px;
   border-radius: var(--radius-full);
-  border: 3px solid var(--white-a18);
+  border: 3px solid var(--border-strong);
   border-top-color: var(--amber-500);
   animation: player-spin 0.9s linear infinite;
 }
@@ -217,7 +217,7 @@
   margin-top: -4.5px;
   border-radius: var(--radius-full);
   background: var(--paper-100);
-  box-shadow: 0 1px 4px rgb(0 0 0 / 0.5);
+  box-shadow: var(--shadow-control);
   transition: transform var(--dur-fast) var(--ease-out);
 }
 
@@ -386,6 +386,7 @@
   right: 0;
   bottom: calc(100% + var(--space-2));
   min-width: 220px;
+  max-width: calc(100vw - 24px); /* reflow floor — never wider than the viewport (same pattern as .tour-card) */
   padding: var(--space-2);
   border-radius: var(--radius-md);
   background: var(--glass-bg-strong);
@@ -455,6 +456,94 @@
 
 .player-menu [role='menuitemradio'] {
   justify-content: flex-start;
+}
+
+/* ── keyboard shortcuts sheet ("?") ──────────────────────────── */
+.player-keys-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 3; /* above top/bottom chrome (z 2) */
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: rgb(var(--ink-950-rgb) / 0.5);
+  animation: player-keys-in var(--dur-fast) var(--ease-out);
+}
+
+@keyframes player-keys-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.player-keys {
+  width: 100%;
+  max-width: min(560px, calc(100vw - 24px));
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(var(--blur-chrome));
+  backdrop-filter: blur(var(--blur-chrome));
+  box-shadow:
+    var(--shadow-glass-edge),
+    var(--shadow-overlay);
+}
+
+.player-keys-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.player-keys-title {
+  font: var(--type-title);
+}
+
+/* two columns read top-to-bottom, so related rows stay adjacent */
+.player-keys-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(6, auto);
+  grid-auto-flow: column;
+  column-gap: var(--space-6);
+  row-gap: var(--space-1);
+  margin: 0;
+}
+
+.player-keys-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-1) 0;
+}
+
+.player-keys-item dt {
+  font: var(--type-row);
+  color: var(--text-secondary);
+}
+
+.player-keys-item dd {
+  display: inline-flex;
+  gap: var(--space-1);
+  margin: 0;
+}
+
+/* key chips — shared by the sheet and the settings-menu hint */
+.player-keys kbd,
+.player-menu-value kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 var(--space-1);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xs);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  font: var(--type-caption);
 }
 
 .player-playbtn {
@@ -536,5 +625,20 @@
 
   .player-menu {
     min-width: 200px;
+  }
+}
+
+/* narrow phones: the two-column list would crush the labels */
+@media (max-width: 560px) {
+  .player-keys-list {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-auto-flow: row;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-keys-scrim {
+    animation: none;
   }
 }

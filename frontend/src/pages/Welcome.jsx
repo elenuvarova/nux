@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import usePageTitle from '../lib/usePageTitle.js';
-import { STOCKED_GENRES, EXTRAS } from '../data/catalog.js';
+import { EXTRAS } from '../data/catalog.js';
+import GenreTastePicker from '../components/GenreTastePicker.jsx';
+import { writeGenrePrefs, markOnboarded } from '../lib/prefs.js';
 import './Welcome.css';
 
 // Honest 2-step indicator shown on BOTH steps: the hero ("Get started") is
@@ -20,7 +22,11 @@ function Steps({ current }) {
 export default function Welcome() {
   usePageTitle('Welcome');
   const navigate = useNavigate();
-  const [step, setStep] = useState(0);
+  const location = useLocation();
+  // Step 2 lives on its own history entry (route state), so browser Back from
+  // the taste picker returns to step 1 instead of leaving the site — the
+  // router handles popstate, no manual listener needed.
+  const step = location.state?.step === 2 ? 2 : 1;
   const [picked, setPicked] = useState(new Set());
   // On step change, move focus to the new step's heading so keyboard and screen
   // reader users land on the fresh content (mirrors the route-change focus pattern).
@@ -38,20 +44,13 @@ export default function Welcome() {
 
   // Onboarding is the single first-run path. Completing it (finish) arms ONE
   // contextual Curator coachmark on Home; "Sign in" skips straight past it — so
-  // a visitor never gets two stacked first-run systems.
-  const markOnboarded = () => {
-    try {
-      localStorage.setItem('nux-onboarded', '1');
-    } catch {
-      /* private mode — nothing to persist */
-    }
-  };
-  // Persist the genre picks so Home can show a real "Because you like…" rail —
-  // the taste step is no longer collected-then-thrown-away — and arm the one-shot
-  // first-run moment on Home (taste confirmation + the single Curator coachmark).
+  // a visitor never gets two stacked first-run systems. Persisting the genre
+  // picks lets Home show a real "Because you like…" rail — the taste step is
+  // no longer collected-then-thrown-away. Both flags go through lib/prefs.js,
+  // whose in-memory fallback keeps the gate open when localStorage throws.
   const finish = () => {
+    writeGenrePrefs(picked);
     try {
-      localStorage.setItem('nux-genre-prefs', JSON.stringify([...picked]));
       localStorage.setItem('nux-curator-hint', '1');
     } catch {
       /* private mode */
@@ -64,7 +63,7 @@ export default function Welcome() {
     navigate('/signin');
   };
 
-  if (step === 0) {
+  if (step === 1) {
     return (
       <main className="welcome">
         <img className="welcome-bg" src={EXTRAS.welcomeBg} alt="" fetchpriority="high" />
@@ -77,7 +76,7 @@ export default function Welcome() {
             Curious Minds
           </h1>
           <p className="welcome-sub">Films and documentaries, chosen one at a time.</p>
-          <button type="button" className="btn btn-primary welcome-cta" onClick={() => setStep(1)}>
+          <button type="button" className="btn btn-primary welcome-cta" onClick={() => navigate('/welcome', { state: { step: 2 } })}>
             Get started
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M2.5 7h9M8 3.5 11.5 7 8 10.5" />
@@ -93,36 +92,12 @@ export default function Welcome() {
 
   return (
     <main className="welcome welcome--genres">
-      <div className="welcome-steps" role="group" aria-label="Onboarding progress — step 2 of 2">
-        <span className="welcome-dot" aria-hidden="true" />
-        <span className="welcome-dot welcome-dot--active" aria-hidden="true" />
-        <span className="welcome-steps-label" aria-hidden="true">Step 2 of 2</span>
-      </div>
+      <Steps current={2} />
       <h1 className="welcome-genres-title" tabIndex={-1} ref={headingRef}>
         What kinds of stories move you?
       </h1>
-      <p className="welcome-sub">Select all that apply — we’ll use this to personalise your feed.</p>
-      <div className="welcome-grid" role="group" aria-label="Genres">
-        {STOCKED_GENRES.map((g) => (
-          <button
-            key={g.id}
-            type="button"
-            className={`welcome-genre ${picked.has(g.id) ? 'welcome-genre--on' : ''}`}
-            aria-pressed={picked.has(g.id)}
-            onClick={() => togglePick(g.id)}
-          >
-            <img src={g.image} alt="" loading="lazy" />
-            <span>{g.label}</span>
-            {picked.has(g.id) && (
-              <span className="welcome-check" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2.5 7.5 6 11l5.5-7" />
-                </svg>
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
+      <p className="welcome-sub">Select all that apply — we’ll use this to personalise your feed.</p>
+      <GenreTastePicker picked={picked} onToggle={togglePick} />
       <button type="button" className="btn btn-primary welcome-cta" onClick={finish}>
         {picked.size === 0 ? 'Skip for now' : 'Continue'}
       </button>

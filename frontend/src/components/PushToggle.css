@@ -1,0 +1,34 @@
+/* One row inside .settings-group. Deliberately NOT .settings-row: the row
+   itself isn't interactive (only its button is), so no hover/active washes. */
+.push-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.push-copy {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.push-title {
+  font: var(--type-input);
+  color: var(--text-primary);
+}
+
+.push-hint {
+  font: var(--type-metadata);
+  color: var(--text-tertiary);
+}
+
+.push-btn {
+  flex-shrink: 0;
+}
+
+.push-btn[disabled] {
+  opacity: var(--opacity-disabled);
+  pointer-events: none;
+}

@@ -26,13 +26,18 @@ export default function ForgotPassword() {
       await api.post('/auth/forgot', { email });
       setSent(true);
     } catch (err) {
-      // a genuine network drop or 5xx means we can't say the mail was sent —
-      // ask the user to retry. Deliberate 4xx responses stay generic so we
-      // never reveal whether the account exists.
-      if (!err.status || err.status >= 500) {
+      if (err.code === 'too_many_requests') {
+        // the one deliberate 4xx this endpoint sends (5/hour per IP) — the
+        // generic "we've sent a link" would be false here
+        setError('Too many attempts — try again in an hour.');
+      } else if (!err.status || err.status >= 500) {
+        // a genuine network drop or 5xx (incl. the limiter's fail-closed 503)
+        // means we can't say the mail was sent — ask the user to retry
         setError('Something went wrong — please try again.');
       } else {
-        setSent(true); // still show the generic confirmation
+        // any other deliberate 4xx stays generic so we never reveal whether
+        // the account exists
+        setSent(true);
       }
     } finally {
       setBusy(false);

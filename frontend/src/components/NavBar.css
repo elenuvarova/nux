@@ -4,7 +4,7 @@
 .nav {
   position: fixed;
   inset: 0 0 auto 0;
-  z-index: 100;
+  z-index: var(--z-chrome);
   background: var(--glass-bg);
   -webkit-backdrop-filter: blur(var(--blur-chrome));
   backdrop-filter: blur(var(--blur-chrome));
@@ -103,23 +103,58 @@
   gap: var(--space-5);
 }
 
+/* a real input in the old link's pill clothes — the form only anchors the icon */
 .nav-search {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  height: 36px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-input);
   color: var(--text-tertiary);
-  font: var(--type-caption);
-  min-width: 220px;
-  transition: border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
 }
 
-.nav-search:hover {
+.nav-search > svg {
+  position: absolute;
+  left: var(--space-4);
+  pointer-events: none;
+}
+
+.nav-search input {
+  width: 220px;
+  height: 36px;
+  /* left inset = icon offset + icon + gap, matching the old icon-label rhythm */
+  padding: 0 var(--space-4) 0 var(--space-10);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-input);
+  background: transparent;
+  color: var(--text-primary);
+  font: var(--type-caption);
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+
+.nav-search input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.nav-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.nav-search:hover input {
   border-color: var(--border-strong);
+}
+
+.nav-search:hover input::placeholder {
   color: var(--text-secondary);
+}
+
+/* amber border on any focus; keyboard focus adds the global :focus-visible ring */
+.nav-search input:focus {
+  border-color: var(--border-focus);
+}
+
+@media (pointer: coarse) {
+  .nav-search input {
+    height: 44px;
+  }
 }
 
 /* avatar + disclosure caret — signals a menu lives here, not just a link */

@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation, useNavigationType } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { useAuth } from './lib/useAuth.jsx';
+import { isOnboarded } from './lib/prefs.js';
 import NavBar from './components/NavBar.jsx';
 import TabBar from './components/TabBar.jsx';
 import Footer from './components/Footer.jsx';
@@ -58,15 +59,11 @@ function RequireAuth({ children }) {
 }
 
 /* First-run gate: a brand-new visitor (no onboarding flag) is sent to the
-   Welcome flow once; everyone who has onboarded or signed in lands on Home. */
+   Welcome flow once; everyone who has onboarded or signed in lands on Home.
+   isOnboarded() carries an in-memory fallback, so a localStorage write that
+   throws in Welcome can't bounce the user back here in an endless loop. */
 function HomeGate() {
-  let onboarded = true;
-  try {
-    onboarded = !!localStorage.getItem('nux-onboarded');
-  } catch {
-    /* private mode → don't trap the user in a redirect */
-  }
-  return onboarded ? <Home /> : <Navigate to="/welcome" replace />;
+  return isOnboarded() ? <Home /> : <Navigate to="/welcome" replace />;
 }
 
 export default function App() {

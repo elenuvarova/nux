@@ -129,6 +129,32 @@
   margin-top: var(--space-1);
 }
 
+/* cross-links to the other hand-written collections — quiet end-of-page nav;
+   the last entry's border-bottom already draws the divider above it */
+.collection-more {
+  margin-top: var(--space-16);
+  display: grid;
+  gap: var(--space-5);
+}
+
+.collection-more-list {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.collection-more-link {
+  display: inline-block;
+  font: var(--type-display-m);
+  letter-spacing: var(--track-display);
+  color: var(--text-primary);
+  transition: color var(--dur-base) var(--ease-out);
+}
+
+.collection-more-link:hover {
+  color: var(--amber-400);
+}
+
 /* loading skeleton — mirrors the hero headings + intro + entry rows */
 .col-sk-eyebrow {
   width: 110px;

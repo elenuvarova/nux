@@ -4,7 +4,7 @@ import { SkeletonGrid } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useMyList } from '../lib/useMyList.js';
 import { useAuth } from '../lib/useAuth.jsx';
-import { byId } from '../data/catalog.js';
+import { byId, REASONS } from '../data/catalog.js';
 import './Browse.css';
 
 export default function MyList() {
@@ -27,13 +27,19 @@ export default function MyList() {
           <>
             <div className="browse-grid">
               {films.map((f) => (
-                <PosterCard key={f.id} filmId={f.id} />
+                <PosterCard key={f.id} filmId={f.id} note={REASONS[f.id]} />
               ))}
             </div>
             {!user && (
-              <p className="browse-empty-sub" style={{ marginTop: 'var(--space-8)', textAlign: 'center' }}>
-                Saved on this device — <Link to="/signin">sign in</Link> to keep your list anywhere.
-              </p>
+              <div className="browse-empty">
+                <p className="browse-empty-sub">Saved on this device — an account keeps your list anywhere.</p>
+                <Link to="/signup" className="btn btn-primary">
+                  Create a free account
+                </Link>
+                <p className="browse-empty-sub">
+                  or <Link to="/signin">sign in</Link>
+                </p>
+              </div>
             )}
           </>
         ) : (

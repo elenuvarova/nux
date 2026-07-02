@@ -16,7 +16,7 @@
   --ndg-lavender-dim: #9d8fb5;
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: var(--z-game);
   background: var(--ndg-void); /* deep-space base for clean letterbox */
   display: grid;
   place-items: center;
@@ -141,7 +141,7 @@
   border-radius: var(--radius-full);
   color: var(--text-primary);
   background: var(--glass-bg-strong);
-  border: 1px solid var(--white-a18);
+  border: 1px solid var(--border-strong);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   transition:

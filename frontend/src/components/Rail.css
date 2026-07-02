@@ -58,7 +58,15 @@
 }
 
 /* ── PosterCard ──────────────────────────────────────────────── */
+/* grid/gap stays on .poster-card too: Browse's game/course cards put their
+   content directly inside a Link.poster-card (no inner .poster-card-link) */
 .poster-card {
+  position: relative; /* anchors .poster-card-play, which lives outside the link */
+  display: grid;
+  gap: var(--space-2);
+}
+
+.poster-card-link {
   display: grid;
   gap: var(--space-2);
 }
@@ -85,6 +93,33 @@
   /* gentle warm grade unifies the temperature of mixed-vintage poster scans
      across a rail without flattening any single one */
   filter: saturate(1.05) brightness(0.98);
+}
+
+/* crossfade preview: the poster dissolves into a landscape still while the
+   card is hovered/focused (Apple TV / Netflix pattern). The still mounts
+   lazily in Rail.jsx; it inherits the frame's cover-crop + warm grade from
+   `.poster-card-art img` above. Poster stays underneath — no layout shift. */
+.poster-card-still {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--dur-crossfade) var(--ease-out);
+  pointer-events: none;
+}
+
+/* reveal only where hover exists — a tap on touch must not flash the still */
+@media (hover: hover) {
+  .poster-card:hover .poster-card-still,
+  .poster-card:focus-within .poster-card-still {
+    opacity: 1;
+  }
+}
+
+/* an instant swap is still motion, so drop the preview entirely */
+@media (prefers-reduced-motion: reduce) {
+  .poster-card-still {
+    display: none;
+  }
 }
 
 /* hairline above the artwork */
@@ -132,7 +167,12 @@
 .poster-card-play {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 0;
+  /* %-margins resolve against the containing block's WIDTH: full-width 2/3
+     art has its centre at 75% of that width — true whether the containing
+     block is .poster-card (PosterCard: the button sits outside the link) or
+     .poster-card-art itself (Browse's decorative game/course play glyph) */
+  margin-top: 75%;
   display: grid;
   place-items: center;
   width: 44px;
@@ -142,7 +182,7 @@
   background: var(--glass-bg-strong);
   -webkit-backdrop-filter: blur(var(--blur-art));
   backdrop-filter: blur(var(--blur-art));
-  border: 1px solid var(--white-a18);
+  border: 1px solid var(--border-strong);
   color: var(--amber-300);
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.82);
@@ -241,6 +281,7 @@
 /* tracked-caps metadata — matches the landing's poster card (DIRECTOR · YEAR · RUNTIME) */
 .poster-card-meta {
   margin: 0;
+  display: flex;
   font-size: 12px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -249,7 +290,17 @@
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
+}
+
+/* the director gives way first — a long name must never eat the year */
+.poster-card-meta-director {
+  min-width: 0;
+  overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.poster-card-meta-tail {
+  flex: none;
 }
 
 /* editorial "why we picked it" line — only on curated rails (PosterCard `note`).

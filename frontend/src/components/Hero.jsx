@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { byId, HERO_ROTATION } from '../data/catalog.js';
 import { useMyList } from '../lib/useMyList.js';
@@ -12,6 +12,10 @@ export default function Hero() {
   const [i, setI] = useState(0);
   const [userPaused, setUserPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
+  // re-keys the active thumb's progress underline whenever a fresh 8s window
+  // is armed (slide change OR resume — a resume restarts the full interval,
+  // not the remainder), so the bar can never finish ahead of the timer
+  const [cycle, setCycle] = useState(0);
   // Timer pauses on an explicit user-pause OR a transient hover/focus, but the
   // button reflects ONLY the explicit pause — so hovering the hero never flips
   // the control's glyph (which is what made it read as a second "Play").
@@ -19,11 +23,14 @@ export default function Hero() {
   const slide = HERO_ROTATION[i];
   const film = byId(slide.filmId);
   const { has, toggle } = useMyList();
+  // swipe start point (touch/pen only — a mouse drag is text selection)
+  const swipe = useRef(null);
 
   // auto-advance unless paused or reduced-motion. Depending on `i` restarts
   // the timer on every slide change (auto or manual), so a click resets it.
   useEffect(() => {
     if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    setCycle((c) => c + 1);
     const t = setTimeout(() => setI((n) => (n + 1) % HERO_ROTATION.length), 8000);
     return () => clearTimeout(t);
   }, [paused, i]);
@@ -35,6 +42,22 @@ export default function Hero() {
   // don't download the full 1600px LCP image
   const bg = film.backdrop2 || film.backdrop || film.poster;
   const bgSmall = bg.replace(/\.jpg$/, '-660.jpg');
+
+  // The pager reads as a carousel on phones, so a horizontal drag must page it
+  // too. Vertical-dominant gestures stay with the scroller; changing `i`
+  // re-arms the 8s timer exactly like a dot tap.
+  function onPointerDown(e) {
+    if (e.pointerType === 'mouse') return;
+    swipe.current = { x: e.clientX, y: e.clientY };
+  }
+  function onPointerUp(e) {
+    const start = swipe.current;
+    swipe.current = null;
+    if (!start) return;
+    const dx = e.clientX - start.x;
+    if (Math.abs(dx) < 40 || Math.abs(dx) <= Math.abs(e.clientY - start.y)) return;
+    setI((n) => (n + (dx < 0 ? 1 : count - 1)) % count);
+  }
 
   return (
     <section
@@ -49,6 +72,11 @@ export default function Hero() {
       // carousel for the rest of the session
       onBlurCapture={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setHovered(false);
+      }}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerCancel={() => {
+        swipe.current = null;
       }}
     >
       <div className="hero-art" key={film.id} aria-live="off">
@@ -101,7 +129,7 @@ export default function Hero() {
             More Info
           </Link>
         </div>
-        <div className="hero-dots" role="group" aria-label="Featured titles">
+        <div className={paused ? 'hero-dots hero-dots--paused' : 'hero-dots'} role="group" aria-label="Featured titles">
           <button
             type="button"
             className={userPaused ? 'hero-pause hero-pause--paused' : 'hero-pause'}
@@ -124,16 +152,27 @@ export default function Hero() {
               </svg>
             )}
           </button>
-          {HERO_ROTATION.map((s, n) => (
-            <button
-              key={s.filmId}
-              type="button"
-              aria-label={`Go to ${byId(s.filmId)?.title || `slide ${n + 1} of ${count}`}`}
-              aria-current={n === i ? 'true' : undefined}
-              className={n === i ? 'hero-dot hero-dot--on' : 'hero-dot'}
-              onClick={() => setI(n)}
-            />
-          ))}
+          {HERO_ROTATION.map((s, n) => {
+            const sf = byId(s.filmId);
+            return (
+              <button
+                key={s.filmId}
+                type="button"
+                aria-label={`Go to ${sf?.title || `slide ${n + 1} of ${count}`}`}
+                aria-current={n === i ? 'true' : undefined}
+                className={n === i ? 'hero-dot hero-dot--on' : 'hero-dot'}
+                onClick={() => setI(n)}
+              >
+                {/* ≥768px the dot renders as a poster thumb (CSS swap); alt stays
+                    empty because the button's aria-label already names the film,
+                    and lazy loading keeps the hidden mobile imgs from fetching */}
+                {sf?.poster && (
+                  <img src={sf.poster} alt="" loading="lazy" draggable={false} width="44" height="66" />
+                )}
+                {n === i && <span key={cycle} className="hero-dot-progress" aria-hidden="true" />}
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>

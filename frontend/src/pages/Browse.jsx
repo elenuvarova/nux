@@ -4,10 +4,18 @@ import { PosterCard } from '../components/Rail.jsx';
 import Slate from '../components/Slate.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useCurator } from '../lib/useCurator.jsx';
-import { FILMS, STOCKED_GENRES, EXTRAS } from '../data/catalog.js';
+import { FILMS, STOCKED_GENRES, EXTRAS, REASONS } from '../data/catalog.js';
 import './Browse.css';
 
 const CHIPS = ['All', 'Films', 'Documentaries', 'Games', 'Courses'];
+
+// one predicate for every film search — director is optional on some records,
+// so guard it rather than letting the whole search throw
+const matchesFilm = (f, q) =>
+  f.title.toLowerCase().includes(q) ||
+  (f.director || '').toLowerCase().includes(q) ||
+  f.genre.toLowerCase().includes(q) ||
+  String(f.year).includes(q);
 
 export default function Browse() {
   usePageTitle('Browse');
@@ -39,9 +47,37 @@ export default function Browse() {
     );
   };
 
+  // explicit search intent (?search=1): focus the field, caret at the end so a
+  // query handed over from the nav search continues cleanly; the timestamp marks
+  // the handoff for the reclaim listener below
+  const handoffAt = useRef(0);
+  const claimSearch = () => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.focus();
+    const n = el.value.length;
+    if (n) el.setSelectionRange?.(n, n);
+  };
   useEffect(() => {
-    if (params.has('search')) inputRef.current?.focus();
+    if (!params.has('search')) return;
+    handoffAt.current = Date.now();
+    claimSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
+
+  // RouteReset (App.jsx) focuses the page h1 a frame after forward navigation —
+  // and its pending steal can outlive ?search, which the first keystroke consumes.
+  // During a fresh handoff, take focus back from that programmatic target only;
+  // never from anything the user moved to themselves.
+  useEffect(() => {
+    const onFocusIn = (e) => {
+      if (Date.now() - handoffAt.current > 1000) return;
+      if (e.target?.matches?.('h1[tabindex="-1"], #main')) claimSearch();
+    };
+    document.addEventListener('focusin', onFocusIn);
+    return () => document.removeEventListener('focusin', onFocusIn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // recent searches (localStorage) + focus state for the suggestions panel
   const [focused, setFocused] = useState(false);
@@ -73,12 +109,16 @@ export default function Browse() {
     if (chip === 'Documentaries') list = list.filter((f) => f.type === 'DOC');
     if (chip === 'Games' || chip === 'Courses') list = [];
     const q = query.trim().toLowerCase();
-    if (q) {
-      list = list.filter(
-        (f) => f.title.toLowerCase().includes(q) || f.genre.toLowerCase().includes(q) || String(f.year).includes(q)
-      );
-    }
+    if (q) list = list.filter((f) => matchesFilm(f, q));
     return list;
+  }, [chip, query]);
+
+  // what the same query would find under All — powers the escape hatch when
+  // a format chip scopes the search into a false empty
+  const allCount = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q || chip === 'All') return 0;
+    return FILMS.filter((f) => matchesFilm(f, q)).length;
   }, [chip, query]);
 
   // the one game / one course live behind their chips (real detail pages);
@@ -106,7 +146,7 @@ export default function Browse() {
 
   const count = films.length + extras.length;
   const emptyCopy = query
-    ? 'Try a different title, genre or year.'
+    ? 'Try a different title, director, genre or year.'
     : 'This shelf is empty for now.';
 
   // Progressive disclosure: the full 72-title grid was one ~13k-px mobile scroll.
@@ -145,7 +185,7 @@ export default function Browse() {
           <input
             ref={inputRef}
             type="search"
-            placeholder="Titles, genres, years…"
+            placeholder="Titles, directors, genres…"
             value={query}
             onChange={(e) => update({ q: e.target.value })}
             onFocus={() => setFocused(true)}
@@ -188,6 +228,7 @@ export default function Browse() {
             className="browse-ask"
             onClick={askCurator}
             aria-label="Ask the Curator about your search"
+            aria-haspopup="dialog"
           >
             <span className="ask-spark" aria-hidden="true">✦</span>
             <span className="browse-ask-label">Ask the Curator</span>
@@ -234,7 +275,7 @@ export default function Browse() {
         <p className="sr-only" role="status">
           {count === 0
             ? query
-              ? `No titles match “${query}”`
+              ? `No titles match “${query}”${allCount > 0 ? `. ${allCount === 1 ? '1 match' : `${allCount} matches`} in All titles` : ''}`
               : 'No titles here yet'
             : `${count} ${count === 1 ? 'title' : 'titles'}`}
         </p>
@@ -258,7 +299,7 @@ export default function Browse() {
               </Link>
             ))}
             {shownFilms.map((f) => (
-              <PosterCard key={f.id} filmId={f.id} />
+              <PosterCard key={f.id} filmId={f.id} note={REASONS[f.id]} />
             ))}
           </div>
           {hasMore && (
@@ -280,6 +321,13 @@ export default function Browse() {
             </svg>
             <p className="display-m">Nothing here yet</p>
             <p className="browse-empty-sub">{emptyCopy}</p>
+            {/* the chip scoped the search into a false empty — offer the wider result set */}
+            {allCount > 0 && (
+              <button type="button" className="btn btn-secondary" onClick={() => update({ type: '' })}>
+                {allCount === 1 ? '1 match' : `${allCount} matches`} in All titles —{' '}
+                {allCount === 1 ? 'show it' : 'show them'}
+              </button>
+            )}
             {query && (
               <button type="button" className="btn btn-secondary" onClick={() => update({ q: '' })}>
                 Clear search

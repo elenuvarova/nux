@@ -12,6 +12,8 @@
 
 html {
   color-scheme: dark;
+  /* HIG polish for the installed PWA: no grey iOS tap flash on cards/buttons */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -21,6 +23,8 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   min-height: 100vh;
+  /* HIG polish for the installed PWA: no rubber-band chaining / accidental pull-to-refresh */
+  overscroll-behavior-y: none;
 }
 
 /* room for the floating tab bar — otherwise it permanently covers
@@ -91,7 +95,7 @@ h1[tabindex='-1'],
   position: fixed;
   top: var(--space-3);
   left: var(--space-3);
-  z-index: 200;
+  z-index: var(--z-skip-link);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-full);
   background: var(--surface-inverse);
@@ -106,7 +110,8 @@ h1[tabindex='-1'],
 
 /* comfortable touch targets on touch devices */
 @media (pointer: coarse) {
-  .chip {
+  .chip,
+  .curator-chip {
     height: 44px;
   }
 
@@ -135,7 +140,7 @@ h1[tabindex='-1'],
   content: '';
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: var(--z-grain);
   pointer-events: none;
   background-image: url('/assets/noise-grain.png');
   background-repeat: repeat;
@@ -392,13 +397,18 @@ h1[tabindex='-1'],
   background: var(--surface-pressed);
 }
 
-/* ── View Transitions: poster → hero morph ───────────────────── */
+/* ── View Transitions: poster → film page morph ──────────────── */
+/* film-poster pairs a rail card with the film page hero; hero-art is the
+   one-sided mark used on the way into /watch and on TitleDetail's hero */
+::view-transition-group(film-poster),
 ::view-transition-group(hero-art) {
   animation-duration: var(--dur-morph);
   animation-timing-function: var(--ease-out);
 }
 
 /* keep artwork covering its box while the aspect ratio morphs */
+::view-transition-old(film-poster),
+::view-transition-new(film-poster),
 ::view-transition-old(hero-art),
 ::view-transition-new(hero-art) {
   height: 100%;
@@ -410,6 +420,7 @@ h1[tabindex='-1'],
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: var(--dur-crossfade);
+  animation-timing-function: var(--ease-out);
 }
 
 /* ── Motion discipline ───────────────────────────────────────── */

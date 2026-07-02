@@ -105,7 +105,7 @@
   top: calc(100% + var(--space-2));
   left: 0;
   right: 0;
-  z-index: 20;
+  z-index: var(--z-sticky);
   padding: var(--space-2);
   border-radius: var(--radius-md);
   background: var(--glass-bg-strong);
@@ -166,6 +166,8 @@
   flex-wrap: wrap;
 }
 
+/* keep in step with .curator-chip in CuratorOverlay.css — same pill recipe
+   (border-default, press-scale on :active), forked only for layout */
 .chip {
   height: 36px;
   padding: 0 var(--space-4);

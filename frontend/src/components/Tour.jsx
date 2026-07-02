@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useCurator } from '../lib/useCurator.jsx';
 import './Tour.css';
 
 // A single contextual coachmark spotlighting the Curator — NUX's one "aha".
@@ -22,6 +23,7 @@ export default function Tour({ onClose }) {
   const [rect, setRect] = useState(null);
   const [cardStyle, setCardStyle] = useState(null);
   const cardRef = useRef(null);
+  const { openCurator, lastFocusedRef } = useCurator();
   const s = STEPS[step];
   const last = step === STEPS.length - 1;
 
@@ -137,6 +139,29 @@ export default function Tour({ onClose }) {
     ? { top: rect.top - PAD, left: rect.left - PAD, width: rect.width + PAD * 2, height: rect.height + PAD * 2 }
     : null;
 
+  // The spotlit target sits in the inerted #root and the spotlight itself is
+  // pointer-events:none, so a click on the glowing FAB actually lands on this
+  // backdrop. On the Curator step, honour the invitation — end the tour and
+  // open the Curator — instead of reading it as a dismissal.
+  function onBackdropClick(e) {
+    const inSpot =
+      spot &&
+      e.clientX >= spot.left &&
+      e.clientX <= spot.left + spot.width &&
+      e.clientY >= spot.top &&
+      e.clientY <= spot.top + spot.height;
+    if (inSpot && s.sel === '[data-tour="curator"]') {
+      const fab = document.querySelector(s.sel);
+      finish();
+      openCurator();
+      // the overlay restores focus here on close — point it at the FAB, not
+      // the tour card this click just unmounted
+      if (fab) lastFocusedRef.current = fab;
+      return;
+    }
+    finish();
+  }
+
   // Until the layout effect measures the card (and for the sign-off step) sit dead-centre.
   const centred = { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
 
@@ -144,7 +169,7 @@ export default function Tour({ onClose }) {
     <div className="tour" role="dialog" aria-modal="true" aria-label="Welcome tour">
       <div
         className={spot ? 'tour-backdrop' : 'tour-backdrop tour-backdrop--dim'}
-        onClick={finish}
+        onClick={onBackdropClick}
         aria-hidden="true"
       />
       {spot && <div className="tour-spotlight" style={spot} aria-hidden="true" />}

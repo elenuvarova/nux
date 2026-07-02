@@ -1,9 +1,12 @@
+import { useEffect, useRef, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import Rail, { PosterCard } from '../components/Rail.jsx';
 import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
 import { useMyList } from '../lib/useMyList.js';
+import { toast } from '../lib/toast.js';
 import { byId, FILMS, anyTitleById } from '../data/catalog.js';
+import { REVIEWS } from '../data/reviews.js';
 import './FilmDetail.css';
 
 /* Serialize JSON-LD safely for embedding in a <script> tag: escape `<` (so a
@@ -40,11 +43,80 @@ function related(film) {
   return [...sameGenre, ...sameType].slice(0, 7);
 }
 
+/* Demo downloads — persisted ids only; the Downloads page is a static
+   fixture for now, so nothing else reads this key yet. */
+const DOWNLOADS_KEY = 'nux-downloads';
+
+function readDownloads() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(DOWNLOADS_KEY) || '[]');
+    return Array.isArray(raw) ? raw : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function FilmDetail() {
   const { id } = useParams();
   const film = byId(id);
   const { has, toggle } = useMyList();
   usePageTitle(film?.title, film?.synopsis, { image: film?.backdrop || film?.poster });
+
+  // 'idle' | 'saving' | 'saved' — the demo download, persisted per film
+  const [download, setDownload] = useState(() => (readDownloads().includes(id) ? 'saved' : 'idle'));
+  const saveTimer = useRef();
+  // section id the anchor bar highlights; null until the scroll spy reports
+  const [active, setActive] = useState(null);
+  // until this timestamp the spy stays quiet: an anchor click sets its id
+  // directly, and the smooth scroll it triggers must not re-highlight whatever
+  // section happens to pass through the band on the way down
+  const spyHold = useRef(0);
+
+  // FilmDetail → FilmDetail hops keep the component mounted: re-read the
+  // persisted download state and drop a pending fake-save timer
+  useEffect(() => {
+    setDownload(readDownloads().includes(id) ? 'saved' : 'idle');
+    setActive(null);
+    spyHold.current = 0;
+    return () => clearTimeout(saveTimer.current);
+  }, [id]);
+
+  // scroll spy for the anchor bar: current = first section (document order)
+  // intersecting the band below the sticky chrome (nav + anchor bar ≈ 112px)
+  useEffect(() => {
+    const targets = Array.from(document.querySelectorAll('.fd [data-fd-section]'));
+    if (targets.length === 0) return undefined;
+    const inView = new Set();
+    // at the page bottom a short last section can never win the band, so a
+    // #reviews jump would leave "Details" highlighted — force the last one
+    const bottomed = () =>
+      window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+    const spy = () => {
+      if (Date.now() < spyHold.current) return;
+      if (bottomed()) {
+        setActive(targets[targets.length - 1].id);
+        return;
+      }
+      const current = targets.find((t) => inView.has(t.id));
+      if (current) setActive(current.id);
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) inView.add(e.target.id);
+          else inView.delete(e.target.id);
+        }
+        spy();
+      },
+      { rootMargin: '-112px 0px -55% 0px' }
+    );
+    targets.forEach((t) => io.observe(t));
+    window.addEventListener('scroll', spy, { passive: true });
+    return () => {
+      io.disconnect();
+      window.removeEventListener('scroll', spy);
+    };
+  }, [id]);
 
   if (!film) {
     // a non-film title (game / course) deep-linked to /film — its template is /title
@@ -55,6 +127,25 @@ export default function FilmDetail() {
   const saved = has(film.id);
 
   const more = related(film);
+  const reviews = REVIEWS[film.id];
+
+  function toggleDownload() {
+    if (download === 'saving') return;
+    if (download === 'saved') {
+      localStorage.setItem(DOWNLOADS_KEY, JSON.stringify(readDownloads().filter((x) => x !== film.id)));
+      setDownload('idle');
+      toast('Removed from downloads'); // ToastHost is a polite live region
+      return;
+    }
+    setDownload('saving');
+    // brief fake latency so the demo save reads as a save, not a glitch
+    saveTimer.current = setTimeout(() => {
+      localStorage.setItem(DOWNLOADS_KEY, JSON.stringify([...new Set([...readDownloads(), film.id])]));
+      setDownload('saved');
+      toast('Saved for offline viewing');
+    }, 900);
+  }
+
   const details = [
     ['Director', film.director],
     ['Cast', film.cast?.slice(0, 3).map((p) => p.name).join(', ')],
@@ -64,6 +155,15 @@ export default function FilmDetail() {
     ['Language', film.language],
     ['Runtime', film.runtime],
   ].filter(([, v]) => v);
+
+  // anchor bar entries — only sections that actually render get a link
+  const anchors = [
+    more.length > 0 && ['more-like-this', 'More Like This'],
+    film.cast && ['cast-crew', 'Cast & Crew'],
+    details.length > 0 && ['details', 'Details'],
+    reviews && ['reviews', 'Reviews'],
+  ].filter(Boolean);
+  const activeAnchor = active ?? anchors[0]?.[0];
 
   const meta = [
     film.year,
@@ -106,6 +206,23 @@ export default function FilmDetail() {
           </svg>
           Play
         </Link>
+        <button
+          type="button"
+          className={download === 'saved' ? 'btn btn-secondary btn-secondary--on' : 'btn btn-secondary'}
+          onClick={toggleDownload}
+          aria-pressed={download === 'saved'}
+        >
+          {download === 'saved' ? (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2.5 7.5 6 11l5.5-7" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M7 2v7M3.8 5.8 7 9l3.2-3.2M2.5 11.7h9" />
+            </svg>
+          )}
+          {download === 'saved' ? 'Saved' : download === 'saving' ? 'Saving…' : 'Download'}
+        </button>
         <button type="button" className={saved ? "btn btn-secondary btn-secondary--on" : "btn btn-secondary"} onClick={() => toggle(film.id, film.title)} aria-pressed={saved}>
           {saved ? (
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -131,22 +248,57 @@ export default function FilmDetail() {
       {film.backdrop ? (
         <section className="fd-hero">
           <div className="fd-art">
-            <img src={film.backdrop} alt="" fetchpriority="high" style={{ viewTransitionName: 'hero-art' }} />
+            {/* receives the poster → film page morph: `film-poster` name is
+                anchored in FilmDetail.css so only one layout carries it */}
+            <img src={film.backdrop} alt="" fetchpriority="high" />
           </div>
           <div className="fd-content">{heroContent}</div>
         </section>
       ) : (
         <section className="fd-hero fd-hero--poster">
           <div className="fd-poster-frame">
-            <img src={film.poster} alt="" fetchpriority="high" style={{ viewTransitionName: 'hero-art' }} />
+            <img src={film.poster} alt="" fetchpriority="high" />
           </div>
           <div className="fd-content fd-content--poster">{heroContent}</div>
         </section>
       )}
 
+      {anchors.length > 0 && (
+        <nav className="fd-anchors glass" aria-label="On this page">
+          <ul>
+            {anchors.map(([anchorId, label]) => (
+              <li key={anchorId}>
+                <a
+                  href={`#${anchorId}`}
+                  className="fd-anchor-link"
+                  aria-current={activeAnchor === anchorId ? 'location' : undefined}
+                  onClick={() => {
+                    // the clicked id wins until the smooth scroll settles
+                    spyHold.current = Date.now() + 600;
+                    setActive(anchorId);
+                  }}
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
       <div className="fd-body">
+        {more.length > 0 && (
+          <div id="more-like-this" data-fd-section>
+            <Rail title="More Like This">
+              {more.map((f) => (
+                <PosterCard key={f.id} filmId={f.id} />
+              ))}
+            </Rail>
+          </div>
+        )}
+
         {film.cast && (
-          <section className="fd-section">
+          <section className="fd-section" id="cast-crew" data-fd-section>
             <h2 className="headline">Cast &amp; Crew</h2>
             <div className="fd-cast">
               {film.cast.map((person) => (
@@ -166,16 +318,8 @@ export default function FilmDetail() {
           </section>
         )}
 
-        {more.length > 0 && (
-          <Rail title="More Like This">
-            {more.map((f) => (
-              <PosterCard key={f.id} filmId={f.id} />
-            ))}
-          </Rail>
-        )}
-
         {details.length > 0 && (
-          <section className="fd-section">
+          <section className="fd-section" id="details" data-fd-section>
             <h2 className="headline">Details</h2>
             <dl className="fd-details">
               {details.map(([label, value]) => (
@@ -185,6 +329,26 @@ export default function FilmDetail() {
                 </div>
               ))}
             </dl>
+          </section>
+        )}
+
+        {reviews && (
+          <section className="fd-section" id="reviews" data-fd-section>
+            <h2 className="headline">Reviews</h2>
+            <div className="fd-reviews">
+              {reviews.map((r) => (
+                <figure className="fd-review" key={r.source}>
+                  <blockquote>“{r.quote}”</blockquote>
+                  <figcaption>
+                    <span className="fd-review-stars" role="img" aria-label={`${r.stars} out of 5 stars`}>
+                      {'★'.repeat(r.stars)}
+                      {'☆'.repeat(5 - r.stars)}
+                    </span>
+                    <span className="fd-review-source">— {r.source}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </section>
         )}
       </div>

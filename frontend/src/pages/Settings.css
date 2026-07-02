@@ -59,6 +59,37 @@
   color: var(--icon-tertiary);
 }
 
+/* ── Your taste (shared GenreTastePicker) ────────────────────── */
+.settings-taste-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.settings-taste-head .settings-eyebrow {
+  margin-bottom: 0;
+}
+
+.settings-saved {
+  font: var(--type-caption);
+  color: var(--text-secondary);
+}
+
+.settings-taste-hint {
+  margin-bottom: var(--space-3);
+  font: var(--type-metadata);
+  color: var(--text-tertiary);
+}
+
+/* the picker's 4-up minmax(150px) grid overflows the --measure-sm column;
+   below 768px the component's own breakpoints (3-up / 2-up) take over */
+@media (min-width: 769px) {
+  .settings .taste-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* ── Toggle (the Figma switch) ───────────────────────────────── */
 .toggle {
   position: relative;

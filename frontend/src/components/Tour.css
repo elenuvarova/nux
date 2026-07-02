@@ -1,9 +1,9 @@
 /* First-run coachmark tour: a spotlight cut into a page scrim + a token-bound
-   card. Sits above the Curator overlay (110) and FAB (100). */
+   card. Sits above the Curator overlay (--z-overlay) and FAB (--z-chrome). */
 .tour {
   position: fixed;
   inset: 0;
-  z-index: 130;
+  z-index: var(--z-tour);
 }
 
 .tour-backdrop {

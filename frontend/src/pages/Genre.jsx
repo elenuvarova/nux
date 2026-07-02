@@ -3,7 +3,7 @@ import { PosterCard } from '../components/Rail.jsx';
 import Slate from '../components/Slate.jsx';
 import NotFound from './NotFound.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
-import { GENRES, FILMS, GENRE_MATCH } from '../data/catalog.js';
+import { GENRES, FILMS, GENRE_MATCH, REASONS } from '../data/catalog.js';
 import './Genre.css';
 
 const BLURB = {
@@ -49,7 +49,7 @@ export default function Genre() {
         {films.length > 0 ? (
           <div className="browse-grid">
             {films.map((f) => (
-              <PosterCard key={f.id} filmId={f.id} />
+              <PosterCard key={f.id} filmId={f.id} note={REASONS[f.id]} />
             ))}
           </div>
         ) : (

@@ -1,4 +1,4 @@
-import { NavLink, Link, useLocation } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useAuth } from '../lib/useAuth.jsx';
 import './NavBar.css';
@@ -6,6 +6,17 @@ import './NavBar.css';
 export default function NavBar() {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  // The nav search is a real input, not a styled link: typing routes to Browse
+  // with the query, where ?search=1 autofocuses the main field mid-word. Local
+  // state holds the characters until that handoff (cleared on blur), so nothing
+  // is lost if a second keystroke lands before Browse takes focus.
+  const [navQuery, setNavQuery] = useState('');
+  const toBrowse = (q) => {
+    const query = q.trim() ? `&q=${encodeURIComponent(q)}` : '';
+    // replace while already on /browse so per-keystroke updates don't stack history
+    navigate(`/browse?search=1${query}`, { replace: location.pathname === '/browse' });
+  };
   const linksRef = useRef(null);
   // A single amber indicator that slides to sit under the active link. Measured
   // from the live DOM so it always tracks the real text width; hidden on routes
@@ -40,13 +51,30 @@ export default function NavBar() {
           </nav>
         </div>
         <div className="nav-right">
-          <Link to="/browse?search=1" className="nav-search" aria-label="Search">
+          <form
+            className="nav-search"
+            role="search"
+            onSubmit={(e) => {
+              e.preventDefault();
+              toBrowse(navQuery);
+            }}
+          >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <circle cx="7" cy="7" r="5.25" stroke="currentColor" strokeWidth="1.5" />
               <path d="M11 11l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
-            <span>Search</span>
-          </Link>
+            <input
+              type="search"
+              placeholder="Search"
+              aria-label="Search the catalogue"
+              value={navQuery}
+              onChange={(e) => {
+                setNavQuery(e.target.value);
+                toBrowse(e.target.value);
+              }}
+              onBlur={() => setNavQuery('')}
+            />
+          </form>
           {user ? (
             <Link to="/profile" className="nav-avatar" aria-label="Account menu" aria-haspopup="menu">
               <span className="nav-avatar-img">

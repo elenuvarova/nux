@@ -33,16 +33,25 @@
   display: grid;
 }
 
+.downloads-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
 .downloads-list li + li {
   border-top: 1px solid var(--border-subtle);
 }
 
 .downloads-row {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-3);
-  margin: 0 calc(-1 * var(--space-3));
+  /* left bleed only — the remove button owns the right edge of the line */
+  margin-left: calc(-1 * var(--space-3));
   border-radius: var(--radius-md);
   transition: background-color var(--dur-base) var(--ease-out);
 }
@@ -80,22 +89,6 @@
   text-overflow: ellipsis;
 }
 
-.downloads-bar {
-  position: relative;
-  height: 3px;
-  border-radius: var(--radius-full);
-  background: var(--white-a18);
-  margin-top: var(--space-1);
-  overflow: hidden;
-}
-
-.downloads-bar-fill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: var(--p, 40%);
-  background: var(--amber-500);
-}
-
 .downloads-status {
   flex-shrink: 0;
   display: grid;
@@ -110,10 +103,25 @@
   color: var(--status-success);
 }
 
-.downloads-status--downloading {
-  color: var(--amber-500);
+.downloads-remove {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  color: var(--icon-secondary);
+  transition: background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
 }
 
-.downloads-status--expiring {
+.downloads-remove:hover {
+  background: var(--surface-hover);
   color: var(--status-danger-text);
+}
+
+@media (pointer: coarse) {
+  .downloads-remove {
+    width: 44px;
+    height: 44px;
+  }
 }

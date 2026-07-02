@@ -10,9 +10,17 @@ const SERVER_ERRORS = {
   email_taken: { field: 'email', msg: 'That email is already registered.' },
   invalid_credentials: { field: 'password', msg: 'Invalid email or password.' },
   weak_password: { field: 'password', msg: 'At least 8 characters.' },
+  password_too_long: { field: 'password', msg: 'Passwords max out at 72 characters.' },
   invalid_email: { field: 'email', msg: 'Enter a valid email.' },
   name_required: { field: 'name', msg: 'Tell us your name.' },
-  too_many_requests: { field: 'password', msg: 'Too many attempts — try again in a minute.' },
+  name_too_long: { field: 'name', msg: 'Names max out at 80 characters.' },
+  // rate-limit windows differ per route (login 5/min, signup 5/hour) — the
+  // copy has to match the mode or it lies about the wait
+  too_many_requests: {
+    field: 'password',
+    msg: 'Too many attempts — try again in a minute.',
+    signupMsg: 'Too many attempts — try again in an hour.',
+  },
 };
 
 export default function Auth({ mode = 'signin' }) {
@@ -49,6 +57,10 @@ export default function Auth({ mode = 'signin' }) {
     if (first) requestAnimationFrame(() => document.getElementById(first)?.focus());
   };
 
+  // "Invalid email or password" often really means "no account yet" — hold
+  // a door to signup open next to the error (signin only; clears with it)
+  const badCreds = !signup && errors.password === SERVER_ERRORS.invalid_credentials.msg;
+
   const submit = async (e) => {
     e.preventDefault();
     const next = {};
@@ -68,16 +80,20 @@ export default function Auth({ mode = 'signin' }) {
       const mapped = SERVER_ERRORS[err.code];
       if (mapped) {
         // a known, field-specific problem maps onto its field
-        const next2 = { [mapped.field]: mapped.msg };
+        const next2 = { [mapped.field]: (signup && mapped.signupMsg) || mapped.msg };
         setErrors(next2);
         focusFirst(next2);
       } else {
-        // network / server / unknown — surface at form level rather than
-        // pinning it to the password field (which read as a credentials error)
+        // server / network / unknown — surface at form level rather than
+        // pinning it to the password field (which read as a credentials error).
+        // Only a dead fetch (no status) may blame the connection — an unmapped
+        // 4xx means the server turned the request down, not that it was missed.
         setFormError(
           err?.status >= 500
             ? 'Our server had a problem — please try again.'
-            : 'Couldn’t reach the server — check your connection and try again.'
+            : err?.status
+              ? 'That didn’t go through — check the form and try again.'
+              : 'Couldn’t reach the server — check your connection and try again.'
         );
       }
     } finally {
@@ -121,6 +137,11 @@ export default function Auth({ mode = 'signin' }) {
             <Link to="/forgot" className="auth-forgot">
               Forgot password?
             </Link>
+          )}
+          {badCreds && (
+            <p className="auth-signup-nudge">
+              New here? <Link to="/signup">Create an account</Link>
+            </p>
           )}
           {formError && (
             <p className="auth-form-error" role="alert">

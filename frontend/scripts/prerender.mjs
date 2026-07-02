@@ -38,14 +38,15 @@ if (!assetTags) {
   process.exit(0);
 }
 
-function compose({ title, description, url, image, preload, preloadSrcset, jsonLds = [] }) {
+function compose({ title, description, url, image, preload, preloadSrcset, jsonLds = [], noindex = false }) {
   const t = title ? `${esc(title)} — NUX` : 'NUX — Cinema for Curious Minds';
   const d = esc(description || DEFAULT_DESC);
   const img = esc(abs(image));
   const isDefaultImg = !image;
   const lines = [
     '<meta charset="UTF-8" />',
-    '<meta name="viewport" content="width=device-width, initial-scale=1.0" />',
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />',
+    noindex ? '<meta name="robots" content="noindex" />' : '',
     `<title>${t}</title>`,
     `<meta name="description" content="${d}" />`,
     '<link rel="icon" type="image/svg+xml" href="/favicon.svg" />',
@@ -136,6 +137,18 @@ safe('/', () =>
 safe('/browse', () =>
   write('/browse', compose({ title: 'Browse', description: 'Search and browse the full NUX catalogue by genre, mood and format.', url: `${ORIGIN}/browse` }))
 );
+
+// SPA fallback for routes without a prerendered file (my-list, profile,
+// settings, watch/*, auth …). Same shell as home but WITHOUT the hero
+// preload (it was wasted bandwidth on every deep-link cold load) and
+// noindex (real public pages all have their own prerendered head).
+// nginx `try_files … /__fallback.html` points here.
+safe('__fallback', () => {
+  writeFileSync(
+    join(DIST, '__fallback.html'),
+    compose({ title: null, url: `${ORIGIN}/`, noindex: true })
+  );
+});
 
 for (const f of FILMS) {
   safe(`/film/${f.id}`, () => {

@@ -5,6 +5,7 @@ import Slate from '../components/Slate.jsx';
 import Reveal from '../components/Reveal.jsx';
 import { SkeletonRail } from '../components/Skeleton.jsx';
 import usePageTitle from '../lib/usePageTitle.js';
+import { readGenrePrefs } from '../lib/prefs.js';
 import { useWatchHistory } from '../lib/useWatchHistory.js';
 import Rail, { PosterCard, ContinueCard } from '../components/Rail.jsx';
 import { RAILS, EDITORIAL_PICK, REASONS, GENRES, GENRE_MATCH, FILMS, COLLECTIONS, byId } from '../data/catalog.js';
@@ -18,8 +19,7 @@ import './Home.css';
 // homepage stays scannable. Makes the taste step visibly real for every pick.
 function readPersonalRails() {
   try {
-    const prefs = JSON.parse(localStorage.getItem('nux-genre-prefs') || '[]');
-    if (!Array.isArray(prefs)) return [];
+    const prefs = readGenrePrefs();
     const rails = [];
     for (const gid of prefs) {
       const labels = GENRE_MATCH[gid];
@@ -87,8 +87,8 @@ export default function Home() {
     try {
       if (localStorage.getItem('nux-curator-hint')) {
         localStorage.removeItem('nux-curator-hint'); // one-shot
-        const prefs = JSON.parse(localStorage.getItem('nux-genre-prefs') || '[]');
-        const labels = (Array.isArray(prefs) ? prefs : [])
+        const prefs = readGenrePrefs();
+        const labels = prefs
           .map((id) => GENRES.find((g) => g.id === id)?.label)
           .filter(Boolean)
           .slice(0, 3);

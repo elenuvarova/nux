@@ -11,3 +11,13 @@ if (!window.matchMedia) {
     removeListener() {},
   });
 }
+
+// used by Reveal for the scroll-in effect; never fires in tests (content
+// simply stays in its pre-reveal state, which is fine for assertions)
+if (!window.IntersectionObserver) {
+  window.IntersectionObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}
