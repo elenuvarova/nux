@@ -66,6 +66,20 @@ Browser ──▶ nginx :80 ──┬─▶  /            built SPA  (immutable 
    **refuses to start** in production without one, to avoid a silent ephemeral SQLite).
 4. Auto-deploy fires on push to `main` via a GitHub webhook.
 
+### Web push
+
+One broadcast ("New collections this week") fires when the weekly collections regenerate.
+Subscriptions are stored server-side (`push_subscriptions`); the notification itself is shown by
+the hand-written service worker (`frontend/src/sw.js`).
+
+- Generate keys once: `cd backend && npx web-push generate-vapid-keys`.
+- Set `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` and `VAPID_SUBJECT` (a `mailto:` address) in
+  Coolify — locally they live in `backend/.env`. Without them `/api/push/*` answers 503 and the
+  Settings row stays hidden; nothing else is affected.
+- Manual test send (no need to wait a week): `cd backend && node scripts/send-push.mjs "Body" "/"`.
+- iOS caveat: Safari only exposes web push once NUX is added to the Home Screen (iOS 16.4+) —
+  the Settings row explains this in place.
+
 ## API
 
 | Method | Path | Description |
@@ -76,3 +90,4 @@ Browser ──▶ nginx :80 ──┬─▶  /            built SPA  (immutable 
 | GET/PUT | `/api/history` | watch progress (Continue Watching) |
 | POST/GET/DELETE | `/api/curator` · `/api/curator/history` | the AI Curator chat |
 | GET | `/api/collections` · `/api/collections/:slug` | generated themed collections |
+| GET/POST/DELETE | `/api/push/public-key` · `/api/push/subscribe` | web-push key + subscriptions |

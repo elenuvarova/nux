@@ -64,6 +64,23 @@ jobs:
       - name: films.js must match the catalog
         run: git diff --exit-code backend/data/films.js
 
+  token-drift:
+    # landing/src/styles/tokens.css is a byte-for-byte copy of the app's
+    # tokens.css (landing/scripts/sync-tokens.mjs, wired to predev/prebuild).
+    # Fail if someone edited the app tokens without re-syncing the landing —
+    # this exact drift shipped twice (--surface-chip, June + July 2026).
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/sync-tokens.mjs
+        working-directory: landing
+      - name: landing tokens.css must match the app's
+        run: git diff --exit-code landing/src/styles/tokens.css
+
   # Dependency audit — SURFACED but NON-BLOCKING (continue-on-error: true).
   # Deliberately not a hard gate: a single transitive / dev-only high advisory
   # (common in the Vite/vitest toolchain) would otherwise false-fail every push
