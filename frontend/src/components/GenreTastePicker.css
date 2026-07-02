@@ -32,7 +32,9 @@
   background: linear-gradient(to top, rgb(var(--ink-900-rgb) / 0.8), rgb(var(--ink-900-rgb) / 0.1) 60%);
 }
 
-.taste-chip span {
+/* the :not() keeps this label rule off .taste-check — bare `span` used to win
+   on specificity and pin the check disc to the chip's left edge */
+.taste-chip span:not(.taste-check) {
   position: absolute;
   left: 0;
   right: 0;
@@ -60,8 +62,10 @@
    the resting ring, so a pick reads at a glance before pressing Continue */
 .taste-check {
   position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
+  /* space-3 clears both the corner curve (radius-md) and the 2px selected
+     ring — at space-2 the disc visually collided with them */
+  top: var(--space-3);
+  right: var(--space-3);
   z-index: 2;
   display: grid;
   place-items: center;
@@ -70,6 +74,8 @@
   border-radius: var(--radius-full);
   background: var(--amber-500);
   color: var(--action-primary-text);
+  /* page-colour cutout ring separates the disc from busy art */
+  box-shadow: 0 0 0 2px rgb(var(--ink-900-rgb) / 0.9);
 }
 
 /* aligned to the system breakpoints (768 / 640) */

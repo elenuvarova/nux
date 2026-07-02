@@ -302,7 +302,7 @@ export default function App() {
             <a href={`${APP}/p/about`}>About <span>→</span></a>
             <a href={`${APP}/browse`}>Catalogue <span>→</span></a>
             <a href={`${APP}/welcome`}>The Curator <span>→</span></a>
-            <a href="https://ontwrpn.com">Case study <span>→</span></a>
+            <a href="https://ontwrpn.com/work/nux">Case study <span>→</span></a>
             <a href="mailto:eluvrv@gmail.com">Contact <span>→</span></a>
           </nav>
           <NewsletterForm />
