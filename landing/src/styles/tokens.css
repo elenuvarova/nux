@@ -4,7 +4,7 @@
 
 /* NUX design tokens — generated from the Figma variable set (Hi-Fi mode).
    Source of truth: Figma file UPtAtDiB37eSssdOGZ8nrq → collections
-   Primitives / Wireframe (semantic, Hi-Fi mode) / Spacing & Radius. */
+   Primitives / Semantic (Wireframe + Hi-Fi modes) / Spacing & Radius. */
 
 :root {
   /* ── Primitives: ink (warm near-black surface ladder) ───────── */
@@ -64,8 +64,6 @@
   --surface-hover: var(--ink-600);
   --surface-pressed: var(--ink-500);
   --surface-overlay: var(--ink-700);
-  --surface-scrim: rgb(13 12 11 / 0.42);
-  --surface-scrim-hover: rgb(13 12 11 / 0.58);
   --surface-scrim-pressed: rgb(13 12 11 / 0.72);
 
   /* ── Semantic: glass chrome (iOS 26-selective material) ─────── */
@@ -74,6 +72,9 @@
      keeps the blur warm. Consume via the .glass utility in global.css. */
   --glass-bg: rgb(13 12 11 / 0.72);
   --glass-bg-strong: rgb(13 12 11 / 0.92);
+  /* opaque chip plate — gives corner badges/tags a controlled backdrop so a
+     coloured label never dissolves into busy poster art (≈ #1E1B17 @ 80%) */
+  --surface-chip: rgb(30 27 23 / 0.8);
   --blur-chrome: 20px;
   /* tighter on-artwork blur (poster badges, the play affordance, card labels) —
      distinct from the 20px chrome blur so the two don't drift apart */
@@ -117,9 +118,6 @@
   --text-primary: var(--paper-100);
   --text-secondary: var(--paper-300);
   --text-tertiary: var(--paper-500);
-  /* disabled controls ONLY (2.69:1 — exempt from WCAG contrast per 1.4.3).
-     Never use this for merely-secondary readable text. */
-  --text-disabled: var(--paper-700);
   --text-inverse: var(--ink-900);
 
   /* ── Semantic: borders ──────────────────────────────────────── */
@@ -131,11 +129,12 @@
   --border-danger: var(--status-danger);
 
   /* ── Semantic: actions ──────────────────────────────────────── */
+  /* NOTE: the full action set (incl. -pressed, secondary fill) lives in the
+     Figma variable collection; tokens unused in code were trimmed 2026-07-01
+     (pressed feedback here is --press-scale, not a colour swap). */
   --action-primary: var(--amber-500);
   --action-primary-hover: var(--amber-400);
-  --action-primary-pressed: var(--amber-300);
   --action-primary-text: var(--ink-900);
-  --action-secondary: transparent;
   --action-secondary-border: var(--white-a14);
 
   /* ── Semantic: icons ────────────────────────────────────────── */
@@ -158,7 +157,6 @@
   --space-16: 64px;
   --space-20: 80px;
   --space-24: 96px;
-  --space-30: 120px;
   /* tiny uppercase chip/badge padding (poster + hero badges) */
   --pad-badge: 3px 6px;
 
@@ -180,8 +178,6 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-2xl: 32px;
   --radius-full: 9999px;
   /* poster artwork specifically (2:3 / 16:9 stills) gets a tighter 6px;
      every other thumbnail/card surface uses --radius-sm (8px). */
@@ -235,10 +231,17 @@
 
   /* Editorial body */
   --type-essay: 400 17px/1.65 var(--font-essay);
+  /* italic Fraunces pull-quote — critic lines, curator prompts, colophon
+     (was hand-rolled four different ways on the landing) */
+  --type-pullquote: italic 600 20px/1.45 var(--font-display);
 
   /* ── Elevation & effects ────────────────────────────────────── */
   --shadow-card-hover: 0 12px 40px rgb(0 0 0 / 0.55);
   --shadow-overlay: 0 24px 80px rgb(0 0 0 / 0.6);
+  /* small-control shadow (scrubber thumb & friends) */
+  --shadow-control: 0 1px 4px rgb(0 0 0 / 0.5);
+  /* recessed text-field interior */
+  --shadow-input-inset: inset 0 1px 2px rgb(0 0 0 / 0.22);
   --focus-ring: 0 0 0 2px var(--surface-page), 0 0 0 4px var(--border-focus);
 
   /* one tactile press-scale for every interactive primitive (btn/chip/icon/tab) */
@@ -249,6 +252,17 @@
   --hover-lift: 1.03;
   /* springier lift for round media controls (player big-play, game close) */
   --hover-lift-control: 1.06;
+
+  /* ── Z-index (named tiers — never type a raw stacking number) ── */
+  --z-sticky: 20; /* in-page raised chrome (browse recent-searches dropdown) */
+  --z-chrome: 100; /* nav / tab bar / curator FAB */
+  --z-overlay: 110; /* curator overlay — above chrome */
+  --z-tour: 130; /* onboarding tour spotlight */
+  --z-player: 150; /* watch-page chrome */
+  --z-skip-link: 200; /* a11y skip link — above app chrome */
+  --z-toast: 300; /* toasts + offline banner — above everything interactive */
+  --z-game: 1000; /* NeonDrift easter-egg canvas */
+  --z-grain: 9999; /* film-grain overlay — decorative, pointer-events: none */
 
   /* ── Motion ─────────────────────────────────────────────────── */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

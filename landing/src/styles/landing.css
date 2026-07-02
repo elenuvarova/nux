@@ -29,6 +29,17 @@
   --type-landing-footer-mark: clamp(64px, 16vw, 200px);
   --type-landing-mobile-display: clamp(34px, 9vw, 40px); /* hero/final ≤430px */
 
+  /* static UI type ramp — one token per small-type role so the raw px sizes live
+     in one place. Values are exactly what shipped (weight 600 + body leading on
+     the section eyebrows — deliberately NOT the app's 700/1 --type-eyebrow).
+     Per-spot letter-spacing / uppercase stay on the rules that need them. */
+  --type-landing-eyebrow: 600 11px/1.5 var(--font-ui); /* .slate, .rail-eyebrow (+ --track-eyebrow) */
+  --type-landing-caps: 400 11px/1.5 var(--font-ui);    /* uppercase micro-meta: credits, counts, plan name */
+  --type-landing-meta: 400 12px/1.5 var(--font-ui);    /* quiet asides: hero hint, plan reassure */
+  --type-landing-caption: 400 13px/1.5 var(--font-ui); /* captions, small labels, legal */
+  --type-landing-body-s: 400 14px/1.5 var(--font-ui);  /* small body copy, inputs, links */
+  --type-landing-nav: 400 15px/1.5 var(--font-ui);     /* nav + footer index links */
+
   /* ONE consistent side gutter for EVERY section/region — the single source of
      truth for left/right inset, so no two sections drift (20px on phones,
      scaling to 48px). Vertical section paddings stay bespoke below. */
@@ -39,8 +50,9 @@
   --pad-landing-footer: clamp(48px, 6vw, 72px);
   --pad-landing-hero-b: clamp(40px, 7vw, 80px);
 
-  /* one 8pt step above --space-6 (24px), for the larger CTA's horizontal pad */
-  --space-7: 28px;
+  /* NOT a --space-* scale member (the shared scale jumps 24 → 32): bespoke
+     horizontal pad for the large CTA only */
+  --btn-lg-pad-x: 28px;
 
   /* landing-only motion / elevation the app ramp doesn't carry */
   --dur-landing-still: 550ms;  /* coll-still zoom (was .55s) */
@@ -61,7 +73,7 @@ img { max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 ::selection { background: var(--amber-500); color: var(--ink-900); }
 :focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: var(--focus-ring); }
-.skip-link { position: absolute; left: var(--space-3); top: -60px; z-index: 100; background: var(--surface-raised); color: var(--text-primary); padding: 10px var(--space-4); border-radius: var(--radius-full); font-size: 14px; transition: top var(--dur-fast) var(--ease-out); }
+.skip-link { position: absolute; left: var(--space-3); top: -60px; z-index: var(--z-skip-link); background: var(--surface-raised); color: var(--text-primary); padding: 10px var(--space-4); border-radius: var(--radius-full); font: var(--type-landing-body-s); transition: top var(--dur-fast) var(--ease-out); }
 .skip-link:focus { top: var(--space-3); }
 
 .grain { position: absolute; inset: 0; pointer-events: none; opacity: .025; mix-blend-mode: overlay; z-index: 3;
@@ -70,34 +82,33 @@ a { color: inherit; text-decoration: none; }
 /* ---- buttons + links ---- */
 /* reuses the app's tokenized button recipe (global.css) so the two surfaces'
    buttons stay in lockstep — same type, press-scale, motion, and semantic hover */
-.btn { display: inline-flex; align-items: center; gap: var(--space-2, 8px); font: var(--type-button);
-  border: 0; border-radius: var(--radius-full, 999px); height: 44px; padding: 0 var(--space-6); cursor: pointer; white-space: nowrap;
+.btn { display: inline-flex; align-items: center; gap: var(--space-2); font: var(--type-button);
+  border: 0; border-radius: var(--radius-full); height: 44px; padding: 0 var(--space-6); cursor: pointer; white-space: nowrap;
   transition: transform var(--dur-fast) var(--ease-out), background var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out); }
 .btn:active { transform: scale(var(--press-scale)); }
-.btn-primary { background: var(--action-primary, #c8922a); color: var(--action-primary-text, #0d0c0b); }
+.btn-primary { background: var(--action-primary); color: var(--action-primary-text); }
 .btn-primary:hover { background: var(--action-primary-hover); }
-.btn-secondary { background: transparent; color: var(--text-primary, #f2efe9); border: 1px solid var(--border-default, rgba(255,255,255,.14)); }
-.btn-secondary:hover { border-color: var(--border-strong, rgba(255,255,255,.18)); }
-.btn-lg { height: 52px; padding: 0 var(--space-7, 28px); font-size: 16px; }
+.btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border-default); }
+.btn-secondary:hover { border-color: var(--border-strong); }
+.btn-lg { height: 52px; padding: 0 var(--btn-lg-pad-x); font-size: 16px; /* one-off: scales the shared --type-button up for the hero CTA */ }
 .btn-block { width: 100%; justify-content: center; }
 /* Secondary CTA — ghost/underline-style link in secondary ink. No amber: solid
    amber is reserved for the one PRIMARY action per viewport (.btn-primary). The
    arrow inherits the link's secondary colour and only animates on hover. */
-.link-arrow { display: inline-flex; align-items: center; gap: 9px; min-height: var(--space-6); color: var(--text-secondary); font-size: 14px; font-weight: 500; letter-spacing: .01em; white-space: nowrap; transition: color var(--dur-base) var(--ease-out); }
+.link-arrow { display: inline-flex; align-items: center; gap: 9px; min-height: var(--space-6); color: var(--text-secondary); font: var(--type-landing-body-s); font-weight: 500; letter-spacing: .01em; white-space: nowrap; transition: color var(--dur-base) var(--ease-out); }
 .link-arrow span { transition: transform var(--dur-base) var(--ease-out); }
 .link-arrow:hover { color: var(--text-primary); }
 .link-arrow:hover span { transform: translateX(5px); }
 
-.wordmark { font-family: var(--font-display); font-weight: 600;
-  font-size: 22px; letter-spacing: .02em; color: var(--text-primary); }
+.wordmark { font: var(--type-wordmark); letter-spacing: var(--track-wordmark); color: var(--text-primary); }
 .eyebrow { font: var(--type-eyebrow); letter-spacing: var(--track-eyebrow); text-transform: uppercase;
   color: var(--amber-500); margin: 0 0 var(--space-5); }
 
 /* slate — the running section-label system (N°0X — Label). ONE locked rule, used
    identically for every N°0x: the NUMBER carries the amber accent, the em-rule and
    the LABEL are grey. Never let a whole label go amber. */
-.slate { display: flex; align-items: center; gap: var(--space-3); margin: 0 0 var(--space-6); font-family: var(--font-ui);
-  font-size: 11px; font-weight: 600; letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--text-tertiary); }
+.slate { display: flex; align-items: center; gap: var(--space-3); margin: 0 0 var(--space-6);
+  font: var(--type-landing-eyebrow); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--text-tertiary); }
 .slate-n { color: var(--amber-500); }              /* number — the only amber bit */
 .slate-rule { height: 1px; width: 26px; background: var(--border-default); } /* grey hairline */
 .slate-label { color: var(--text-tertiary); }      /* label — grey, never amber */
@@ -118,14 +129,14 @@ a { color: inherit; text-decoration: none; }
 .section.fotw, .section.pricing { border-top: 1px solid var(--border-subtle); }
 
 /* ---- nav ---- */
-.nav { position: absolute; top: 0; left: 0; right: 0; z-index: 10; display: flex; align-items: center;
+.nav { position: absolute; top: 0; left: 0; right: 0; z-index: var(--z-chrome); display: flex; align-items: center;
   justify-content: space-between; padding: var(--space-6) var(--gutter); }
 /* Scrim band so the wordmark + "Sign in" keep AA contrast over the bright,
    moving poster hero (posters can drift light behind the unfilled nav). */
 .nav::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 132px; pointer-events: none; z-index: -1;
   background: linear-gradient(to bottom, rgb(var(--ink-900-rgb) / .72) 0%, rgb(var(--ink-900-rgb) / .34) 46%, rgb(var(--ink-900-rgb) / 0) 100%); }
 .nav-actions { display: flex; align-items: center; gap: var(--space-6); }
-.nav-link { color: var(--text-secondary); font-size: 15px; padding: 6px 2px; }
+.nav-link { color: var(--text-secondary); font: var(--type-landing-nav); padding: 6px 2px; }
 .nav-link:hover { color: var(--text-primary); }
 
 /* ---- hero (poster cylinder) ---- */
@@ -153,15 +164,17 @@ a { color: inherit; text-decoration: none; }
   margin: 0 0 var(--space-5); text-shadow: 0 2px 40px rgb(var(--ink-950-rgb) / .6); max-width: 16ch; text-wrap: balance; }
 .hero-sub { font-size: var(--type-landing-hero-sub); line-height: 1.5; color: var(--text-secondary); max-width: 56ch; margin: 0 0 var(--space-8); }
 .cta-row { display: flex; gap: var(--space-6); flex-wrap: wrap; align-items: center; }
-.hero-hint { margin: var(--space-6) 0 0; font-size: 12px; letter-spacing: .04em; color: var(--text-tertiary); }
-@media (hover: none) { .hint-cursor { display: none; } }
+.hero-hint { margin: var(--space-6) 0 0; font: var(--type-landing-meta); letter-spacing: .04em; color: var(--text-tertiary); }
+/* the "cursor" phrasing only makes sense with a pointer; touch gets its own hint */
+.hint-touch { display: none; }
+@media (hover: none) { .hint-cursor { display: none; } .hint-touch { display: inline; } }
 
 /* ---- director marquee ---- */
 .marquee { overflow: hidden; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
   padding: var(--space-4) 0; }
 .marquee-track { display: inline-flex; white-space: nowrap; animation: marquee 60s linear infinite; will-change: transform; }
 .marquee-item { display: inline-flex; align-items: center; font-family: var(--font-display); font-size: var(--type-landing-marquee); color: var(--text-secondary); }
-.marquee-item i { color: var(--amber-500); font-size: 9px; padding: 0 var(--space-6); font-style: normal; opacity: .8; }
+.marquee-item i { color: var(--amber-500); font-size: 9px; /* one-off: separator dot scaled to the marquee display type */ padding: 0 var(--space-6); font-style: normal; opacity: .8; }
 /* WCAG 2.2.2 — give the auto-scrolling director marquee an in-page pause
    (reduced-motion already stops it; this also covers pointer/keyboard users) */
 .marquee:hover .marquee-track, .marquee:focus-within .marquee-track { animation-play-state: paused; }
@@ -170,7 +183,7 @@ a { color: inherit; text-decoration: none; }
 .proof { position: relative; overflow: clip; background: var(--surface-sunken); min-height: 100svh; display: flex; flex-direction: column; }
 .wall { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-2); justify-content: center; align-content: center;
   flex: 1; opacity: .22; filter: grayscale(.35); }
-.wall img { width: clamp(70px, 6.4vw, 128px); aspect-ratio: 2/3; object-fit: cover; border-radius: 3px; }
+.wall img { width: clamp(70px, 6.4vw, 128px); aspect-ratio: 2/3; object-fit: cover; border-radius: var(--radius-poster); }
 .proof::after { content: ''; position: absolute; inset: 0; z-index: 1;
   background: radial-gradient(120% 85% at 50% 50%, rgb(var(--ink-900-rgb) / .5) 0%, rgb(var(--ink-900-rgb) / .82) 55%, rgb(var(--ink-900-rgb) / .96) 100%); }
 .proof-over { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -187,26 +200,28 @@ a { color: inherit; text-decoration: none; }
 .curator { background: var(--surface-raised); max-width: none; }
 .curator > .slate, .curator-grid { max-width: calc(1240px - 2 * var(--gutter)); margin-inline: auto; }
 .curator-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(40px, 6vw, 100px); align-items: start; }
-.curator-prompt { font-family: var(--font-display); font-style: italic; font-size: var(--type-landing-curator-prompt); line-height: 1.3;
+/* quote voice: family/style/weight come from the shared --type-pullquote; each
+   spot keeps its own fluid size and leading on top */
+.curator-prompt { font: var(--type-pullquote); font-size: var(--type-landing-curator-prompt); line-height: 1.3;
   color: var(--text-primary); margin: 0 0 var(--space-6); }
-.curator-note { font-family: var(--font-display); font-style: italic; font-size: var(--type-landing-curator-note); line-height: 1.55;
+.curator-note { font: var(--type-pullquote); font-size: var(--type-landing-curator-note); line-height: 1.55;
   color: var(--text-secondary); margin: 0 0 var(--space-5); max-width: 44ch; }
 .curator-note em { color: var(--amber-400); font-style: italic; }
-.curator-sign { font-size: 13px; letter-spacing: .06em; color: var(--text-tertiary); margin: 0 0 var(--space-6); }
+.curator-sign { font: var(--type-landing-caption); letter-spacing: .06em; color: var(--text-tertiary); margin: 0 0 var(--space-6); }
 .picks { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-5); }
 .pick { display: grid; grid-template-columns: 86px 1fr; gap: var(--space-5); align-items: start; }
 .pick-still { overflow: hidden; border-radius: var(--radius-xs); }
 .pick-still img { width: 86px; aspect-ratio: 2/3; object-fit: cover; display: block; }
-.pick-eyebrow { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber-500); margin: 0 0 6px; }
-.pick-title { font-family: var(--font-display); font-weight: 600; font-size: 19px; margin: 0 0 2px; }
-.pick-credit { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-tertiary); margin: 0 0 var(--space-2); }
-.pick-reason { font-size: 14px; line-height: 1.5; color: var(--text-secondary); margin: 0; }
+.pick-eyebrow { font: var(--type-landing-caps); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--amber-500); margin: 0 0 6px; }
+.pick-title { font-family: var(--font-display); font-weight: 600; font-size: 19px; /* one-off: Fraunces pick title, between the shared 17/22 steps */ margin: 0 0 2px; }
+.pick-credit { font: var(--type-landing-caps); letter-spacing: .06em; text-transform: uppercase; color: var(--text-tertiary); margin: 0 0 var(--space-2); }
+.pick-reason { font: var(--type-landing-body-s); color: var(--text-secondary); margin: 0; }
 
 /* ---- N°03 catalogue: rails + index ---- */
 .cat-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-6); margin-bottom: var(--space-10); }
 .cat-head .section-title { margin: 0; }
 .rail { margin-bottom: var(--space-12); }
-.rail-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--text-secondary); margin: 0 0 var(--space-5); }
+.rail-eyebrow { font: var(--type-landing-eyebrow); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--text-secondary); margin: 0 0 var(--space-5); }
 .rail-row { display: flex; gap: var(--space-5); overflow-x: auto; scrollbar-width: none; padding-bottom: var(--space-1);
   scroll-snap-type: x proximity; } /* gentle paging — proximity never traps the user mid-drag */
 .rail-row::-webkit-scrollbar { display: none; }
@@ -236,7 +251,7 @@ a { color: inherit; text-decoration: none; }
   transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); pointer-events: none; }
 .poster-card:hover .poster-card-play { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .poster-card-title { font: var(--type-card-title); color: var(--text-primary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.poster-card-meta { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-tertiary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.poster-card-meta { font: var(--type-landing-caps); letter-spacing: .06em; text-transform: uppercase; color: var(--text-tertiary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* The editors' room — single-film spotlight (replaced the type-index) */
 .fotw-card { position: relative; display: block; aspect-ratio: 16 / 7; border-radius: var(--radius-md);
   overflow: hidden; isolation: isolate; box-shadow: inset 0 0 0 1px var(--white-a08); }
@@ -250,12 +265,12 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(90deg, rgb(var(--ink-900-rgb) / .85) 0%, rgb(var(--ink-900-rgb) / .6) 45%, rgb(var(--ink-900-rgb) / 0) 70%),
     linear-gradient(0deg, rgb(var(--ink-900-rgb) / .72) 0%, transparent 52%); }
 .fotw-body { position: absolute; z-index: 2; left: clamp(20px, 4vw, 56px); bottom: clamp(20px, 3.5vw, 48px); max-width: 32ch; }
-.fotw-meta { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-tertiary); margin: 0 0 10px; }
+.fotw-meta { font: var(--type-landing-caps); letter-spacing: .12em; text-transform: uppercase; color: var(--text-tertiary); margin: 0 0 10px; }
 .fotw-title { font-family: var(--font-display); font-weight: 600; font-size: var(--type-landing-fotw-title); line-height: .98; margin: 0 0 14px; color: var(--text-primary); }
 /* lifted to primary ink: this body sits over a bright graded region of the still,
    where secondary grey drops below AA (M-14) */
 .fotw-note { font-size: var(--type-landing-fotw-note); line-height: 1.55; color: var(--text-primary); margin: 0 0 var(--space-5); }
-.fotw-cta { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+.fotw-cta { display: inline-flex; align-items: center; gap: var(--space-2); font: var(--type-landing-caption); letter-spacing: .08em; text-transform: uppercase;
   color: var(--text-primary); border-bottom: 1px solid var(--amber-300); padding-bottom: 3px; }
 .fotw-cta span { color: var(--amber-300); transition: transform var(--dur-landing-cta) var(--ease-out); }
 .fotw-card:hover .fotw-cta span, .fotw-card:focus-within .fotw-cta span { transform: translateX(4px); }
@@ -279,10 +294,10 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(to top, rgb(var(--ink-950-rgb) / .92) 0%, rgb(var(--ink-950-rgb) / .58) 42%, rgb(var(--ink-950-rgb) / .4) 100%); }
 .coll-text { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: flex-end;
   min-height: clamp(260px, 27vw, 380px); padding: clamp(22px, 3vw, 34px); }
-.coll-n { font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--amber-400); margin: 0 0 auto; text-shadow: 0 1px 12px rgb(var(--ink-950-rgb) / .9); }
+.coll-n { font-family: var(--font-display); font-weight: 600; font-size: 15px; /* one-off: Fraunces numeral for the collection index */ color: var(--amber-400); margin: 0 0 auto; text-shadow: 0 1px 12px rgb(var(--ink-950-rgb) / .9); }
 .coll-title { font-family: var(--font-display); font-weight: 600; font-size: var(--type-landing-coll-title); line-height: 1.05; margin: 0 0 var(--space-2); }
-.coll-standfirst { font-family: var(--font-display); font-style: italic; font-size: 15px; line-height: 1.4; color: var(--paper-300); margin: 0 0 var(--space-3); max-width: 34ch; }
-.coll-count { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-secondary); margin: 0; display: inline-flex; gap: var(--space-2); }
+.coll-standfirst { font: var(--type-pullquote); font-size: 15px; /* one-off: compact standfirst inside the tile */ line-height: 1.4; color: var(--paper-300); margin: 0 0 var(--space-3); max-width: 34ch; }
+.coll-count { font: var(--type-landing-caps); letter-spacing: .1em; text-transform: uppercase; color: var(--text-secondary); margin: 0; display: inline-flex; gap: var(--space-2); }
 .coll-count span { color: var(--amber-500); }
 
 /* ---- N°05 how it works (ghosted numerals) ---- */
@@ -301,22 +316,22 @@ a { color: inherit; text-decoration: none; }
 .plan-free { border-right: 1px solid var(--border-default); }
 .plan-member { background: var(--surface-page); position: relative; }
 .plan-member::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--amber-500); }
-.plan-name { font-size: 11px; letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--text-secondary); margin: 0 0 var(--space-4); }
+.plan-name { font: var(--type-landing-caps); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--text-secondary); margin: 0 0 var(--space-4); }
 .plan-price { font-family: var(--font-display); font-weight: 600; font-size: var(--type-landing-price); line-height: 1; margin: 0 0 var(--space-3); color: var(--text-primary); }
 /* the "a month" rider rides the big numeral's baseline, so it reads low against
    the cap-height; nudge it up so it sits against the upper third of the figure (N-6) */
-.plan-price .per { font-family: var(--font-ui); font-weight: 400; font-size: 15px; color: var(--text-secondary); vertical-align: 0.18em; }
-.plan-note { color: var(--text-secondary); font-size: 14px; margin: 0 0 var(--space-5); line-height: 1.5; }
+.plan-price .per { font-family: var(--font-ui); font-weight: 400; font-size: 15px; /* one-off: rider sized against the 56px numeral, not the UI ramp */ color: var(--text-secondary); vertical-align: 0.18em; }
+.plan-note { color: var(--text-secondary); font: var(--type-landing-body-s); margin: 0 0 var(--space-5); }
 .toggle { display: flex; width: fit-content; gap: var(--space-1); background: var(--surface-muted); border-radius: var(--radius-full); padding: var(--space-1); margin: 0 auto var(--space-2); }
-.toggle button { background: transparent; border: 0; color: var(--text-secondary); font: inherit; font-size: 13px; padding: 6px 14px; border-radius: var(--radius-full); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.toggle button { background: transparent; border: 0; color: var(--text-secondary); font: var(--type-landing-caption); padding: 6px 14px; border-radius: var(--radius-full); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 .toggle button.on { background: var(--surface-raised); color: var(--text-primary); box-shadow: inset 0 0 0 1px var(--amber-500); }
-.save { font-size: 10px; font-weight: 700; letter-spacing: .04em; color: var(--amber-500); text-transform: uppercase; }
+.save { font-size: 10px; /* one-off: 700-weight badge inside the toggle pill */ font-weight: 700; letter-spacing: .04em; color: var(--amber-500); text-transform: uppercase; }
 /* feature list stays a left-aligned checklist, but centred as a block so the
    plan reads centered (price/name) without ragged-centre bullet lines */
 .plan-feats { list-style: none; padding: 0; margin: 0 auto var(--space-6); display: grid; gap: 9px; width: fit-content; max-width: 100%; text-align: left; }
-.plan-feats li { color: var(--text-secondary); font-size: 14px; padding-left: var(--space-5); position: relative; line-height: 1.4; }
+.plan-feats li { color: var(--text-secondary); font: var(--type-landing-body-s); line-height: 1.4; padding-left: var(--space-5); position: relative; }
 .plan-feats li::before { content: '·'; position: absolute; left: var(--space-1); color: var(--amber-500); }
-.plan-reassure { text-align: center; font-size: 12px; color: var(--text-tertiary); margin: var(--space-3) 0 0; }
+.plan-reassure { text-align: center; font: var(--type-landing-meta); color: var(--text-tertiary); margin: var(--space-3) 0 0; }
 
 /* ---- colophon (honesty) ---- */
 /* The colophon sits directly under pricing. Both pricing's bottom pad and this
@@ -325,10 +340,11 @@ a { color: inherit; text-decoration: none; }
    reads as the closing note to pricing, not a removed section. */
 .section.pricing { padding-bottom: calc(var(--pad-landing-section) / 2); }
 .colophon { max-width: 620px; margin: 0 auto; padding: var(--space-12) var(--gutter) var(--pad-landing-colophon); text-align: center; }
-.colophon-mark { color: var(--amber-500); font-size: 18px; margin: 0 0 var(--space-5); }
+.colophon-mark { color: var(--amber-500); font-size: 18px; /* one-off: decorative amber mark above the colophon */ margin: 0 0 var(--space-5); }
 /* Fraunces italic kept on purpose — same editor's-note texture as the curator note
-   and collection standfirsts; capped to ~60ch so the line never runs over-long (N-6). */
-.colophon-text { font-family: var(--font-display); font-style: italic; font-size: var(--type-landing-colophon); line-height: 1.6; color: var(--text-secondary); margin: 0 auto; max-width: 60ch; }
+   and collection standfirsts (all via --type-pullquote); capped to ~60ch so the
+   line never runs over-long (N-6). */
+.colophon-text { font: var(--type-pullquote); font-size: var(--type-landing-colophon); line-height: 1.6; color: var(--text-secondary); margin: 0 auto; max-width: 60ch; }
 
 /* ---- final CTA ---- */
 .final-cta { position: relative; overflow: hidden; text-align: center; padding: var(--pad-landing-final) var(--gutter); background: var(--surface-sunken); }
@@ -342,21 +358,21 @@ a { color: inherit; text-decoration: none; }
 .footer { border-top: 1px solid var(--border-subtle); padding: var(--pad-landing-footer) var(--gutter) 0; overflow: hidden; }
 .footer-top { display: flex; justify-content: space-between; gap: var(--space-12); flex-wrap: wrap; max-width: calc(1240px - 2 * var(--gutter)); margin: 0 auto clamp(36px, 5vw, 56px); }
 .footer-index { display: flex; flex-direction: column; gap: 11px; }
-.footer-index a { color: var(--text-secondary); font-size: 15px; display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--space-6); }
+.footer-index a { color: var(--text-secondary); font: var(--type-landing-nav); display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--space-6); }
 .footer-index a span { color: var(--amber-500); opacity: 0; transform: translateX(-4px); transition: opacity var(--dur-base) ease, transform var(--dur-base) ease; }
 .footer-index a:hover { color: var(--text-primary); }
 .footer-index a:hover span { opacity: 1; transform: translateX(0); }
 .news-form { max-width: 340px; }
-.news-form label { display: block; color: var(--text-secondary); font-size: 13px; margin: 0 0 var(--space-3); line-height: 1.4; }
-.news-done { margin: 0; font-size: 14px; line-height: 1.5; color: var(--amber-500); }
+.news-form label { display: block; color: var(--text-secondary); font: var(--type-landing-caption); line-height: 1.4; margin: 0 0 var(--space-3); }
+.news-done { margin: 0; font: var(--type-landing-body-s); color: var(--amber-500); }
 .news-row { display: flex; gap: var(--space-2); }
 .news-row input { flex: 1; min-width: 0; background: var(--surface-raised); border: 1px solid var(--border-input);
-  border-radius: var(--radius-full); padding: 10px var(--space-4); color: var(--text-primary); font: inherit; font-size: 14px; }
+  border-radius: var(--radius-full); padding: 10px var(--space-4); color: var(--text-primary); font: var(--type-landing-body-s); }
 .news-row input::placeholder { color: var(--text-tertiary); }
 .footer-mark { font-family: var(--font-display); font-weight: 600; font-size: var(--type-landing-footer-mark); line-height: .82; letter-spacing: -.02em;
   color: var(--text-primary); text-align: center; margin: clamp(36px, 5vw, 56px) 0; max-width: 100%; overflow: hidden; user-select: none; }
 .footer-legal { display: flex; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; max-width: calc(1240px - 2 * var(--gutter)); margin: 0 auto; padding: var(--space-6) 0;
-  border-top: 1px solid var(--border-subtle); color: var(--text-tertiary); font-size: 13px; }
+  border-top: 1px solid var(--border-subtle); color: var(--text-tertiary); font: var(--type-landing-caption); }
 
 /* ---- responsive ---- */
 @media (max-width: 920px) {
@@ -392,7 +408,7 @@ a { color: inherit; text-decoration: none; }
   .proof { min-height: auto; }
   .wall { flex: none; min-height: 0; max-height: 62svh; overflow: clip; align-content: flex-start; }
   .move { grid-template-columns: 1fr; gap: var(--space-2); }
-  .move-n { font-size: 72px; }
+  .move-n { font-size: 72px; /* one-off: pins the ghost numeral at its clamp floor on phones */ }
   .rail-row .poster-card { flex-basis: 150px; }
   .fotw-card { aspect-ratio: 4 / 5; }
   .fotw-body { max-width: none; right: clamp(20px, 6vw, 40px); }

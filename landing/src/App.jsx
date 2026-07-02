@@ -116,7 +116,7 @@ export default function App() {
               <a className="btn btn-primary btn-lg" href={`${APP}/welcome`} onClick={() => track('cta_start_watching_click', { location: 'hero' })}><PlayIcon /> Start free trial</a>
               <a className="link-arrow" href="#catalogue" onClick={() => track('cta_browse_click', { location: 'hero' })}>Browse the catalogue <span>→</span></a>
             </div>
-            <p className="hero-hint">drag to spin<span className="hint-cursor"> · move your cursor to look around</span></p>
+            <p className="hero-hint">drag to spin<span className="hint-cursor"> · move your cursor to look around</span><span className="hint-touch"> · look around</span></p>
           </div>
         </HeroDome>
 
